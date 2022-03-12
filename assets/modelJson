@@ -1,0 +1,14 @@
+channel model:
+{
+"channel": "CCTV",
+"about": "balabala",
+"program": [
+{
+"name": "a",
+"time": "2022-3-03 14:00",
+"length": 3,
+"about":"abac"
+}
+]
+}
+
