@@ -13,22 +13,28 @@ import '../util/app_util.dart';
 
 class HomePage extends StatefulWidget {
   final ValueChanged<int>? onJumpTo;
-  List<Channel> channelList = [];
-  List<Channel> bannerList = [];
 
-  HomePage({Key? key, this.onJumpTo})
+  const HomePage({Key? key, this.onJumpTo})
       : super(key: key);
 
   @override
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends BaseState<HomeModel, Channel, HomePage>
+class _HomePageState extends BaseState<HomePage>
     with TickerProviderStateMixin, WidgetsBindingObserver {
   var listener;
   late Widget _currentPage;
   late List<Map<String, dynamic>> _items;
+  late Random random;
+  List<Channel> channelList = [];
+  List<Channel> bannerList = [];
+  late List<Color> colors;
+  int pageSize = 16;
   int maxSize = 0;
+
+
+  _HomePageState() : super(removeTop: true, needScrollController: true);
 
   @override
   void initState() {
@@ -48,6 +54,7 @@ class _HomePageState extends BaseState<HomeModel, Channel, HomePage>
       //   changeStatusBar(color: Colors.white, statusStyle: statusStyle);
       // }
     });
+    random = Random();
   }
 
   @override
@@ -80,10 +87,9 @@ class _HomePageState extends BaseState<HomeModel, Channel, HomePage>
 
   @override
   get contentChild {
-    Random random = Random();
     return MasonryGridView.count(
       controller: scrollController,
-      itemCount: widget.channelList.length,
+      itemCount: channelList.length,
       physics: const AlwaysScrollableScrollPhysics(),
       padding: const EdgeInsets.symmetric(vertical: 50, horizontal: 10),
       // the number of columns
@@ -94,11 +100,10 @@ class _HomePageState extends BaseState<HomeModel, Channel, HomePage>
       crossAxisSpacing: 4,
       itemBuilder: (context, index) {
         // display each item with a card
-        Channel channel = widget.channelList[index];
+        Channel channel = channelList[index];
         return Card(
           // Give each item a random background color
-          color: Color.fromARGB(random.nextInt(256), random.nextInt(256),
-              random.nextInt(256), random.nextInt(256)),
+          color: colors[index],
           key: ValueKey(_items[index]['id']),
           child: SizedBox(
             height: _items[index]['height'],
@@ -123,23 +128,26 @@ class _HomePageState extends BaseState<HomeModel, Channel, HomePage>
       if (homeModel.channels.isNotEmpty) {
         setState(() {
           if (loadMore) {
-            widget.channelList.addAll(homeModel.channels);
+            channelList.addAll(homeModel.channels);
             pageIndex = currentIndex;
+            _items.addAll(configList(homeModel.channels.length, random));
           } else {
-            widget.bannerList = homeModel.bannerList;
-            widget.channelList = homeModel.channels;
+            bannerList = homeModel.bannerList;
+            channelList = homeModel.channels;
             maxSize = homeModel.maxSize;
-            _items = List.generate(
-              homeModel.maxSize,
-                  (index) => {
-                "id": index,
-                "title": "Item $index",
-                "height": Random().nextInt(150) + 50.5
-              },
-            );
+            _items = configList(homeModel.channels.length, random);
+            colors = [];
           }
+          _colorFill(channelList.length);
         });
       }
+    }
+  }
+
+  void _colorFill(int length){
+    for(int i = 0; i < length; i++) {
+      colors.add(Color.fromARGB(random.nextInt(256), random.nextInt(256),
+          random.nextInt(256), random.nextInt(256)));
     }
   }
 }

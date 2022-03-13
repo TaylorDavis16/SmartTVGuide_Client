@@ -5,7 +5,7 @@ abstract class BaseRequest {
   var pathParams = '';
 
   // static String authority = "www.dongdong16.com";
-  static String authority = "192.168.1.7:8080";
+  static String authority = "192.168.1.5:8080";
   static String app = "SmartTVGuide/";
 
   HttpMethod httpMethod();
@@ -17,7 +17,6 @@ abstract class BaseRequest {
     var pathStr = app + path() + pathParams;
     //拼接path参数
     uri = Uri.http(authority, pathStr, params);
-
     if (needLogin()) {
       //给需要登录的接口携带登录令牌
       // addHeader(LoginDao.BOARDING_PASS, LoginDao.getBoardingPass());

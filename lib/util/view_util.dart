@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'dart:ui';
 
 import 'package:cached_network_image/cached_network_image.dart';
@@ -10,24 +11,27 @@ import 'format_util.dart';
 ///带缓存的image
 Widget cachedImage(String url, String alternative,
     {double? width, double? height}) {
-  return CachedNetworkImage(
-      height: height,
-      width: width,
-      fit: BoxFit.cover,
-      placeholder: (
-        BuildContext context,
-        String url,
-      ) =>
-          Container(color: Colors.grey[200]),
-      errorWidget: (
-        BuildContext context,
-        String url,
-        dynamic error,
-      ) =>
-          Wrap(
-            children: [const Icon(Icons.tv), Text(alternative)],
-          ),
-      imageUrl: url);
+  var wrap = Wrap(
+    children: [const Icon(Icons.tv), Text(alternative)],
+  );
+  return url == 'unknown'
+      ? wrap
+      : CachedNetworkImage(
+          height: height,
+          width: width,
+          fit: BoxFit.cover,
+          placeholder: (
+            BuildContext context,
+            String url,
+          ) =>
+              Container(color: Colors.grey[200]),
+          errorWidget: (
+            BuildContext context,
+            String url,
+            dynamic error,
+          ) =>
+              wrap,
+          imageUrl: url);
 }
 
 ///黑色线性渐变
@@ -100,6 +104,7 @@ BoxDecoration bottomBoxShadow() {
   ]);
 }
 
+//加载圈圈
 Offstage offstage(bool condition) {
   // print(window.physicalSize.width);
   return Offstage(
@@ -118,5 +123,15 @@ Offstage offstage(bool condition) {
         Text(' loading...'),
       ],
     ),
+  );
+}
+
+List<Map<String, Object>> configList(int length, Random random){
+  return List.generate(
+    length,
+        (index) => {
+      "id": index,
+      "height": random.nextInt(150) + 50.5
+    },
   );
 }

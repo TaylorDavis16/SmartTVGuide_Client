@@ -30,7 +30,7 @@ class HiNet {
     // printLog(response.extra);
     // printLog(response.statusMessage);
     var result = response.data;
-    printLog(result['code']);
+    printLog('code: ${result['code']}');
     var status = response.statusCode;
     printLog(status);
     printLog('----------------------------------------------------------');

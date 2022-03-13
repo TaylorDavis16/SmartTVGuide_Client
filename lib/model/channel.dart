@@ -1,10 +1,10 @@
-import 'package:smart_tv_guide/http/request/image_looker.dart';
+
 
 class Channel {
   String id = 'unknown';
   String displayName = 'unknown';
   String about = 'Nothing here';
-  String imgURL = '0.0.0.0';
+  String imgURL = 'unknown';
   String url = 'unknown';
   List<Program> programs = <Program>[];
 
