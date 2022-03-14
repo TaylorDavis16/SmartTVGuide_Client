@@ -1,10 +1,8 @@
 import 'dart:math';
-import 'dart:ui';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
-import '../widget/navigation_bar.dart';
 import 'format_util.dart';
 
 ///带缓存的image
@@ -125,12 +123,9 @@ Offstage offstage(bool condition) {
   );
 }
 
-List<Map<String, Object>> configList(int length, Random random){
+List<Map<String, Object>> configList(int length, Random random) {
   return List.generate(
     length,
-        (index) => {
-      "id": index,
-      "height": random.nextInt(150) + 50.5
-    },
+    (index) => {"id": index, "height": random.nextInt(150) + 50.5},
   );
 }
