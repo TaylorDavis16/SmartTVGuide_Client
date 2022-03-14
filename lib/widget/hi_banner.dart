@@ -11,7 +11,6 @@ class HiBanner extends StatelessWidget {
   final double bannerHeight;
   final EdgeInsetsGeometry? padding;
 
-
   const HiBanner(this.bannerList,
       {Key? key, this.bannerHeight = 160, this.padding})
       : super(key: key);
@@ -57,5 +56,3 @@ class HiBanner extends StatelessWidget {
     );
   }
 }
-
-

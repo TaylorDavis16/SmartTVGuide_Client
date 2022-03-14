@@ -10,6 +10,8 @@ import 'package:smart_tv_guide/pages/register_page.dart';
 import 'package:smart_tv_guide/pages/search_page.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../util/app_util.dart';
+
 typedef RouteChangeListener = Function(
     RouteStatusInfo current, RouteStatusInfo pre);
 
@@ -139,7 +141,7 @@ class HiNavigator extends _RouteJumpListener {
   }
 
   void _notify(RouteStatusInfo? current) {
-    print('current: $current');
+    logger.d('current: $current');
     if (current?.page is TabNavigator && _bottomTab != null) {
       //如果打开的是首页，则明确到首页具体的tab
       current = _bottomTab!;

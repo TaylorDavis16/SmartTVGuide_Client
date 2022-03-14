@@ -6,18 +6,23 @@ class InputField extends StatefulWidget {
   final void Function(String)? onChanged;
   final String? labelText;
   final TextStyle errorStyle = TextStyle(
-      fontSize: 12, color: Colors.redAccent, backgroundColor: Colors.white.withOpacity(0.8),);
+    fontSize: 12,
+    color: Colors.redAccent,
+    backgroundColor: Colors.white.withOpacity(0.8),
+  );
   final bool obscureText;
   final TextInputType? keyboardType;
   final double height;
 
   InputField(
       {Key? key,
-      this.stream, required this.controller,
+      this.stream,
+      required this.controller,
       this.onChanged,
       this.labelText,
       this.obscureText = false,
-      this.keyboardType, this.height = 95})
+      this.keyboardType,
+      this.height = 95})
       : super(key: key);
 
   @override

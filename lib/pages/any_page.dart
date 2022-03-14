@@ -12,8 +12,8 @@ class _AnyPageState extends State<AnyPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: appBar('any', 'rightTitle', (){}),
-      body: Text('Any page'),
+      appBar: appBar('any', 'rightTitle', () {}),
+      body: const Text('Any page'),
     );
   }
 }

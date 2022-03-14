@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:smart_tv_guide/util/app_util.dart';
 import 'package:smart_tv_guide/util/view_util.dart';
 import 'package:smart_tv_guide/widget/appbar.dart';
 import '../widget/navigation_bar.dart';
-
 
 class SearchPage extends StatefulWidget {
   const SearchPage({Key? key}) : super(key: key);
@@ -17,39 +17,41 @@ class _SearchPageState extends State<SearchPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: appBar("Search", "", () => print('123'), centerTitle: true),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SearchBar(
-            height: 50,
-            child: _appBar(),
-            color: Colors.white,
-            statusStyle: StatusStyle.DARK_CONTENT,
-          ),
-          Container(
-            color: Colors.white,
-            padding: EdgeInsets.only(top: 30),
-          ),
-          _chip('Beijing                                                                  '),
-          _chip('CCTV 4                                                              '),
-          _chip('Tianjin                                                            '),
-          _chip('Sichuan                                                       '),
-          _chip('Ningxia                                               '),
-          _chip('Guangdong                              '),
-          _chip('Guangxi                               '),
-          _chip('Jilin                              '),
-          _chip('Gansu                       '),
-          _chip('CCTV children       '),
-          offstage(false)
-        ],
-      )
-    );
+        appBar: appBar("Search", "", () => logger.i('123'), centerTitle: true),
+        body: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SearchBar(
+              height: 50,
+              child: _appBar(),
+              color: Colors.white,
+            ),
+            Container(
+              color: Colors.white,
+              padding: const EdgeInsets.only(top: 30),
+            ),
+            _chip(
+                'Beijing                                                                  '),
+            _chip(
+                'CCTV 4                                                              '),
+            _chip(
+                'Tianjin                                                            '),
+            _chip(
+                'Sichuan                                                       '),
+            _chip('Ningxia                                               '),
+            _chip('Guangdong                              '),
+            _chip('Guangxi                               '),
+            _chip('Jilin                              '),
+            _chip('Gansu                       '),
+            _chip('CCTV children       '),
+            offstage(false)
+          ],
+        ));
   }
 
   _appBar() {
     return Padding(
-      padding: EdgeInsets.only(left: 15, right: 15),
+      padding: const EdgeInsets.only(left: 15, right: 15),
       child: Row(
         children: [
           InkWell(
@@ -65,18 +67,18 @@ class _SearchPageState extends State<SearchPage> {
           ),
           Expanded(
               child: Padding(
-                padding: EdgeInsets.only(left: 15, right: 15),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(16),
-                  child: Container(
-                    padding: EdgeInsets.only(left: 10),
-                    height: 32,
-                    alignment: Alignment.centerLeft,
-                    child: Icon(Icons.search, color: Colors.grey),
-                    decoration: BoxDecoration(color: Colors.grey[100]),
-                  ),
-                ),
-              )),
+            padding: const EdgeInsets.only(left: 15, right: 15),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(16),
+              child: Container(
+                padding: const EdgeInsets.only(left: 10),
+                height: 32,
+                alignment: Alignment.centerLeft,
+                child: const Icon(Icons.search, color: Colors.grey),
+                decoration: BoxDecoration(color: Colors.grey[100]),
+              ),
+            ),
+          )),
           const Icon(
             Icons.explore_outlined,
             color: Colors.grey,
@@ -105,7 +107,7 @@ class _SearchPageState extends State<SearchPage> {
         backgroundColor: Colors.blue.shade900,
         child: Text(
           label.substring(0, 1),
-          style: TextStyle(fontSize: 10),
+          style: const TextStyle(fontSize: 10),
         ),
       ),
     );

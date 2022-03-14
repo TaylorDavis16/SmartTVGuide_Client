@@ -37,7 +37,8 @@ class NewsCard extends StatelessWidget {
     final size = MediaQuery.of(context).size;
     return Stack(
       children: [
-        cachedImage(channel.imgURL, channel.displayName, width: size.width / 2 - 10, height: 120),
+        cachedImage(channel.imgURL, channel.displayName,
+            width: size.width / 2 - 10, height: 120),
         Positioned(
           left: 0,
           right: 0,
@@ -89,7 +90,7 @@ class NewsCard extends StatelessWidget {
             channel.displayName,
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
-            style: TextStyle(fontSize: 12, color: Colors.black87),
+            style: const TextStyle(fontSize: 12, color: Colors.black87),
           ),
           //作者
         ],

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
 ///自定义顶部appBar
-appBar(String title, String rightTitle, VoidCallback rightButtonClick, {IconData? icon, bool leading = false, centerTitle = false}) {
+appBar(String title, String rightTitle, VoidCallback rightButtonClick,
+    {IconData? icon, bool leading = false, centerTitle = false}) {
   return AppBar(
     //让title居左
     centerTitle: centerTitle,
@@ -17,14 +18,19 @@ appBar(String title, String rightTitle, VoidCallback rightButtonClick, {IconData
         child: Container(
           padding: const EdgeInsets.only(left: 15, right: 15),
           alignment: Alignment.center,
-          child: Wrap(children: [
-            Icon(icon, color: Colors.red,),
-            Text(
-              rightTitle,
-              style: TextStyle(fontSize: 18, color: Colors.grey[500]),
-              textAlign: TextAlign.center,
-            )
-          ],),
+          child: Wrap(
+            children: [
+              Icon(
+                icon,
+                color: Colors.red,
+              ),
+              Text(
+                rightTitle,
+                style: TextStyle(fontSize: 18, color: Colors.grey[500]),
+                textAlign: TextAlign.center,
+              )
+            ],
+          ),
         ),
       )
     ],

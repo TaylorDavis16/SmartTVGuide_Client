@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:smart_tv_guide/http/core/hi_state.dart';
+import 'package:smart_tv_guide/util/app_util.dart';
 
 import '../../util/color.dart';
 import '../../util/toast.dart';
@@ -27,7 +28,7 @@ abstract class BaseState<T extends StatefulWidget> extends HiState<T>
   @override
   void initState() {
     super.initState();
-    print('initiating!!!!!!!!!!!!!');
+    logger.i('initiating!!!!!!!!!!!!!');
     if (needScrollController) {
       scrollController = ScrollController();
       scrollController!.addListener(() {
@@ -39,7 +40,7 @@ abstract class BaseState<T extends StatefulWidget> extends HiState<T>
             //fix 当列表高度不满屏幕高度时不执行加载更多
             // && scrollController.position.maxScrollExtent != 0
             ) {
-          print('------_loadData---');
+          logger.i('------_loadData---');
           loadData(loadMore: true);
         }
       });
@@ -64,7 +65,7 @@ abstract class BaseState<T extends StatefulWidget> extends HiState<T>
     );
   }
 
-  Future<void> customLoad({loadMore = false}) async{}
+  Future<void> customLoad({loadMore = false}) async {}
 
   Future<void> loadData({loadMore = false}) async {
     if (!loading) {
@@ -73,7 +74,7 @@ abstract class BaseState<T extends StatefulWidget> extends HiState<T>
         pageIndex = 0;
       }
       try {
-        print('pageIndex: $pageIndex');
+        logger.i('pageIndex: $pageIndex');
         await customLoad(loadMore: loadMore);
         // Future.delayed(const Duration(milliseconds: 1000), () {
         //   loading = false;

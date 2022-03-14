@@ -5,7 +5,6 @@ import 'package:smart_tv_guide/pages/search_page.dart';
 import 'package:smart_tv_guide/pages/hot_page.dart';
 import 'package:smart_tv_guide/tools/shared_variables.dart';
 
-import '../model/channel.dart';
 import 'hi_navigator.dart';
 
 class TabNavigator extends StatefulWidget {
@@ -25,7 +24,6 @@ class _TabNavigatorState extends State<TabNavigator> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _controller = PageController(initialPage: _currentIndex, keepPage: true);
     _pages = [

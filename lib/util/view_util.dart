@@ -103,7 +103,7 @@ BoxDecoration bottomBoxShadow() {
 
 //加载圈圈
 Offstage offstage(bool condition) {
-  // print(window.physicalSize.width);
+  // debug(window.physicalSize.width);
   return Offstage(
     offstage: condition,
     child: Row(

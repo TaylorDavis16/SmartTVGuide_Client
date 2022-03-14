@@ -1,6 +1,7 @@
 import 'package:smart_tv_guide/http/core/dio_adapter.dart';
 import 'package:smart_tv_guide/http/core/hi_net_adapter.dart';
 import 'package:smart_tv_guide/http/request/base_request.dart';
+import 'package:smart_tv_guide/util/app_util.dart';
 
 import 'hi_error.dart';
 import 'hi_interceptor.dart';
@@ -9,6 +10,7 @@ class HiNet {
   HiNet._internal();
 
   late HiErrorInterceptor _hiErrorInterceptor;
+
   factory HiNet() => _instance;
 
   static late final HiNet _instance = HiNet._internal();
@@ -17,24 +19,22 @@ class HiNet {
     HiNetResponse response;
     try {
       response = await send(request);
-    } on HiNetError catch(e){
+    } on HiNetError catch (e) {
       response = e.data;
-      printLog('----------------------------------------------------------');
-      printLog(e.message);
-    } catch(e){
-      printLog('Something really bad happened!!!!!!!!!!!!!!!!');
-      printLog(e);
+      logger.w('----------------------------------------------------------');
+      logger.w(e.message);
+    } catch (e) {
+      logger.wtf('Something really bad happened!!!!!!!!!!!!!!!!');
+      logger.w(e);
       return;
     }
-    printLog(response.request);
-    // printLog(response.extra);
-    // printLog(response.statusMessage);
+    // logger.i(e);(response.extra);
+    // logger.i(e);(response.statusMessage);
     var result = response.data;
-    printLog('code: ${result['code']}');
+    logger.d('code: ${result['code']}');
     var status = response.statusCode;
-    printLog(status);
-    printLog('----------------------------------------------------------');
-    var hiError;
+    logger.d(status);
+    HiNetError hiError;
     switch (status) {
       case 200:
         return result;
@@ -54,14 +54,12 @@ class HiNet {
       default:
         hiError = HiNetError(status ?? 0, result.toString(), data: result);
     }
-    if (_hiErrorInterceptor != null) {
-      _hiErrorInterceptor(hiError);
-    }
+    _hiErrorInterceptor(hiError);
     throw hiError;
   }
 
   Future<dynamic> send<T>(BaseRequest request) async {
-    printLog('url:${request.url()}');
+    logger.i('url:${request.url()}');
     HiNetAdapter adapter = DioAdapter();
     return adapter.send(request);
   }
@@ -70,7 +68,5 @@ class HiNet {
     _hiErrorInterceptor = interceptor;
   }
 
-  printLog(Object? object) {
-    print('HiNet: $object');
-  }
+
 }

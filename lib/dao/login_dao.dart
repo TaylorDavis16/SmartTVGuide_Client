@@ -1,13 +1,12 @@
-import 'package:smart_tv_guide/http/core/hi_error.dart';
-
 import '../db/hi_cache.dart';
 import '../http/core/hi_net.dart';
 import '../http/request/base_request.dart';
 import '../http/request/login_request.dart';
 import '../http/request/registration_request.dart';
+import '../util/app_util.dart';
 
 class LoginDao {
-  static const BOARDING_PASS = "boarding-pass";
+  static const boardingPass = "boarding-pass";
 
   LoginDao._internal();
 
@@ -34,14 +33,14 @@ class LoginDao {
           .add("gender", gender);
     }
     var result = await HiNet().fire(request);
-    print(result);
+    logger.i(result);
     if (result['code'] == 1) {
-      HiCache().setString(BOARDING_PASS, result['info']);
+      HiCache().setString(boardingPass, result['info']);
     }
     return result;
   }
 
   static getBoardingPass() {
-    return HiCache().get(BOARDING_PASS);
+    return HiCache().get(boardingPass);
   }
 }

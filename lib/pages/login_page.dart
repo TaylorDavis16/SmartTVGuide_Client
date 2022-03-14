@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:smart_tv_guide/http/core/hi_error.dart';
 import 'package:smart_tv_guide/tools/bloc.dart';
+import 'package:smart_tv_guide/util/app_util.dart';
 import 'package:smart_tv_guide/util/toast.dart';
 import 'package:video_player/video_player.dart';
 import '../dao/login_dao.dart';
@@ -144,7 +145,8 @@ class _LoginPageState extends State<LoginPage>
                                 ButtonField(
                                   color: Colors.lightBlueAccent,
                                   child: const Icon(FontAwesomeIcons.wpforms),
-                                  onPressed: () => HiNavigator().onJumpTo(RouteStatus.registration),
+                                  onPressed: () => HiNavigator()
+                                      .onJumpTo(RouteStatus.registration),
                                 ),
                               ],
                             )
@@ -166,13 +168,14 @@ class _LoginPageState extends State<LoginPage>
     try {
       // var result = await LoginDao.login("631999273@qq.com", "lxd12345");
       var result = await LoginDao.login(_emailText.text, _passwordText.text);
-      print(_emailText.text);
-      print(_passwordText.text);
-      print(result);
+      logger.i(_emailText.text);
+      logger.i(_passwordText.text);
+      logger.i(result);
       if (result['code'] == 1) {
         showToast('Login Successful');
-        HiNavigator().onJumpTo(RouteStatus.home, args: {"login" : ""});
-      } else {//maybe password incorrect
+        HiNavigator().onJumpTo(RouteStatus.home, args: {"login": ""});
+      } else {
+        //maybe password incorrect
         showWarnToast('Login Failed');
       }
     } on HiNetError catch (e) {

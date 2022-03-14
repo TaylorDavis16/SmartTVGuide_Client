@@ -1,12 +1,10 @@
 import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:smart_tv_guide/dao/channel_dao.dart';
 import 'package:smart_tv_guide/http/core/base_state.dart';
 import 'package:smart_tv_guide/model/home_model.dart';
 import 'package:smart_tv_guide/util/view_util.dart';
-
 import '../model/channel.dart';
 import '../navigator/hi_navigator.dart';
 import '../util/app_util.dart';
@@ -40,12 +38,12 @@ class _HomePageState extends BaseState<HomePage>
     super.initState();
     HiNavigator().addListener(listener = (current, pre) {
       _currentPage = current.page;
-      print('home:current:${current.page}');
-      print('home:pre:${pre.page}');
+      logger.i('home:current:${current.page}');
+      logger.i('home:pre:${pre.page}');
       if (widget == _currentPage || _currentPage is HomePage) {
-        print('打开了首页:onResume');
+        logger.i('打开了首页:onResume');
       } else if (widget == pre?.page || pre?.page is HomePage) {
-        print('首页:onPause');
+        logger.i('首页:onPause');
       }
       //当页面返回到首页恢复首页的状态栏样式
       // if (pre?.page is VideoDetailPage && !(current.page is ProfilePage)) {
@@ -65,7 +63,7 @@ class _HomePageState extends BaseState<HomePage>
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
-    print(':didChangeAppLifecycleState:$state');
+    logger.i(':didChangeAppLifecycleState:$state');
     switch (state) {
       case AppLifecycleState.inactive: // 处于这种状态的应用程序应该假设它们可能在任何时候暂停。
         break;

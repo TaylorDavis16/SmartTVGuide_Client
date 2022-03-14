@@ -3,6 +3,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:smart_tv_guide/http/core/hi_error.dart';
 import 'package:smart_tv_guide/navigator/tab_navigator.dart';
 import 'package:smart_tv_guide/tools/bloc.dart';
+import 'package:smart_tv_guide/util/app_util.dart';
 import 'package:smart_tv_guide/util/toast.dart';
 import '../dao/login_dao.dart';
 import '../widget/button_field.dart';
@@ -25,13 +26,9 @@ class _RegisterPageState extends State<RegisterPage>
   final _email = TextEditingController();
   final _password = TextEditingController();
   final _rePassword = TextEditingController();
-  final _dropdown = DropdownBox(const <String>[
-    'Select you gender',
-    'Male',
-    'Female',
-    'Neutral',
-    'Unknown'
-  ], 'Select you gender');
+  final _dropdown = const DropdownBox(
+      <String>['Select you gender', 'Male', 'Female', 'Neutral', 'Unknown'],
+      'Select you gender');
 
   @override
   void initState() {
@@ -200,15 +197,15 @@ class _RegisterPageState extends State<RegisterPage>
           _dropdown.selected == _dropdown.list[0]
               ? "null"
               : _dropdown.selected);
-      print(_email.text);
-      print(_password.text);
-      print(result);
+      logger.i(_email.text);
+      logger.i(_password.text);
+      logger.i(result);
       if (result['code'] == 1) {
         showToast('Register Successful');
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => TabNavigator(),
+            builder: (context) => const TabNavigator(),
           ),
         );
       } else {

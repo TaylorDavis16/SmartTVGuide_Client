@@ -1,5 +1,3 @@
-
-
 class Channel {
   String id = 'unknown';
   String displayName = 'unknown';
@@ -14,7 +12,7 @@ class Channel {
     id = json['id'];
     displayName = json['displayName'];
     about = json['about'];
-    if(json['imgURL'] != null) {
+    if (json['imgURL'] != null) {
       imgURL = json['imgURL'];
     }
     url = json['url'];
@@ -32,7 +30,7 @@ class Channel {
     data['about'] = about;
     data['img'] = imgURL;
     data['url'] = url;
-    if (programs != null) {
+    if (programs.isNotEmpty) {
       data['programs'] = programs.map((v) => v.toJson()).toList();
     }
     return data;
@@ -47,7 +45,8 @@ class Program {
   DateTime? stop;
   String about = 'Unknown';
 
-  Program(this.channel, this.title, this.lang, this.start, this.stop, this.about);
+  Program(
+      this.channel, this.title, this.lang, this.start, this.stop, this.about);
 
   Program.fromJson(Map<String, dynamic> json) {
     channel = json['channel'];
@@ -69,4 +68,3 @@ class Program {
     return data;
   }
 }
-

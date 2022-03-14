@@ -1,8 +1,6 @@
-
 import 'base_request.dart';
 
 class LoginRequest extends BaseRequest {
-
   @override
   HttpMethod httpMethod() {
     return HttpMethod.post;

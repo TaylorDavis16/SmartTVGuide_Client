@@ -5,7 +5,9 @@ class ButtonField extends StatelessWidget {
   final Widget? child;
   final Function()? onPressed;
 
-  const ButtonField({Key? key, this.color = Colors.blue, this.child, this.onPressed}) : super(key: key);
+  const ButtonField(
+      {Key? key, this.color = Colors.blue, this.child, this.onPressed})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {

@@ -70,9 +70,9 @@ class RouteDelegate extends RouterDelegate<RoutePath>
     HiNavigator().registerRouteJump(
         RouteJumpListener((RouteStatus routeStatus, {Map? args}) {
       _routeStatus = routeStatus;
-      if(_routeStatus == RouteStatus.channelDetail){
+      if (_routeStatus == RouteStatus.channelDetail) {
         channel = args!['channel'];
-      }else if(_routeStatus == RouteStatus.programDetail){
+      } else if (_routeStatus == RouteStatus.programDetail) {
         program = args!['program'];
       }
       notifyListeners();
@@ -81,7 +81,7 @@ class RouteDelegate extends RouterDelegate<RoutePath>
     HiNet().setErrorInterceptor((error) {
       if (error is NeedLogin) {
         //清空失效的登录令牌
-        HiCache().setString(LoginDao.BOARDING_PASS, 'null');
+        HiCache().setString(LoginDao.boardingPass, 'null');
         //拉起登录
         HiNavigator().onJumpTo(RouteStatus.login);
       }
@@ -89,6 +89,7 @@ class RouteDelegate extends RouterDelegate<RoutePath>
   }
 
   RouteStatus _routeStatus = RouteStatus.home;
+
   RouteStatus get routeStatus {
     if (_routeStatus != RouteStatus.registration && !hasLogin) {
       return _routeStatus = RouteStatus.login;
@@ -161,14 +162,8 @@ class RouteDelegate extends RouterDelegate<RoutePath>
     );
   }
 
-
-
   @override
-  Future<void> setNewRoutePath(RoutePath configuration) async {
-
-  }
-
-
+  Future<void> setNewRoutePath(RoutePath configuration) async {}
 }
 
 class RoutePath {

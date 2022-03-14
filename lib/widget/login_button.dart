@@ -7,7 +7,9 @@ class LoginButton extends StatelessWidget {
   final bool enable;
   final VoidCallback? onPressed;
   final Color color;
-  const LoginButton(this.title, {Key? key, this.enable = true, this.onPressed, this.color = primary})
+
+  const LoginButton(this.title,
+      {Key? key, this.enable = true, this.onPressed, this.color = primary})
       : super(key: key);
 
   @override
@@ -20,8 +22,11 @@ class LoginButton extends StatelessWidget {
         onPressed: enable ? onPressed : null,
         disabledColor: primary[50],
         color: color,
-        child: Text(title, style: const TextStyle(color: Colors.white, fontSize: 16,)),
-
+        child: Text(title,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 16,
+            )),
       ),
     );
   }

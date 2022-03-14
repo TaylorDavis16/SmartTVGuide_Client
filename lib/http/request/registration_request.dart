@@ -1,7 +1,6 @@
-
 import 'base_request.dart';
 
-class RegistrationRequest extends BaseRequest{
+class RegistrationRequest extends BaseRequest {
   @override
   HttpMethod httpMethod() {
     return HttpMethod.post;

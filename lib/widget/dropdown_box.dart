@@ -1,17 +1,27 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 
 class DropdownBox extends StatefulWidget {
   final List<String> list;
-  String selected;
-  DropdownBox(this.list, this.selected, {Key? key}) : super(key: key);
+  final String selected;
+
+  const DropdownBox(this.list, this.selected, {Key? key}) : super(key: key);
 
   @override
   _DropdownBoxState createState() => _DropdownBoxState();
 }
 
 class _DropdownBoxState extends State<DropdownBox> {
+  late String selected;
+  bool initiated = false;
+
   @override
   Widget build(BuildContext context) {
+    if (!initiated) {
+      selected = widget.selected;
+      initiated = true;
+    }
     return DecoratedBox(
       decoration: BoxDecoration(
           color: const Color.fromRGBO(210, 207, 207, 0.8),
@@ -26,7 +36,7 @@ class _DropdownBoxState extends State<DropdownBox> {
       child: Padding(
         padding: const EdgeInsets.only(left: 30, right: 30),
         child: DropdownButton<String>(
-          value: widget.selected,
+          value: selected,
           items: widget.list
               .map((value) => DropdownMenuItem<String>(
                     value: value,
@@ -34,9 +44,9 @@ class _DropdownBoxState extends State<DropdownBox> {
                   ))
               .toList(),
           onChanged: (value) {
-            print("You have selected $value");
+            log("You have selected $value");
             setState(() {
-              widget.selected = value!;
+              selected = value!;
             });
           },
           icon: const Padding(

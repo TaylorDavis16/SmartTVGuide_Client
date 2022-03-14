@@ -34,7 +34,7 @@ abstract class BaseRequest {
     return this;
   }
 
-  Map<String, dynamic> header = {"auth-token" : "lxd123"};
+  Map<String, dynamic> header = {"auth-token": "lxd123"};
 
   ///添加header
   BaseRequest addHeader(String k, Object v) {
