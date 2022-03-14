@@ -51,7 +51,7 @@ blackLinearGradient({bool fromTop = false}) {
 
 ///修改状态栏
 void changeStatusBar(
-    {color: Colors.white, StatusStyle statusStyle: StatusStyle.DARK_CONTENT}) {
+    {color = Colors.white, StatusStyle statusStyle = StatusStyle.DARK_CONTENT}) {
   //沉浸式状态栏样式
   FlutterStatusbarManager.setColor(color, animated: false);
   FlutterStatusbarManager.setStyle(statusStyle == StatusStyle.DARK_CONTENT
@@ -79,7 +79,7 @@ smallIconText(IconData iconData, var text) {
 }
 
 ///border线
-borderLine(BuildContext context, {bottom: true, top: false}) {
+borderLine(BuildContext context, {bottom = true, top = false}) {
   BorderSide borderSide = BorderSide(width: 0.5, color: Colors.grey[200]!);
   return Border(
     bottom: bottom ? borderSide : BorderSide.none,
@@ -97,7 +97,7 @@ BoxDecoration bottomBoxShadow() {
   return BoxDecoration(color: Colors.white, boxShadow: [
     BoxShadow(
         color: Colors.grey[100]!,
-        offset: Offset(0, 5), //xy轴偏移
+        offset: const Offset(0, 5), //xy轴偏移
         blurRadius: 5.0, //阴影模糊程度
         spreadRadius: 1 //阴影扩散程度
         )

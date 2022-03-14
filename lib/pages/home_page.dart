@@ -73,7 +73,7 @@ class _HomePageState extends BaseState<HomePage>
         break;
       case AppLifecycleState.resumed: //从后台切换前台，界面可见
         //fix Android压后台首页状态栏字体颜色变白，详情页状态栏字体变黑问题
-        //   changeStatusBar();
+          changeStatusBar();
         break;
       case AppLifecycleState.paused: // 界面不可见，后台
         break;

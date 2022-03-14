@@ -26,12 +26,13 @@ class _ChannelDetailState extends BaseState<ChannelDetail> {
 
   void _init() {
     _items = configList(widget.channel.programs.length, random);
-    colors =[];
-    for(int i = 0; i < widget.channel.programs.length; i++) {
+    colors = [];
+    for (int i = 0; i < widget.channel.programs.length; i++) {
       colors.add(Color.fromARGB(random.nextInt(256), random.nextInt(256),
           random.nextInt(256), random.nextInt(256)));
     }
   }
+
   @override
   void initState() {
     super.initState();
@@ -79,9 +80,8 @@ class _ChannelDetailState extends BaseState<ChannelDetail> {
     );
   }
 
-
   @override
-  Future<void> loadData({loadMore = false}) async{
+  Future<void> loadData({loadMore = false}) async {
     setState(() {
       _init();
     });

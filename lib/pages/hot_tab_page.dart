@@ -27,18 +27,17 @@ class _HotTabPageState extends State<HotTabPage>
   bool get wantKeepAlive => true;
 
 
-  @override
   Future getData(int pageIndex) {
     return Future.value(16);
   }
 
-  @override
   List parseList(result) {
     return [];
   }
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return _child();
   }
 

@@ -77,13 +77,13 @@ class _SearchPageState extends State<SearchPage> {
                   ),
                 ),
               )),
-          Icon(
+          const Icon(
             Icons.explore_outlined,
             color: Colors.grey,
           ),
           InkWell(
             onTap: () {},
-            child: Padding(
+            child: const Padding(
               padding: EdgeInsets.only(left: 12),
               child: Icon(
                 Icons.mail_outline,
