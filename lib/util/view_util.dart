@@ -1,7 +1,9 @@
+import 'dart:io';
 import 'dart:math';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:smart_tv_guide/util/app_util.dart';
 
 import 'format_util.dart';
 
@@ -11,24 +13,29 @@ Widget cachedImage(String url, String alternative,
   var wrap = Wrap(
     children: [const Icon(Icons.tv), Text(alternative)],
   );
-  return url == 'unknown'
-      ? wrap
-      : CachedNetworkImage(
-          height: height,
-          width: width,
-          fit: BoxFit.cover,
-          placeholder: (
-            BuildContext context,
-            String url,
-          ) =>
-              Container(color: Colors.grey[200]),
-          errorWidget: (
-            BuildContext context,
-            String url,
-            dynamic error,
-          ) =>
-              wrap,
-          imageUrl: url);
+  try {
+    return url == 'unknown'
+        ? wrap
+        : CachedNetworkImage(
+            height: height,
+            width: width,
+            fit: BoxFit.cover,
+            placeholder: (
+              BuildContext context,
+              String url,
+            ) =>
+                Container(color: Colors.grey[200]),
+            errorWidget: (
+              BuildContext context,
+              String url,
+              dynamic error,
+            ) =>
+                wrap,
+            imageUrl: url);
+  } on SocketException catch (e) {
+    logger.e('Fail to load image!' + e.message);
+    return wrap;
+  }
 }
 
 ///黑色线性渐变

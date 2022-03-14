@@ -72,6 +72,7 @@ class _HomePageState extends BaseState<HomePage>
       case AppLifecycleState.paused: // 界面不可见，后台
         break;
       case AppLifecycleState.detached: // APP结束时调用
+      disposeLogger();
         break;
     }
   }
@@ -138,10 +139,13 @@ class _HomePageState extends BaseState<HomePage>
         );
       }
     }
+    else {
+      stopLoading = true;
+    }
   }
 
   void _colorFill(int length) {
-    for (int i = 0; i < length; i++) {
+    for (int i = colors.length; i < length; i++) {
       colors.add(Color.fromARGB(random.nextInt(256), random.nextInt(256),
           random.nextInt(256), random.nextInt(256)));
     }

@@ -14,10 +14,19 @@ class SimpleLogFilter extends LogFilter {
 
 Logger get logger => _logger;
 
-var _logger = Logger(
-  filter: SimpleLogFilter(),
-  printer: PrettyPrinter(methodCount: 1),
-);
+late Logger _logger;
+
+void initLogger() {
+  _logger = Logger(
+    filter: SimpleLogFilter(),
+    printer: PrettyPrinter(methodCount: 1),
+  );
+}
+
+void disposeLogger(){
+  _logger.d('logger out!');
+  _logger.close();
+}
 
 void gotoChannel(Channel channel) {
   logger.i('Go to ' + channel.displayName);

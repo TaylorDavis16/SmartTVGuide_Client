@@ -14,6 +14,7 @@ abstract class BaseState<T extends StatefulWidget> extends HiState<T>
   bool loading = false;
   bool removeTop;
   bool needScrollController;
+  bool stopLoading = false;
   ScrollController? scrollController;
 
   BaseState({
@@ -36,11 +37,10 @@ abstract class BaseState<T extends StatefulWidget> extends HiState<T>
             scrollController!.position.pixels;
         // print('$dis');
         //当距离底部不足300时加载更多
-        if (dis < 100 && !loading
+        if (dis < 100 && !loading && !stopLoading
             //fix 当列表高度不满屏幕高度时不执行加载更多
             // && scrollController.position.maxScrollExtent != 0
             ) {
-          logger.i('------_loadData---');
           loadData(loadMore: true);
         }
       });
@@ -58,11 +58,16 @@ abstract class BaseState<T extends StatefulWidget> extends HiState<T>
   Widget build(BuildContext context) {
     super.build(context);
     return RefreshIndicator(
-      onRefresh: loadData,
+      onRefresh: refresh,
       color: primary,
       child: MediaQuery.removePadding(
           removeTop: removeTop, context: context, child: contentChild),
     );
+  }
+
+  Future<void> refresh() async{
+    stopLoading = false;
+    await loadData();
   }
 
   Future<void> customLoad({loadMore = false}) async {}
@@ -74,6 +79,7 @@ abstract class BaseState<T extends StatefulWidget> extends HiState<T>
         pageIndex = 0;
       }
       try {
+        logger.i('------_loadData---');
         logger.i('pageIndex: $pageIndex');
         await customLoad(loadMore: loadMore);
         // Future.delayed(const Duration(milliseconds: 1000), () {

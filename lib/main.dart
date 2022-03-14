@@ -7,6 +7,7 @@ import 'package:smart_tv_guide/pages/channel_detail_page.dart';
 import 'package:smart_tv_guide/pages/login_page.dart';
 import 'package:smart_tv_guide/pages/program_detail_page.dart';
 import 'package:smart_tv_guide/pages/register_page.dart';
+import 'package:smart_tv_guide/util/app_util.dart';
 import 'package:smart_tv_guide/util/color.dart';
 import 'package:smart_tv_guide/util/toast.dart';
 
@@ -38,11 +39,16 @@ class _AppEntryState extends State<AppEntry> {
 
   final RouteDelegate _routeDelegate = RouteDelegate();
 
+  Future<void> init() async{
+    initLogger();
+    await HiCache.preInit();
+  }
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
       //进行初始化
-      future: HiCache.preInit(),
+      future: init(),
       builder: (BuildContext context, AsyncSnapshot snapshot) {
         //定义route
         var widget = snapshot.connectionState == ConnectionState.done
