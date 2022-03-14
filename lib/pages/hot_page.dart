@@ -27,7 +27,7 @@ class _HotPageState extends HiState<HotPage>
     super.initState();
     loadData();
     logger.i("xxxxxxxx");
-    logger.i('${channelList.length}');
+    logger.i(channelList.length);
     _controller = TabController(length: channelList.length, vsync: this);
   }
 
