@@ -14,8 +14,7 @@ import '../util/app_util.dart';
 class HomePage extends StatefulWidget {
   final ValueChanged<int>? onJumpTo;
 
-  const HomePage({Key? key, this.onJumpTo})
-      : super(key: key);
+  const HomePage({Key? key, this.onJumpTo}) : super(key: key);
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -33,11 +32,11 @@ class _HomePageState extends BaseState<HomePage>
   int pageSize = 16;
   int maxSize = 0;
 
-
   _HomePageState() : super(removeTop: true, needScrollController: true);
 
   @override
   void initState() {
+    random = Random();
     super.initState();
     HiNavigator().addListener(listener = (current, pre) {
       _currentPage = current.page;
@@ -54,7 +53,6 @@ class _HomePageState extends BaseState<HomePage>
       //   changeStatusBar(color: Colors.white, statusStyle: statusStyle);
       // }
     });
-    random = Random();
   }
 
   @override
@@ -126,26 +124,28 @@ class _HomePageState extends BaseState<HomePage>
       HomeModel homeModel = await ChannelDao.homeData(
           swiper: !loadMore, pageIndex: currentIndex, pageSize: pageSize);
       if (homeModel.channels.isNotEmpty) {
-        setState(() {
-          if (loadMore) {
-            channelList.addAll(homeModel.channels);
-            pageIndex = currentIndex;
-            _items.addAll(configList(homeModel.channels.length, random));
-          } else {
-            bannerList = homeModel.bannerList;
-            channelList = homeModel.channels;
-            maxSize = homeModel.maxSize;
-            _items = configList(homeModel.channels.length, random);
-            colors = [];
-          }
-          _colorFill(channelList.length);
-        });
+        setState(
+          () {
+            if (loadMore) {
+              channelList.addAll(homeModel.channels);
+              pageIndex = currentIndex;
+              _items.addAll(configList(homeModel.channels.length, random));
+            } else {
+              bannerList = homeModel.bannerList;
+              channelList = homeModel.channels;
+              maxSize = homeModel.maxSize;
+              _items = configList(homeModel.channels.length, random);
+              colors = [];
+            }
+            _colorFill(channelList.length);
+          },
+        );
       }
     }
   }
 
-  void _colorFill(int length){
-    for(int i = 0; i < length; i++) {
+  void _colorFill(int length) {
+    for (int i = 0; i < length; i++) {
       colors.add(Color.fromARGB(random.nextInt(256), random.nextInt(256),
           random.nextInt(256), random.nextInt(256)));
     }

@@ -35,9 +35,8 @@ class _ChannelDetailState extends BaseState<ChannelDetail> {
 
   @override
   void initState() {
-    super.initState();
     random = Random();
-    _init();
+    super.initState();
   }
 
   @override
