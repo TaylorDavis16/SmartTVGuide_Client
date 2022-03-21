@@ -72,7 +72,6 @@ class _HomePageState extends BaseState<HomePage>
       case AppLifecycleState.paused: // 界面不可见，后台
         break;
       case AppLifecycleState.detached: // APP结束时调用
-      disposeLogger();
         break;
     }
   }

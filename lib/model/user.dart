@@ -1,7 +1,14 @@
-class User {
+import 'package:hive_flutter/adapters.dart';
+
+@HiveType(typeId: 0)
+class User extends HiveObject {
+  @HiveField(0)
   int? id;
+  @HiveField(1)
   String? username;
+  @HiveField(2)
   String? email;
+  @HiveField(3)
   String? gender;
 
   User({this.id, this.username, this.email, this.gender});

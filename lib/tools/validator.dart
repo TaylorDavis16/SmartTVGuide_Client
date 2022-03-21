@@ -3,6 +3,7 @@ import 'dart:async';
 mixin Validators {
   var emailValidator = StreamTransformer<String, String>.fromHandlers(
     handleData: (email, sink) {
+      sink.add(email);
       String regexEmail =
           "^([a-z0-9A-Z]+[-|\\.]?)+[a-z0-9A-Z]@([a-z0-9A-Z]+(-[a-z0-9A-Z]+)?\\.)+[a-zA-Z]{2,}\$";
       if (RegExp(regexEmail).hasMatch(email)) {
@@ -15,6 +16,7 @@ mixin Validators {
 
   var passwordValidator = StreamTransformer<String, String>.fromHandlers(
     handleData: (password, sink) {
+      sink.add(password);
       String letterDigit = "^[a-z0-9A-Z]+\$";
       if (RegExp(letterDigit).hasMatch(password) && password.length > 6) {
         sink.add(password);

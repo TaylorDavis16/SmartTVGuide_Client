@@ -158,7 +158,7 @@ abstract class _RouteJumpListener {
   void onJumpTo(RouteStatus routeStatus, {Map args});
 }
 
-typedef OnJumpTo = void Function(RouteStatus routeStatus, {Map? args});
+typedef OnJumpTo = Function(RouteStatus routeStatus, {Map? args});
 
 ///定义路由跳转逻辑要实现的功能
 class RouteJumpListener {

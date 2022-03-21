@@ -37,3 +37,5 @@ void gotoProgram(Program program) {
   logger.i('Go to' + program.title + ' of ' + program.channel);
   HiNavigator().onJumpTo(RouteStatus.programDetail, args: {"program": program});
 }
+
+

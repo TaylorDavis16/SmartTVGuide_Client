@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:smart_tv_guide/dao/login_dao.dart';
+import 'package:hive_flutter/adapters.dart';
+import 'package:smart_tv_guide/dao/user_dao.dart';
 import 'package:smart_tv_guide/model/channel.dart';
 import 'package:smart_tv_guide/navigator/tab_navigator.dart';
 import 'package:smart_tv_guide/pages/any_page.dart';
@@ -7,11 +8,10 @@ import 'package:smart_tv_guide/pages/channel_detail_page.dart';
 import 'package:smart_tv_guide/pages/login_page.dart';
 import 'package:smart_tv_guide/pages/program_detail_page.dart';
 import 'package:smart_tv_guide/pages/register_page.dart';
+import 'package:smart_tv_guide/tools/shared_variables.dart';
 import 'package:smart_tv_guide/util/app_util.dart';
 import 'package:smart_tv_guide/util/color.dart';
-import 'package:smart_tv_guide/util/toast.dart';
 
-import 'db/hi_cache.dart';
 import 'http/core/hi_error.dart';
 import 'http/core/hi_net.dart';
 import 'navigator/hi_navigator.dart';
@@ -28,12 +28,11 @@ class AppEntry extends StatefulWidget {
 }
 
 class _AppEntryState extends State<AppEntry> {
-  Brightness _brightness = Brightness.light;
 
   void changeTheme() {
     setState(() {
-      _brightness =
-          _brightness == Brightness.dark ? Brightness.light : Brightness.dark;
+      Share.brightness =
+      Share.brightness == Brightness.dark ? Brightness.light : Brightness.dark;
     });
   }
 
@@ -41,7 +40,9 @@ class _AppEntryState extends State<AppEntry> {
 
   Future<void> init() async{
     initLogger();
-    await HiCache.preInit();
+    await Hive.initFlutter();
+    await Hive.openBox('login_detail');
+    // Share.map['switch'] = changeTheme;
   }
 
   @override
@@ -58,10 +59,16 @@ class _AppEntryState extends State<AppEntry> {
               );
         return MaterialApp(
           home: widget,
-          theme: ThemeData(primarySwatch: white),
+          theme: ThemeData(primarySwatch: white, brightness: Share.brightness),
         );
       },
     );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    disposeLogger();
   }
 }
 
@@ -69,6 +76,19 @@ class RouteDelegate extends RouterDelegate<RoutePath>
     with ChangeNotifier, PopNavigatorRouterDelegateMixin<RoutePath> {
   @override
   late final GlobalKey<NavigatorState> navigatorKey;
+  RouteStatus _routeStatus = RouteStatus.home;
+
+  RouteStatus get routeStatus {
+    if (_routeStatus != RouteStatus.registration && !hasLogin) {
+      return _routeStatus = RouteStatus.login;
+    }
+    return _routeStatus;
+  }
+  bool get hasLogin => UserDao.hasLogin();
+  List<MaterialPage> pages = [];
+  Channel? channel;
+  Program? program;
+  int initialTabPage = 0;
 
   //为Navigator设置一个key，必要的时候可以通过navigatorKey.currentState来获取到NavigatorState对象
   RouteDelegate() : navigatorKey = GlobalKey<NavigatorState>() {
@@ -76,7 +96,9 @@ class RouteDelegate extends RouterDelegate<RoutePath>
     HiNavigator().registerRouteJump(
         RouteJumpListener((RouteStatus routeStatus, {Map? args}) {
       _routeStatus = routeStatus;
-      if (_routeStatus == RouteStatus.channelDetail) {
+      if(_routeStatus == RouteStatus.home) {
+        initialTabPage = args?['page'];
+      } else if (_routeStatus == RouteStatus.channelDetail) {
         channel = args!['channel'];
       } else if (_routeStatus == RouteStatus.programDetail) {
         program = args!['program'];
@@ -87,26 +109,14 @@ class RouteDelegate extends RouterDelegate<RoutePath>
     HiNet().setErrorInterceptor((error) {
       if (error is NeedLogin) {
         //清空失效的登录令牌
-        HiCache().setString(LoginDao.boardingPass, 'null');
+        UserDao.clearLogin();
         //拉起登录
         HiNavigator().onJumpTo(RouteStatus.login);
       }
     });
   }
 
-  RouteStatus _routeStatus = RouteStatus.home;
 
-  RouteStatus get routeStatus {
-    if (_routeStatus != RouteStatus.registration && !hasLogin) {
-      return _routeStatus = RouteStatus.login;
-    }
-    return _routeStatus;
-  }
-
-  bool get hasLogin => LoginDao.getBoardingPass() != null;
-  List<MaterialPage> pages = [];
-  Channel? channel;
-  Program? program;
 
   @override
   Widget build(BuildContext context) {
@@ -115,13 +125,14 @@ class RouteDelegate extends RouterDelegate<RoutePath>
     if (index != -1) {
       //要打开的页面在栈中已存在，则将该页面和它上面的所有页面进行出栈
       //tips 具体规则可以根据需要进行调整，这里要求栈中只允许有一个同样的页面的实例
+      logger.wtf('存在');
       tempPages = tempPages.sublist(0, index);
     }
     var page;
     if (_routeStatus == RouteStatus.home) {
       //跳转首页时将栈中其它页面进行出栈，因为首页不可回退
       pages.clear();
-      page = pageWrap(const TabNavigator());
+      page = pageWrap(TabNavigator(initialPage: initialTabPage,));
     } else if (_routeStatus == RouteStatus.channelDetail) {
       page = pageWrap(ChannelDetail(channel!));
     } else if (_routeStatus == RouteStatus.programDetail) {
@@ -145,23 +156,25 @@ class RouteDelegate extends RouterDelegate<RoutePath>
         key: navigatorKey,
         pages: pages,
         onPopPage: (route, result) {
-          if (route.settings is MaterialPage) {
-            //登录页未登录返回拦截
-            if ((route.settings as MaterialPage).child is LoginPage) {
-              if (!hasLogin) {
-                showWarnToast("请先登录");
-                return false;
-              }
-            }
-          }
+          // if (route.settings is MaterialPage) {
+          //   //登录页未登录返回拦截
+          //   if ((route.settings as MaterialPage).child is LoginPage) {
+          //     if (!hasLogin) {
+          //       showWarnToast("请先登录");
+          //       return false;
+          //     }
+          //   }
+          // }
           //执行返回操作
           if (!route.didPop(result)) {
             return false;
           }
-          var tempPages = [...pages];
-          pages.removeLast();
-          //通知路由发生变化
-          HiNavigator().notify(pages, tempPages);
+          if(pages.isNotEmpty){
+            var tempPages = [...pages];
+            pages.removeLast();
+            //通知路由发生变化
+            HiNavigator().notify(pages, tempPages);
+          }
           return true;
         },
       ),

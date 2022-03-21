@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:smart_tv_guide/http/core/hi_error.dart';
 import 'package:smart_tv_guide/tools/bloc.dart';
-import 'package:smart_tv_guide/util/app_util.dart';
 import 'package:smart_tv_guide/util/toast.dart';
 import 'package:video_player/video_player.dart';
-import '../dao/login_dao.dart';
+
+import '../dao/user_dao.dart';
 import '../navigator/hi_navigator.dart';
 import '../widget/button_field.dart';
 import '../widget/input_field.dart';
@@ -18,7 +18,7 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage>
-    with SingleTickerProviderStateMixin {
+    with SingleTickerProviderStateMixin, AutomaticKeepAliveClientMixin {
   late Animation<double> _iconAnimation;
   late AnimationController _iconAnimationController;
   late VideoPlayerController _videoController;
@@ -166,14 +166,9 @@ class _LoginPageState extends State<LoginPage>
 
   _login(BuildContext context) async {
     try {
-      // var result = await LoginDao.login("631999273@qq.com", "lxd12345");
-      var result = await LoginDao.login(_emailText.text, _passwordText.text);
-      logger.i(_emailText.text);
-      logger.i(_passwordText.text);
-      logger.i(result);
-      if (result['code'] == 1) {
+      if (await UserDao.login(_emailText.text, _passwordText.text)) {
         showToast('Login Successful');
-        HiNavigator().onJumpTo(RouteStatus.home, args: {"login": ""});
+        HiNavigator().onJumpTo(RouteStatus.home, args: {"page": 0});
       } else {
         //maybe password incorrect
         showWarnToast('Login Failed');
@@ -188,5 +183,11 @@ class _LoginPageState extends State<LoginPage>
     super.dispose();
     _iconAnimationController.dispose();
     _videoController.dispose();
+    _bloc.dispose();
+    _emailText.dispose();
+    _passwordText.dispose();
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

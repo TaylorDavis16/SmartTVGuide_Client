@@ -1,11 +1,14 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:smart_tv_guide/http/core/hi_error.dart';
-import 'package:smart_tv_guide/navigator/tab_navigator.dart';
 import 'package:smart_tv_guide/tools/bloc.dart';
-import 'package:smart_tv_guide/util/app_util.dart';
 import 'package:smart_tv_guide/util/toast.dart';
-import '../dao/login_dao.dart';
+
+import '../dao/user_dao.dart';
+import '../navigator/hi_navigator.dart';
 import '../widget/button_field.dart';
 import '../widget/dropdown_box.dart';
 import '../widget/input_field.dart';
@@ -18,7 +21,7 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage>
-    with SingleTickerProviderStateMixin {
+    with SingleTickerProviderStateMixin, AutomaticKeepAliveClientMixin {
   late Animation<double> _iconAnimation;
   late AnimationController _iconAnimationController;
   final Bloc _bloc = Bloc();
@@ -26,9 +29,17 @@ class _RegisterPageState extends State<RegisterPage>
   final _email = TextEditingController();
   final _password = TextEditingController();
   final _rePassword = TextEditingController();
-  final _dropdown = const DropdownBox(
+  final _checkCode = TextEditingController();
+  final _dropdown = DropdownBox(
+    DropdownController(
       <String>['Select you gender', 'Male', 'Female', 'Neutral', 'Unknown'],
-      'Select you gender');
+      'Select you gender',
+    ),
+  );
+  String checkCode = '';
+  late Timer _timer;
+  bool freeze = false;
+  int count = 21;
 
   @override
   void initState() {
@@ -47,8 +58,9 @@ class _RegisterPageState extends State<RegisterPage>
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Scaffold(
-      resizeToAvoidBottomInset: false,
+      // resizeToAvoidBottomInset: false,
       body: Stack(
         fit: StackFit.expand,
         children: [
@@ -143,7 +155,7 @@ class _RegisterPageState extends State<RegisterPage>
                               ),
                               _dropdown,
                               const Padding(
-                                padding: EdgeInsets.only(top: 5.0),
+                                padding: EdgeInsets.only(top: 20.0),
                               ),
                               Row(
                                 mainAxisAlignment:
@@ -152,19 +164,30 @@ class _RegisterPageState extends State<RegisterPage>
                                   StreamBuilder<bool>(
                                     stream: _bloc.registerSubmitCheck,
                                     builder: (context, snapshot) => ButtonField(
-                                      color: Colors.teal,
-                                      child: const Icon(
-                                          FontAwesomeIcons.signInAlt),
-                                      onPressed: snapshot.hasData
+                                      height: 50,
+                                      width: 150,
+                                      color: freeze ? Colors.blueGrey : Colors.teal,
+                                      child: freeze
+                                          ? Text(
+                                              '$count',
+                                              style: const TextStyle(
+                                                  fontSize: 30,
+                                                  fontWeight: FontWeight.bold),
+                                            )
+                                          : const Icon(
+                                              FontAwesomeIcons.signInAlt),
+                                      onPressed: snapshot.hasData && !freeze
                                           ? () => _register(context)
                                           : null,
                                     ),
                                   ),
-                                  ButtonField(
-                                    color: Colors.lightBlueAccent,
-                                    child: const Icon(FontAwesomeIcons.wpforms),
-                                    onPressed: () =>
-                                        Navigator.pushNamed(context, 'login'),
+                                  InputField(
+                                    height: 50,
+                                    width: 150,
+                                    controller: _checkCode,
+                                    labelText: "Check Code",
+                                    labelStyle: const TextStyle(fontSize: 13),
+                                    keyboardType: TextInputType.text,
                                   ),
                                 ],
                               )
@@ -189,27 +212,45 @@ class _RegisterPageState extends State<RegisterPage>
       return;
     }
     try {
-      // var result = await LoginDao.login("631999273@qq.com", "lxd12345");
-      var result = await LoginDao.register(
-          _username.text,
-          _email.text,
-          _password.text,
-          _dropdown.selected == _dropdown.list[0]
-              ? "null"
-              : _dropdown.selected);
-      logger.i(_email.text);
-      logger.i(_password.text);
-      logger.i(result);
-      if (result['code'] == 1) {
-        showToast('Register Successful');
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const TabNavigator(),
-          ),
-        );
+      if (_checkCode.text.isEmpty && !freeze) {
+        freeze = true;
+        var result = await UserDao.sendCheckCode(_email.text, _username.text);
+        if (result['code'] == 0) {
+          showWarnToast(result['reason']);
+        } else {
+          showToast('A check code is sending to your email');
+          checkCode = result[_email.text];
+        }
+        _timer = Timer.periodic(const Duration(milliseconds: 1000), (timer) {
+          count--;
+          ///到5秒后停止
+          if (count == 0) {
+            _timer.cancel();
+            freeze = false;
+            count = 21;
+          }
+          setState(() {});
+        });
       } else {
-        showWarnToast('Register Failed');
+        if (checkCode == _checkCode.text) {
+          DropdownController controller = _dropdown.dropdownController!;
+          var result = await UserDao.register(
+              _username.text,
+              _email.text,
+              _password.text,
+              controller.selected == controller.list[0]
+                  ? "null"
+                  : controller.selected);
+          if (result['code'] == 1) {
+            showToast('Register Successful');
+            HiNavigator().onJumpTo(RouteStatus.home, args: {"page": 0});
+          } else {
+            showWarnToast('Register Failed');
+            showWarnToast(result['reason']);
+          }
+        } else {
+          showWarnToast('The check code is incorrect');
+        }
       }
     } on HiNetError catch (e) {
       showWarnToast(e.message);
@@ -220,5 +261,14 @@ class _RegisterPageState extends State<RegisterPage>
   void dispose() {
     super.dispose();
     _iconAnimationController.dispose();
+    _bloc.dispose();
+    _username.dispose();
+    _email.dispose();
+    _password.dispose();
+    _rePassword.dispose();
+    _checkCode.dispose();
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

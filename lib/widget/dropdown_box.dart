@@ -1,27 +1,28 @@
-import 'dart:developer';
 
 import 'package:flutter/material.dart';
 
-class DropdownBox extends StatefulWidget {
-  final List<String> list;
-  final String selected;
+class DropdownController{
+  List<String> list;
+  String selected;
 
-  const DropdownBox(this.list, this.selected, {Key? key}) : super(key: key);
+  DropdownController(this.list, this.selected);
+}
+
+class DropdownBox extends StatefulWidget {
+  final DropdownController? dropdownController;
+
+  const DropdownBox(this.dropdownController, {Key? key}) : super(key: key);
 
   @override
   _DropdownBoxState createState() => _DropdownBoxState();
 }
 
 class _DropdownBoxState extends State<DropdownBox> {
-  late String selected;
-  bool initiated = false;
+  late List<String> _list;
 
   @override
   Widget build(BuildContext context) {
-    if (!initiated) {
-      selected = widget.selected;
-      initiated = true;
-    }
+    _list = widget.dropdownController!.list;
     return DecoratedBox(
       decoration: BoxDecoration(
           color: const Color.fromRGBO(210, 207, 207, 0.8),
@@ -36,17 +37,16 @@ class _DropdownBoxState extends State<DropdownBox> {
       child: Padding(
         padding: const EdgeInsets.only(left: 30, right: 30),
         child: DropdownButton<String>(
-          value: selected,
-          items: widget.list
+          value: widget.dropdownController?.selected,
+          items: _list
               .map((value) => DropdownMenuItem<String>(
                     value: value,
                     child: Text(value),
                   ))
               .toList(),
           onChanged: (value) {
-            log("You have selected $value");
             setState(() {
-              selected = value!;
+              widget.dropdownController?.selected = value!;
             });
           },
           icon: const Padding(

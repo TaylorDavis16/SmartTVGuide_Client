@@ -65,7 +65,7 @@ abstract class BaseState<T extends StatefulWidget> extends HiState<T>
     );
   }
 
-  Future<void> refresh() async{
+  Future<void> refresh() async {
     stopLoading = false;
     await loadData();
   }
