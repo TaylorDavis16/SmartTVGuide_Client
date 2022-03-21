@@ -53,6 +53,7 @@ class _LoginPageState extends State<LoginPage>
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: Colors.blue,
@@ -166,12 +167,13 @@ class _LoginPageState extends State<LoginPage>
 
   _login(BuildContext context) async {
     try {
-      if (await UserDao.login(_emailText.text, _passwordText.text)) {
+      var result = await UserDao.login(_emailText.text, _passwordText.text);
+      if (result['code'] == 1) {
         showToast('Login Successful');
         HiNavigator().onJumpTo(RouteStatus.home, args: {"page": 0});
       } else {
-        //maybe password incorrect
         showWarnToast('Login Failed');
+        showWarnToast(result['reason']);
       }
     } on HiNetError catch (e) {
       showWarnToast(e.message);

@@ -14,16 +14,15 @@ class UserDao {
 
   UserDao._internal();
 
-  static Future<bool> login(String email, String password) async {
+  static login(String email, String password) async {
     BaseRequest request = LoginRequest();
     request.add("email", email).add("password", password);
     var result = await HiNet().fire(request);
     logger.i(result);
     if (result['code'] == 1) {
       await _loginBox.put(boardingPass, result['user']);
-      return true;
     }
-    return false;
+    return result;
   }
 
   static register(

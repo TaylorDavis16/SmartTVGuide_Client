@@ -222,12 +222,10 @@ class _RegisterPageState extends State<RegisterPage>
           checkCode = result[_email.text];
         }
         _timer = Timer.periodic(const Duration(milliseconds: 1000), (timer) {
-          count--;
-          ///到5秒后停止
-          if (count == 0) {
+          if (count-- == 0) {
             _timer.cancel();
             freeze = false;
-            count = 21;
+            count = 16;
           }
           setState(() {});
         });

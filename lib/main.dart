@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:smart_tv_guide/dao/user_dao.dart';
 import 'package:smart_tv_guide/model/channel.dart';
@@ -17,7 +18,9 @@ import 'http/core/hi_net.dart';
 import 'navigator/hi_navigator.dart';
 
 void main() {
-  runApp(const AppEntry());
+  WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
+      .then((_) => runApp(const AppEntry()));
 }
 
 class AppEntry extends StatefulWidget {
@@ -28,17 +31,17 @@ class AppEntry extends StatefulWidget {
 }
 
 class _AppEntryState extends State<AppEntry> {
-
   void changeTheme() {
     setState(() {
-      Share.brightness =
-      Share.brightness == Brightness.dark ? Brightness.light : Brightness.dark;
+      Share.brightness = Share.brightness == Brightness.dark
+          ? Brightness.light
+          : Brightness.dark;
     });
   }
 
   final RouteDelegate _routeDelegate = RouteDelegate();
 
-  Future<void> init() async{
+  Future<void> init() async {
     initLogger();
     await Hive.initFlutter();
     await Hive.openBox('login_detail');
@@ -84,6 +87,7 @@ class RouteDelegate extends RouterDelegate<RoutePath>
     }
     return _routeStatus;
   }
+
   bool get hasLogin => UserDao.hasLogin();
   List<MaterialPage> pages = [];
   Channel? channel;
@@ -96,7 +100,7 @@ class RouteDelegate extends RouterDelegate<RoutePath>
     HiNavigator().registerRouteJump(
         RouteJumpListener((RouteStatus routeStatus, {Map? args}) {
       _routeStatus = routeStatus;
-      if(_routeStatus == RouteStatus.home) {
+      if (_routeStatus == RouteStatus.home) {
         initialTabPage = args?['page'];
       } else if (_routeStatus == RouteStatus.channelDetail) {
         channel = args!['channel'];
@@ -116,8 +120,6 @@ class RouteDelegate extends RouterDelegate<RoutePath>
     });
   }
 
-
-
   @override
   Widget build(BuildContext context) {
     var index = getPageIndex(pages, _routeStatus);
@@ -132,7 +134,9 @@ class RouteDelegate extends RouterDelegate<RoutePath>
     if (_routeStatus == RouteStatus.home) {
       //跳转首页时将栈中其它页面进行出栈，因为首页不可回退
       pages.clear();
-      page = pageWrap(TabNavigator(initialPage: initialTabPage,));
+      page = pageWrap(TabNavigator(
+        initialPage: initialTabPage,
+      ));
     } else if (_routeStatus == RouteStatus.channelDetail) {
       page = pageWrap(ChannelDetail(channel!));
     } else if (_routeStatus == RouteStatus.programDetail) {
@@ -169,7 +173,7 @@ class RouteDelegate extends RouterDelegate<RoutePath>
           if (!route.didPop(result)) {
             return false;
           }
-          if(pages.isNotEmpty){
+          if (pages.isNotEmpty) {
             var tempPages = [...pages];
             pages.removeLast();
             //通知路由发生变化
