@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:smart_tv_guide/dao/user_dao.dart';
 import 'package:smart_tv_guide/util/app_util.dart';
 
-import '../navigator/hi_navigator.dart';
+import '../navigator/my_navigator.dart';
 import '../tools/shared_variables.dart';
 import '../widget/appbar.dart';
 
@@ -30,7 +30,7 @@ class _MinePageState extends State<MinePage> {
                   setState(() {
                   });
                 }else{
-                  HiNavigator().onJumpTo(RouteStatus.login);
+                  MyNavigator().onJumpTo(RouteStatus.login);
                 }
               },
               child: Text(text),

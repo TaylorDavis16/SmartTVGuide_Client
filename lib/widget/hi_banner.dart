@@ -50,7 +50,7 @@ class HiBanner extends StatelessWidget {
         padding: padding,
         child: ClipRRect(
           borderRadius: const BorderRadius.all(Radius.circular(6)),
-          child: cachedImage(channel.imgURL, channel.displayName),
+          child: Center(child: cachedImage(channel.imgURL, channel.displayName),),
         ),
       ),
     );

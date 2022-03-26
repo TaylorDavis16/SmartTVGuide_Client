@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:smart_tv_guide/navigator/tab_navigator.dart';
 import 'package:smart_tv_guide/pages/channel_detail_page.dart';
-import 'package:smart_tv_guide/pages/home_page.dart';
-import 'package:smart_tv_guide/pages/hot_page.dart';
+import 'package:smart_tv_guide/pages/home_tab_page.dart';
+import 'package:smart_tv_guide/pages/homepage.dart';
 import 'package:smart_tv_guide/pages/login_page.dart';
 import 'package:smart_tv_guide/pages/my_page.dart';
 import 'package:smart_tv_guide/pages/program_detail_page.dart';
@@ -47,9 +47,9 @@ enum RouteStatus {
 
 ///获取page对应的RouteStatus
 RouteStatus getStatus(MaterialPage page) {
-  if (page.child is HomePage || page.child is TabNavigator) {
+  if (page.child is HomeTabPage || page.child is TabNavigator) {
     return RouteStatus.home;
-  } else if (page.child is HotPage) {
+  } else if (page.child is HomePage) {
     return RouteStatus.hot;
   } else if (page.child is SearchPage) {
     return RouteStatus.search;
@@ -81,12 +81,12 @@ class RouteStatusInfo {
   }
 }
 
-class HiNavigator extends _RouteJumpListener {
-  HiNavigator._internal();
+class MyNavigator extends _RouteJumpListener {
+  MyNavigator._internal();
 
-  factory HiNavigator() => _instance;
+  factory MyNavigator() => _instance;
 
-  static late final HiNavigator _instance = HiNavigator._internal();
+  static late final MyNavigator _instance = MyNavigator._internal();
 
   RouteJumpListener? _routeJump;
   final List<RouteChangeListener> _listeners = [];

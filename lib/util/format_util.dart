@@ -10,6 +10,9 @@ String durationTransform(int seconds) {
   return '$m:$s';
 }
 
+String timeFormat(DateTime start, DateTime stop) =>
+    '${start.hour}:${start.minute} - ${stop.hour}:${stop.minute}';
+
 ///数字转万
 String countFormat(int count) {
   String views = "";

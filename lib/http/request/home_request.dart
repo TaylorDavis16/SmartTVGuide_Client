@@ -13,6 +13,6 @@ class HomeRequest extends BaseRequest {
 
   @override
   String path() {
-    return "channel";
+    return "home";
   }
 }

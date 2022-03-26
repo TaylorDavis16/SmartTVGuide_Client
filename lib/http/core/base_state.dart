@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:smart_tv_guide/http/core/hi_state.dart';
+import 'package:smart_tv_guide/http/core/my_state.dart';
 import 'package:smart_tv_guide/util/app_util.dart';
 
 import '../../util/color.dart';
 import '../../util/toast.dart';
-import 'hi_error.dart';
+import 'request_error.dart';
 
 ///通用底层带分页和刷新的页面框架
-///M为Dao返回数据模型，L为列表数据模型，T为具体widget
-abstract class BaseState<T extends StatefulWidget> extends HiState<T>
+///T为具体widget
+abstract class BaseState<T extends StatefulWidget> extends MyState<T>
     with AutomaticKeepAliveClientMixin {
   int pageIndex;
   bool loading = false;
@@ -33,13 +33,12 @@ abstract class BaseState<T extends StatefulWidget> extends HiState<T>
     if (needScrollController) {
       scrollController = ScrollController();
       scrollController!.addListener(() {
-        var dis = scrollController!.position.maxScrollExtent -
-            scrollController!.position.pixels;
+        var dis = scrollController!.position.extentAfter;
         // print('$dis');
         //当距离底部不足300时加载更多
         if (dis < 100 && !loading && !stopLoading
             //fix 当列表高度不满屏幕高度时不执行加载更多
-            // && scrollController.position.maxScrollExtent != 0
+            && scrollController!.position.maxScrollExtent != 0
             ) {
           loadData(loadMore: true);
         }
@@ -74,7 +73,9 @@ abstract class BaseState<T extends StatefulWidget> extends HiState<T>
 
   Future<void> loadData({loadMore = false}) async {
     if (!loading) {
-      loading = true;
+      // setState(() {
+        loading = true;
+      // });
       if (!loadMore) {
         pageIndex = 0;
       }
@@ -82,14 +83,20 @@ abstract class BaseState<T extends StatefulWidget> extends HiState<T>
         logger.i('------_loadData---');
         logger.i('pageIndex: $pageIndex');
         await customLoad(loadMore: loadMore);
-        // Future.delayed(const Duration(milliseconds: 1000), () {
-        //   loading = false;
-        // });
+        if (stopLoading) {
+          ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('You have reached the end')));
+        }
       } on NeedAuth catch (e) {
-        showWarnToast(e.message);
-      } on HiNetError catch (e) {
-        showWarnToast(e.message);
-      } finally {
+        logger.e(e.message);
+        showWarnToast('NO Authentication');
+      } on RequestError catch (e) {
+        logger.e(e.message);
+        showWarnToast('Network Error 1');
+      } catch (e){
+        logger.e(e.toString());
+        showWarnToast('Network Error 2');
+      }finally {
         loading = false;
       }
     }

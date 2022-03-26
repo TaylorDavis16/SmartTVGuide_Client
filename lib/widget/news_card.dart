@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../model/channel.dart';
-import '../navigator/hi_navigator.dart';
+import '../navigator/my_navigator.dart';
 import '../util/view_util.dart';
 
 ///视频卡片
@@ -14,7 +14,7 @@ class NewsCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
         onTap: () {
-          HiNavigator()
+          MyNavigator()
               .onJumpTo(RouteStatus.channelDetail, args: {"channel": channel});
         },
         child: SizedBox(

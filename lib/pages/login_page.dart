@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:smart_tv_guide/http/core/hi_error.dart';
+import 'package:smart_tv_guide/http/core/request_error.dart';
 import 'package:smart_tv_guide/tools/bloc.dart';
 import 'package:smart_tv_guide/util/toast.dart';
 import 'package:video_player/video_player.dart';
 
 import '../dao/user_dao.dart';
-import '../navigator/hi_navigator.dart';
+import '../navigator/my_navigator.dart';
 import '../widget/button_field.dart';
 import '../widget/input_field.dart';
 
@@ -146,7 +146,7 @@ class _LoginPageState extends State<LoginPage>
                                 ButtonField(
                                   color: Colors.lightBlueAccent,
                                   child: const Icon(FontAwesomeIcons.wpforms),
-                                  onPressed: () => HiNavigator()
+                                  onPressed: () => MyNavigator()
                                       .onJumpTo(RouteStatus.registration),
                                 ),
                               ],
@@ -170,12 +170,14 @@ class _LoginPageState extends State<LoginPage>
       var result = await UserDao.login(_emailText.text, _passwordText.text);
       if (result['code'] == 1) {
         showToast('Login Successful');
-        HiNavigator().onJumpTo(RouteStatus.home, args: {"page": 0});
+        MyNavigator().onJumpTo(RouteStatus.home, args: {"page": 0});
       } else {
-        showWarnToast('Login Failed');
+        // showWarnToast('Login Failed');
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Login failed')));
         showWarnToast(result['reason']);
       }
-    } on HiNetError catch (e) {
+    } on RequestError catch (e) {
       showWarnToast(e.message);
     }
   }

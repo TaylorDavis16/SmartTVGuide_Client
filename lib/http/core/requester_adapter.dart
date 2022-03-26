@@ -3,13 +3,13 @@ import 'dart:convert';
 import '../request/base_request.dart';
 
 ///网络请求抽象类
-abstract class HiNetAdapter<T> {
-  Future<HiNetResponse<T>> send(BaseRequest request);
+abstract class RequesterAdapter<T> {
+  Future<MyNetResponse<T>> send(BaseRequest request);
 }
 
 /// 统一网络层返回格式
-class HiNetResponse<T> {
-  HiNetResponse({
+class MyNetResponse<T> {
+  MyNetResponse({
     this.data,
     this.request,
     this.statusCode,

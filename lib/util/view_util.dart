@@ -7,7 +7,7 @@ import 'format_util.dart';
 
 ///带缓存的image
 Widget cachedImage(String url, String alternative,
-    {double? width, double? height}) {
+    {double? width, double? height, BoxFit? fit = BoxFit.contain}) {
   var wrap = Wrap(
     children: [const Icon(Icons.tv), Text(alternative)],
   );
@@ -16,7 +16,7 @@ Widget cachedImage(String url, String alternative,
       : CachedNetworkImage(
           height: height,
           width: width,
-          fit: BoxFit.cover,
+          fit: fit,
           placeholder: (
             BuildContext context,
             String url,

@@ -1,27 +1,26 @@
 import 'package:smart_tv_guide/http/core/dio_adapter.dart';
-import 'package:smart_tv_guide/http/core/hi_net_adapter.dart';
+import 'package:smart_tv_guide/http/core/requester_adapter.dart';
 import 'package:smart_tv_guide/http/request/base_request.dart';
 import 'package:smart_tv_guide/util/app_util.dart';
 
-import 'hi_error.dart';
+import 'request_error.dart';
 import 'hi_interceptor.dart';
 
-class HiNet {
-  HiNet._internal();
+class Requester {
+  Requester._internal();
 
   late HiErrorInterceptor _hiErrorInterceptor;
 
-  factory HiNet() => _instance;
+  factory Requester() => _instance;
 
-  static late final HiNet _instance = HiNet._internal();
+  static late final Requester _instance = Requester._internal();
 
   Future fire(BaseRequest request) async {
-    HiNetResponse response;
+    MyNetResponse response;
     try {
       response = await send(request);
-    } on HiNetError catch (e) {
+    } on RequestError catch (e) {
       response = e.data;
-      logger.w('----------------------------------------------------------');
       logger.w(e.message);
     } catch (e) {
       logger.wtf('Something really bad happened!!!!!!!!!!!!!!!!');
@@ -34,7 +33,7 @@ class HiNet {
     logger.d('code: ${result['code']}');
     var status = response.statusCode;
     logger.d(status);
-    HiNetError hiError;
+    RequestError hiError;
     switch (status) {
       case 200:
         return result;
@@ -52,15 +51,15 @@ class HiNet {
         hiError = ServerError(result.toString(), data: result);
         break;
       default:
-        hiError = HiNetError(status ?? 0, result.toString(), data: result);
+        hiError = RequestError(status ?? 0, result.toString(), data: result);
     }
     _hiErrorInterceptor(hiError);
     throw hiError;
   }
 
-  Future<dynamic> send<T>(BaseRequest request) async {
+  Future<MyNetResponse<T>> send<T>(BaseRequest request) async {
     logger.i('url:${request.url()}');
-    HiNetAdapter adapter = DioAdapter();
+    RequesterAdapter<T> adapter = DioAdapter<T>();
     return adapter.send(request);
   }
 

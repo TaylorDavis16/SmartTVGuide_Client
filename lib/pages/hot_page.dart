@@ -1,121 +1,76 @@
 import 'package:flutter/material.dart';
-import 'package:smart_tv_guide/dao/channel_dao.dart';
-import 'package:smart_tv_guide/http/core/hi_state.dart';
-import 'package:smart_tv_guide/model/channel.dart';
-import 'package:smart_tv_guide/pages/hot_tab_page.dart';
-import 'package:smart_tv_guide/util/color.dart';
-import 'package:underline_indicator/underline_indicator.dart';
-import '../http/core/hi_error.dart';
-import '../util/app_util.dart';
-import '../util/toast.dart';
+import 'package:smart_tv_guide/widget/my_tab.dart';
+import 'package:smart_tv_guide/widget/navigation_bar.dart';
+
+import '../util/view_util.dart';
+import 'hot_tab_page.dart';
 
 class HotPage extends StatefulWidget {
   const HotPage({Key? key}) : super(key: key);
 
   @override
-  State<HotPage> createState() => _HotPageState();
+  _HotPageState createState() => _HotPageState();
 }
 
-class _HotPageState extends HiState<HotPage>
-    with AutomaticKeepAliveClientMixin, TickerProviderStateMixin {
-  List<Channel> channelList = [];
-  late TabController _controller;
-  bool _isLoading = true;
+class _HotPageState extends State<HotPage>
+    with TickerProviderStateMixin {
+  static const tabs = [
+    {"key": "hot", "name": "Hottest", "index" : 1},
+    {"key": "new", "name": "Latest", "index" : 2},
+    {"key": "collection", "name": "Favorite", "index" : 3}
+  ];
+  TabController? _controller;
 
   @override
   void initState() {
     super.initState();
-    loadData();
-    logger.i("xxxxxxxx");
-    logger.i(channelList.length);
-    _controller = TabController(length: channelList.length, vsync: this);
+    _controller = TabController(length: tabs.length, vsync: this);
   }
 
   @override
   void dispose() {
+    _controller?.dispose();
     super.dispose();
-    _controller.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    super.build(context);
     return Scaffold(
-      // appBar: appBar(
-      //     "Hot Channel", "Refresh", () => log('123'), centerTitle: true),
       body: Column(
-        children: [
-          Container(
-            color: Colors.white,
-            padding: const EdgeInsets.only(top: 30),
-            child: _tabBar(),
-          ),
-          Flexible(
-              child: TabBarView(
-            controller: _controller,
-            children: channelList
-                .map((channel) =>
-                    HotTabPage(channel.displayName, channel.programs))
-                .toList(),
-          )),
-        ],
+        children: [_buildNavigationBar(), _buildTabView()],
+      ),
+    );
+  }
+
+  _buildNavigationBar() {
+    return SearchBar(
+      child: Container(
+        decoration: bottomBoxShadow(),
+        alignment: Alignment.center,
+        child: _tabBar(),
       ),
     );
   }
 
   _tabBar() {
-    return TabBar(
-      tabs: channelList
-          .map<Tab>((channel) => Tab(
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 5, right: 5),
-                  child: Text(
-                    channel.displayName,
-                    style: const TextStyle(fontSize: 16),
-                  ),
-                ),
-              ))
-          .toList(),
-      controller: _controller,
-      isScrollable: true,
-      indicator: const UnderlineIndicator(
-          strokeCap: StrokeCap.round,
-          borderSide: BorderSide(color: primary),
-          insets: EdgeInsets.only(left: 15, right: 15)),
+    return MyTab(
+        tabs.map<Tab>((tab) {
+          return Tab(
+            text: tab['name'] as String,
+          );
+        }).toList(),
+        fontSize: 16,
+        borderWidth: 3,
+        unselectedLabelColor: Colors.black54,
+        controller: _controller);
+  }
+
+  _buildTabView() {
+    return Flexible(
+      child: TabBarView(
+          controller: _controller,
+          children:
+              tabs.map((tab) => HotTabPage(name: tab['name'] as String, index: tab['index'] as int, needSwiper: tab['index'] != 'collection',)).toList()),
     );
   }
-
-  void loadData() async {
-    try {
-      List<Channel> channels = await ChannelDao.getAll();
-      if (channels.isNotEmpty) {
-        //tab长度变化后需要重新创建TabController
-        _controller = TabController(length: channels.length, vsync: this);
-      }
-      setState(() {
-        channelList = channels;
-        for (var channel in channelList) {
-          channel.programs
-              .sort((p1, p2) => p1.start!.isAfter(p2.start!) ? 1 : -1);
-        }
-        // channelList.sort((c1, c2) => c2.programs.length - c1.programs.length);
-        _isLoading = false;
-      });
-    } on NeedAuth catch (e) {
-      logger.i(e.toString());
-      showWarnToast(e.message);
-      setState(() {
-        _isLoading = false;
-      });
-    } on HiNetError catch (e) {
-      logger.i(e.toString());
-      showWarnToast(e.message);
-      setState(() {
-        _isLoading = false;
-      });
-    }
-  }
-
-  @override
-  bool get wantKeepAlive => true;
 }

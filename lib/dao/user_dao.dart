@@ -2,7 +2,7 @@ import 'package:hive_flutter/adapters.dart';
 import 'package:smart_tv_guide/http/request/check_code_request.dart';
 import 'package:smart_tv_guide/model/user.dart';
 
-import '../http/core/hi_net.dart';
+import '../http/core/requester.dart';
 import '../http/request/base_request.dart';
 import '../http/request/login_request.dart';
 import '../http/request/registration_request.dart';
@@ -17,7 +17,7 @@ class UserDao {
   static login(String email, String password) async {
     BaseRequest request = LoginRequest();
     request.add("email", email).add("password", password);
-    var result = await HiNet().fire(request);
+    var result = await Requester().fire(request);
     logger.i(result);
     if (result['code'] == 1) {
       await _loginBox.put(boardingPass, result['user']);
@@ -33,13 +33,13 @@ class UserDao {
         .add("password", password)
         .add("username", username)
         .add("gender", gender);
-    return await HiNet().fire(request);
+    return await Requester().fire(request);
   }
 
   static sendCheckCode(String email, String username) async {
     BaseRequest request = CheckCodeRequest();
     request.add("email", email).add('username', username);
-    return await HiNet().fire(request);
+    return await Requester().fire(request);
   }
 
   static bool hasLogin() {

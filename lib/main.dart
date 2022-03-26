@@ -13,9 +13,9 @@ import 'package:smart_tv_guide/tools/shared_variables.dart';
 import 'package:smart_tv_guide/util/app_util.dart';
 import 'package:smart_tv_guide/util/color.dart';
 
-import 'http/core/hi_error.dart';
-import 'http/core/hi_net.dart';
-import 'navigator/hi_navigator.dart';
+import 'http/core/request_error.dart';
+import 'http/core/requester.dart';
+import 'navigator/my_navigator.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -44,7 +44,10 @@ class _AppEntryState extends State<AppEntry> {
   Future<void> init() async {
     initLogger();
     await Hive.initFlutter();
+    Hive.registerAdapter(ChannelAdapter());
+    Hive.registerAdapter(ProgramAdapter());
     await Hive.openBox('login_detail');
+    await Hive.openBox('home');
     // Share.map['switch'] = changeTheme;
   }
 
@@ -97,7 +100,7 @@ class RouteDelegate extends RouterDelegate<RoutePath>
   //为Navigator设置一个key，必要的时候可以通过navigatorKey.currentState来获取到NavigatorState对象
   RouteDelegate() : navigatorKey = GlobalKey<NavigatorState>() {
     //实现路由跳转逻辑
-    HiNavigator().registerRouteJump(
+    MyNavigator().registerRouteJump(
         RouteJumpListener((RouteStatus routeStatus, {Map? args}) {
       _routeStatus = routeStatus;
       if (_routeStatus == RouteStatus.home) {
@@ -110,12 +113,12 @@ class RouteDelegate extends RouterDelegate<RoutePath>
       notifyListeners();
     }));
     //设置网络错误拦截器
-    HiNet().setErrorInterceptor((error) {
+    Requester().setErrorInterceptor((error) {
       if (error is NeedLogin) {
         //清空失效的登录令牌
         UserDao.clearLogin();
         //拉起登录
-        HiNavigator().onJumpTo(RouteStatus.login);
+        MyNavigator().onJumpTo(RouteStatus.login);
       }
     });
   }
@@ -127,7 +130,6 @@ class RouteDelegate extends RouterDelegate<RoutePath>
     if (index != -1) {
       //要打开的页面在栈中已存在，则将该页面和它上面的所有页面进行出栈
       //tips 具体规则可以根据需要进行调整，这里要求栈中只允许有一个同样的页面的实例
-      logger.wtf('存在');
       tempPages = tempPages.sublist(0, index);
     }
     var page;
@@ -151,7 +153,7 @@ class RouteDelegate extends RouterDelegate<RoutePath>
     //重新创建一个数组，否则pages因引用没有改变路由不会生效
     tempPages = [...tempPages, page];
     //通知路由发生变化
-    HiNavigator().notify(tempPages, pages);
+    MyNavigator().notify(tempPages, pages);
     pages = tempPages;
     return WillPopScope(
       //fix Android物理返回键，无法返回上一页问题@https://github.com/flutter/flutter/issues/66349
@@ -177,7 +179,7 @@ class RouteDelegate extends RouterDelegate<RoutePath>
             var tempPages = [...pages];
             pages.removeLast();
             //通知路由发生变化
-            HiNavigator().notify(pages, tempPages);
+            MyNavigator().notify(pages, tempPages);
           }
           return true;
         },

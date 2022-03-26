@@ -1,14 +1,13 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:smart_tv_guide/http/core/hi_error.dart';
+import 'package:smart_tv_guide/http/core/request_error.dart';
 import 'package:smart_tv_guide/tools/bloc.dart';
 import 'package:smart_tv_guide/util/toast.dart';
 
 import '../dao/user_dao.dart';
-import '../navigator/hi_navigator.dart';
+import '../navigator/my_navigator.dart';
 import '../widget/button_field.dart';
 import '../widget/dropdown_box.dart';
 import '../widget/input_field.dart';
@@ -165,7 +164,7 @@ class _RegisterPageState extends State<RegisterPage>
                                     stream: _bloc.registerSubmitCheck,
                                     builder: (context, snapshot) => ButtonField(
                                       height: 50,
-                                      width: 150,
+                                      width: 135,
                                       color: freeze ? Colors.blueGrey : Colors.teal,
                                       child: freeze
                                           ? Text(
@@ -183,7 +182,7 @@ class _RegisterPageState extends State<RegisterPage>
                                   ),
                                   InputField(
                                     height: 50,
-                                    width: 150,
+                                    width: 135,
                                     controller: _checkCode,
                                     labelText: "Check Code",
                                     labelStyle: const TextStyle(fontSize: 13),
@@ -241,7 +240,7 @@ class _RegisterPageState extends State<RegisterPage>
                   : controller.selected);
           if (result['code'] == 1) {
             showToast('Register Successful');
-            HiNavigator().onJumpTo(RouteStatus.home, args: {"page": 0});
+            MyNavigator().onJumpTo(RouteStatus.home, args: {"page": 0});
           } else {
             showWarnToast('Register Failed');
             showWarnToast(result['reason']);
@@ -250,7 +249,7 @@ class _RegisterPageState extends State<RegisterPage>
           showWarnToast('The check code is incorrect');
         }
       }
-    } on HiNetError catch (e) {
+    } on RequestError catch (e) {
       showWarnToast(e.message);
     }
   }

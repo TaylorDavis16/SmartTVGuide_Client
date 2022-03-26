@@ -1,9 +1,19 @@
+
+import 'package:hive_flutter/adapters.dart';
+part 'channel.g.dart';
+@HiveType(typeId: 0)
 class Channel {
+  @HiveField(0)
   String id = 'unknown';
+  @HiveField(1)
   String displayName = 'unknown';
+  @HiveField(2)
   String about = 'Nothing here';
+  @HiveField(3)
   String imgURL = 'unknown';
+  @HiveField(4)
   String url = 'unknown';
+  @HiveField(5)
   List<Program> programs = <Program>[];
 
   Channel(this.id, this.displayName, this.about, this.imgURL, this.url);
@@ -37,12 +47,19 @@ class Channel {
   }
 }
 
+@HiveType(typeId: 1)
 class Program {
+  @HiveField(0)
   String channel = '';
+  @HiveField(1)
   String title = 'Unknown';
+  @HiveField(2)
   String lang = 'Unknown';
+  @HiveField(3)
   DateTime? start;
+  @HiveField(4)
   DateTime? stop;
+  @HiveField(5)
   String about = 'Unknown';
 
   Program(

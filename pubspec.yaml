@@ -55,6 +55,8 @@ dependencies:
   chewie: ^1.3.0
   logger: ^1.1.0
   hive_flutter: ^1.1.0
+  lottie: ^1.2.2
+  hive_generator: ^1.1.2
 
 dev_dependencies:
   flutter_test:

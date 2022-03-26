@@ -1,14 +1,14 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
 ///缓存管理类
-class HiCache {
-  factory HiCache() => _instance;
+class MyCache {
+  factory MyCache() => _instance;
 
-  HiCache._internal();
+  MyCache._internal();
 
   static late SharedPreferences _prefs;
 
-  static late final HiCache _instance = HiCache._internal();
+  static late final MyCache _instance = MyCache._internal();
 
   ///预初始化，防止在使用get时，prefs还未完成初始化
   static Future<void> preInit() async {
