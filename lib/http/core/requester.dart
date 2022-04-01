@@ -1,7 +1,9 @@
+import 'package:dio/dio.dart';
 import 'package:smart_tv_guide/http/core/dio_adapter.dart';
 import 'package:smart_tv_guide/http/core/requester_adapter.dart';
 import 'package:smart_tv_guide/http/request/base_request.dart';
 import 'package:smart_tv_guide/util/app_util.dart';
+import 'package:smart_tv_guide/util/view_util.dart';
 
 import 'request_error.dart';
 import 'hi_interceptor.dart';
@@ -21,18 +23,17 @@ class Requester {
       response = await send(request);
     } on RequestError catch (e) {
       response = e.data;
-      logger.w(e.message);
+      if(response.extra == DioErrorType.other){
+        showWarnToast('Network Error');
+        return;
+      }
     } catch (e) {
       logger.wtf('Something really bad happened!!!!!!!!!!!!!!!!');
       logger.w(e);
       return;
     }
-    // logger.i(e);(response.extra);
-    // logger.i(e);(response.statusMessage);
     var result = response.data;
-    logger.d('code: ${result['code']}');
     var status = response.statusCode;
-    logger.d(status);
     RequestError hiError;
     switch (status) {
       case 200:

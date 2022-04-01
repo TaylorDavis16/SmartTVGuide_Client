@@ -1,6 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:smart_tv_guide/dao/program_dao.dart';
 import 'package:smart_tv_guide/model/channel.dart';
+import 'package:smart_tv_guide/navigator/my_navigator.dart';
+import 'package:smart_tv_guide/util/app_util.dart';
 import 'package:smart_tv_guide/widget/appbar.dart';
+
+import '../dao/user_dao.dart';
+import '../http/core/route_jump_listener.dart';
+import '../util/view_util.dart';
+import '../widget/multi_select_box.dart';
 
 class ProgramDetail extends StatefulWidget {
   final Program program;
@@ -11,11 +19,43 @@ class ProgramDetail extends StatefulWidget {
   _ProgramDetailState createState() => _ProgramDetailState();
 }
 
-class _ProgramDetailState extends State<ProgramDetail> {
+class _ProgramDetailState extends State<ProgramDetail>
+    with MultiSelectSupport<ProgramDetail> {
+  bool marked = false;
+  late final Program _program;
+
+  @override
+  void initState() {
+    if (UserDao.hasLogin()) {
+      Program p = widget.program;
+      _program = Program(
+          p.channel,
+          p.title.replaceAll(RegExp(r'[0-9\()（）・：\s]+'), ''),
+          p.lang,
+          p.start,
+          p.stop,
+          p.about);
+      logger.d(_program);
+      _refresh(true);
+    }
+    super.initState();
+  }
+
+  void _like() async {
+    if (UserDao.hasLogin()) {
+      showMultiSelect();
+    } else {
+      showWarnToast('Please login');
+      MyNavigator().onJumpTo(RouteStatus.login);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: appBar(widget.program.title, 'Something', () => {}),
+        appBar: appBar(
+            widget.program.title, marked ? 'Remove' : 'Add', () => _like(),
+            icon: marked ? Icons.favorite : Icons.favorite_border_outlined),
         body: ListView(
           children: [
             Text(widget.program.about),
@@ -24,7 +64,36 @@ class _ProgramDetailState extends State<ProgramDetail> {
             Text(widget.program.start.toString()),
             Text(widget.program.stop.toString()),
             Text(widget.program.lang),
+            ElevatedButton(
+              onPressed: () async =>
+                  await MyNavigator().openH5('https://tv.cctv.com'),
+              child: const Text('View'),
+            )
           ],
         ));
+  }
+
+  @override
+  Map<String, bool> fetch() {
+    Map<String, bool> selectBoxOptions = UserDao.getProgramCollection()
+        .map((key, list) => MapEntry(key, list.contains(_program)));
+    return selectBoxOptions;
+  }
+
+  @override
+  String get selectBoxName => 'Program Collection';
+
+  @override
+  Future<void> updateDB(Map<String, bool> changes, int change) async {
+    var success = await ProgramDao.updateData(changes, _program, change);
+    _refresh(success);
+  }
+
+  _refresh(bool refresh) {
+    if(refresh){
+      setState(() {
+        marked = UserDao.containsProgram(_program);
+      });
+    }
   }
 }

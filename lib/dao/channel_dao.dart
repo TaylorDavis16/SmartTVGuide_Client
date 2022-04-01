@@ -1,7 +1,13 @@
+import 'dart:convert';
+
+import 'package:smart_tv_guide/dao/user_dao.dart';
 import 'package:smart_tv_guide/http/core/request_error.dart';
+import 'package:smart_tv_guide/http/request/base_request.dart';
+import 'package:smart_tv_guide/util/app_util.dart';
+
 import '../http/core/requester.dart';
+import '../http/request/collect_request.dart';
 import '../http/request/home_request.dart';
-import '../model/channel.dart';
 import '../model/home_model.dart';
 
 class ChannelDao {
@@ -15,15 +21,60 @@ class ChannelDao {
     return HomeModel.fromJson(result['model']);
   }
 
-  static Future<List<Channel>> getSwiper() async {
-    HomeRequest request = HomeRequest();
-    request.add('name', 'swiper');
-    Map<String, dynamic> result = await Requester().fire(request);
-    List<Channel> channels = <Channel>[];
-    if (result['code'] != 1) {
-      throw RequestError(result['code'], result['message']);
-    }
-    result['channels'].forEach((v) => channels.add(Channel.fromJson(v)));
-    return channels;
+  static retrieve() async {
+    BaseRequest channelRequest =
+        CollectRequest.getRequest(option: 'retrieve', type: 'channel');
+    return await Requester().fire(channelRequest);
   }
+
+  static Future<bool> updateData(
+      Map<String, bool> operations, String channel, int change) async {
+    return requestSend(() async {
+      BaseRequest request =
+          CollectRequest.getRequest(option: 'update', type: 'channel')
+              .add('operations', json.encode(operations))
+              .add('channel', channel)
+              .add('change', change);
+      var result = await Requester().fire(request);
+      if (result['code'] == 1) {
+        UserDao.updateChannelCollection(operations, channel);
+        return true;
+      }
+      return false;
+    });
+  }
+
+  static Future<bool> create(String name, {option = 'create'}) async {
+    return requestSend(() async {
+      BaseRequest request =
+          CollectRequest.getRequest(option: option, type: 'channel')
+              .add('name', name);
+      var result = await Requester().fire(request);
+      return result['code'] == 1;
+    });
+  }
+
+  static Future<bool> update(String oldName, String newName) async {
+    return requestSend(() async {
+      BaseRequest request =
+          CollectRequest.getRequest(option: 'changeName', type: 'channel')
+              .add('oldName', oldName)
+              .add('newName', newName);
+      var result = await Requester().fire(request);
+      return result['code'] == 1;
+    });
+  }
+
+  static Future<bool> updateCollectNum(List remove) async {
+    return requestSend(() async {
+      BaseRequest request = CollectRequest()
+          .add('option', 'updateCollectNum')
+          .add('type', 'channel')
+          .add("remove", json.encode(remove));
+      var result = await Requester().fire(request);
+      return result['code'] == 1;
+    });
+  }
+
+  static Future<bool> delete(String name) => create(name, option: 'delete');
 }

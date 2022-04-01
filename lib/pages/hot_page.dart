@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:smart_tv_guide/pages/hot_tab_collection_page.dart';
+import 'package:smart_tv_guide/pages/hot_tab_latest_page.dart';
 import 'package:smart_tv_guide/widget/my_tab.dart';
 import 'package:smart_tv_guide/widget/navigation_bar.dart';
 
 import '../util/view_util.dart';
-import 'hot_tab_page.dart';
+import 'hot_tab_hottest_page.dart';
 
 class HotPage extends StatefulWidget {
   const HotPage({Key? key}) : super(key: key);
@@ -12,13 +14,8 @@ class HotPage extends StatefulWidget {
   _HotPageState createState() => _HotPageState();
 }
 
-class _HotPageState extends State<HotPage>
-    with TickerProviderStateMixin {
-  static const tabs = [
-    {"key": "hot", "name": "Hottest", "index" : 1},
-    {"key": "new", "name": "Latest", "index" : 2},
-    {"key": "collection", "name": "Favorite", "index" : 3}
-  ];
+class _HotPageState extends State<HotPage> with TickerProviderStateMixin, AutomaticKeepAliveClientMixin {
+  static const tabs = ["Latest", "Hottest", "Favorite"];
   TabController? _controller;
 
   @override
@@ -35,6 +32,7 @@ class _HotPageState extends State<HotPage>
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Scaffold(
       body: Column(
         children: [_buildNavigationBar(), _buildTabView()],
@@ -43,7 +41,7 @@ class _HotPageState extends State<HotPage>
   }
 
   _buildNavigationBar() {
-    return SearchBar(
+    return MyNavigationBar(
       child: Container(
         decoration: bottomBoxShadow(),
         alignment: Alignment.center,
@@ -53,12 +51,7 @@ class _HotPageState extends State<HotPage>
   }
 
   _tabBar() {
-    return MyTab(
-        tabs.map<Tab>((tab) {
-          return Tab(
-            text: tab['name'] as String,
-          );
-        }).toList(),
+    return MyTab(tabs.map<Tab>((tab) => Tab(text: tab)).toList(),
         fontSize: 16,
         borderWidth: 3,
         unselectedLabelColor: Colors.black54,
@@ -67,10 +60,14 @@ class _HotPageState extends State<HotPage>
 
   _buildTabView() {
     return Flexible(
-      child: TabBarView(
-          controller: _controller,
-          children:
-              tabs.map((tab) => HotTabPage(name: tab['name'] as String, index: tab['index'] as int, needSwiper: tab['index'] != 'collection',)).toList()),
+      child: TabBarView(controller: _controller, children: const [
+        HotTabLatestPage(),
+        HotTabHottestPage(),
+        HotTabCollectionPage()
+      ]),
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

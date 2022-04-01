@@ -1,8 +1,8 @@
-import 'dart:math';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
+import 'app_util.dart';
 import 'format_util.dart';
 
 ///带缓存的image
@@ -123,9 +123,32 @@ Offstage offstage(bool condition) {
   );
 }
 
-List<Map<String, Object>> configList(int length, Random random) {
+List<Map<String, Object>> configList(int length) {
   return List.generate(
     length,
-    (index) => {"id": index, "height": random.nextInt(150) + 50.5},
+    (index) => {"id": index, "height": random().nextInt(150) + 50.5},
   );
 }
+
+///错误提示样式的toast
+void showWarnToast(String text) {
+  Fluttertoast.showToast(
+      msg: text,
+      toastLength: Toast.LENGTH_LONG,
+      gravity: ToastGravity.CENTER,
+      backgroundColor: Colors.red,
+      textColor: Colors.white);
+}
+
+///普通提示样式的toast
+void showToast(String text) {
+  Fluttertoast.showToast(
+    msg: text,
+    toastLength: Toast.LENGTH_LONG,
+    gravity: ToastGravity.CENTER,
+  );
+}
+
+bottomMessage(BuildContext context, String message) =>
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text(message)));

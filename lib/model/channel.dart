@@ -2,7 +2,7 @@
 import 'package:hive_flutter/adapters.dart';
 part 'channel.g.dart';
 @HiveType(typeId: 0)
-class Channel {
+class Channel{
   @HiveField(0)
   String id = 'unknown';
   @HiveField(1)
@@ -45,10 +45,29 @@ class Channel {
     }
     return data;
   }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+          other is Channel &&
+              runtimeType == other.runtimeType &&
+              id == other.id &&
+              displayName == other.displayName &&
+              about == other.about &&
+              imgURL == other.imgURL &&
+              url == other.url;
+
+  @override
+  int get hashCode =>
+      id.hashCode ^
+      displayName.hashCode ^
+      about.hashCode ^
+      imgURL.hashCode ^
+      url.hashCode;
 }
 
 @HiveType(typeId: 1)
-class Program {
+class Program{
   @HiveField(0)
   String channel = '';
   @HiveField(1)
@@ -77,11 +96,28 @@ class Program {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['channel'] = channel;
-    data['name'] = title;
+    data['title'] = title;
     data['lang'] = lang;
     data['start'] = start.toString();
     data['stop'] = stop.toString();
     data['about'] = about;
     return data;
+  }
+
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Program &&
+          runtimeType == other.runtimeType &&
+          channel == other.channel &&
+          title == other.title;
+
+  @override
+  int get hashCode => channel.hashCode ^ title.hashCode;
+
+  @override
+  String toString() {
+    return 'Program{channel: $channel, title: $title, lang: $lang, start: $start, stop: $stop, about: $about}';
   }
 }

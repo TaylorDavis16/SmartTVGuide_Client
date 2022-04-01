@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:hive_flutter/adapters.dart';
@@ -7,6 +5,7 @@ import 'package:smart_tv_guide/util/view_util.dart';
 
 import '../model/channel.dart';
 import '../util/app_util.dart';
+import '../util/color.dart';
 
 class HomeTabPage extends StatefulWidget {
   final List<String> channelNames;
@@ -17,17 +16,15 @@ class HomeTabPage extends StatefulWidget {
 }
 
 class _HomeTabPageState extends State<HomeTabPage>
-    with AutomaticKeepAliveClientMixin, TickerProviderStateMixin, WidgetsBindingObserver {
+    with AutomaticKeepAliveClientMixin, WidgetsBindingObserver {
   static final homeBox = Hive.box('home');
   Map channelMap = homeBox.get('channelMap');
   late List<Map<String, dynamic>> _items;
-  late Random random;
 
   @override
   void initState() {
     super.initState();
-    random = Random();
-    _items = configList(widget.channelNames.length, random);
+    _items = configList(widget.channelNames.length);
   }
 
   @override
@@ -70,8 +67,7 @@ class _HomeTabPageState extends State<HomeTabPage>
         Channel channel = channelMap[widget.channelNames[index]]!;
         return Card(
           // Give each item a random background color
-          color: Color.fromARGB(random.nextInt(256), random.nextInt(256),
-              random.nextInt(256), random.nextInt(256)),
+          color: randomColor(),
           key: ValueKey(_items[index]['id']),
           child: SizedBox(
             height: _items[index]['height'],

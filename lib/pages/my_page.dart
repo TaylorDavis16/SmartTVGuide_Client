@@ -1,7 +1,10 @@
+import 'dart:core';
+
 import 'package:flutter/material.dart';
 import 'package:smart_tv_guide/dao/user_dao.dart';
 import 'package:smart_tv_guide/util/app_util.dart';
 
+import '../http/core/route_jump_listener.dart';
 import '../navigator/my_navigator.dart';
 import '../tools/shared_variables.dart';
 import '../widget/appbar.dart';
@@ -17,7 +20,7 @@ class _MinePageState extends State<MinePage> {
   @override
   Widget build(BuildContext context) {
     bool hasLogin = UserDao.hasLogin();
-    String text = hasLogin ? 'Logout':'Login';
+    String text = hasLogin ? 'Logout' : 'Login';
     return Scaffold(
       appBar: appBar("title", "rightTitle", () => logger.i('123')),
       body: Center(
@@ -25,11 +28,10 @@ class _MinePageState extends State<MinePage> {
           children: [
             ElevatedButton(
               onPressed: () {
-                if(hasLogin){
+                if (hasLogin) {
                   UserDao.clearLogin();
-                  setState(() {
-                  });
-                }else{
+                  MyNavigator().onJumpTo(RouteStatus.home, args: {"page": 0});
+                } else {
                   MyNavigator().onJumpTo(RouteStatus.login);
                 }
               },
@@ -39,7 +41,13 @@ class _MinePageState extends State<MinePage> {
             ElevatedButton(
               onPressed: Share.map['switch'],
               child: const Text('Switch'),
-            )
+            ),
+            const Padding(padding: EdgeInsets.only(top: 10)),
+            if (hasLogin)
+              ElevatedButton(
+                onPressed: () => MyNavigator().onJumpTo(RouteStatus.collection),
+                child: const Text('My Collection'),
+              )
           ],
         ),
       ),

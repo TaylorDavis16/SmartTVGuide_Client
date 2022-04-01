@@ -1,7 +1,7 @@
 import 'package:hive_flutter/adapters.dart';
-
-@HiveType(typeId: 0)
-class User extends HiveObject {
+part 'user.g.dart';
+@HiveType(typeId: 2)
+class User{
   @HiveField(0)
   int? id;
   @HiveField(1)
@@ -13,12 +13,12 @@ class User extends HiveObject {
 
   User({this.id, this.username, this.email, this.gender});
 
-  factory User.fromJson(Map<String, dynamic> json) => User(
-        id: json['id'] as int?,
-        username: json['username'] as String?,
-        email: json['email'] as String?,
-        gender: json['gender'] as String?,
-      );
+  User.fromJson(Map<String, dynamic> json) {
+    id=json['id'];
+    username= json['username'];
+    email= json['email'];
+    gender= json['gender'];
+  }
 
   Map<String, dynamic> toJson() => <String, dynamic>{
         'id': id,

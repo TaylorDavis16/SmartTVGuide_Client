@@ -1,20 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:hive_flutter/adapters.dart';
 import 'package:smart_tv_guide/dao/user_dao.dart';
 import 'package:smart_tv_guide/model/channel.dart';
 import 'package:smart_tv_guide/navigator/tab_navigator.dart';
-import 'package:smart_tv_guide/pages/any_page.dart';
 import 'package:smart_tv_guide/pages/channel_detail_page.dart';
+import 'package:smart_tv_guide/pages/collection_page.dart';
 import 'package:smart_tv_guide/pages/login_page.dart';
 import 'package:smart_tv_guide/pages/program_detail_page.dart';
 import 'package:smart_tv_guide/pages/register_page.dart';
 import 'package:smart_tv_guide/tools/shared_variables.dart';
 import 'package:smart_tv_guide/util/app_util.dart';
-import 'package:smart_tv_guide/util/color.dart';
 
 import 'http/core/request_error.dart';
 import 'http/core/requester.dart';
+import 'http/core/route_jump_listener.dart';
 import 'navigator/my_navigator.dart';
 
 void main() {
@@ -43,11 +42,7 @@ class _AppEntryState extends State<AppEntry> {
 
   Future<void> init() async {
     initLogger();
-    await Hive.initFlutter();
-    Hive.registerAdapter(ChannelAdapter());
-    Hive.registerAdapter(ProgramAdapter());
-    await Hive.openBox('login_detail');
-    await Hive.openBox('home');
+    await hiveInit();
     // Share.map['switch'] = changeTheme;
   }
 
@@ -65,7 +60,7 @@ class _AppEntryState extends State<AppEntry> {
               );
         return MaterialApp(
           home: widget,
-          theme: ThemeData(primarySwatch: white, brightness: Share.brightness),
+          // theme: ThemeData(primarySwatch: white, brightness: Share.brightness),
         );
       },
     );
@@ -145,8 +140,8 @@ class RouteDelegate extends RouterDelegate<RoutePath>
       page = pageWrap((ProgramDetail(program!)));
     } else if (_routeStatus == RouteStatus.registration) {
       page = pageWrap(const RegisterPage());
-    } else if (_routeStatus == RouteStatus.notice) {
-      page = pageWrap(const AnyPage());
+    } else if (_routeStatus == RouteStatus.collection) {
+      page = pageWrap(const CollectionPage());
     } else if (_routeStatus == RouteStatus.login) {
       page = pageWrap(const LoginPage());
     }
@@ -176,7 +171,7 @@ class RouteDelegate extends RouterDelegate<RoutePath>
             return false;
           }
           if (pages.isNotEmpty) {
-            var tempPages = [...pages];
+            var tempPages = List<MaterialPage>.from(pages);
             pages.removeLast();
             //通知路由发生变化
             MyNavigator().notify(pages, tempPages);

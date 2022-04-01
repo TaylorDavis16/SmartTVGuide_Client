@@ -31,4 +31,7 @@
             android:name="flutterEmbedding"
             android:value="2" />
     </application>
+
+    <!-- Nest within the manifest element, not the application element-->
+    <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES" />
 </manifest>

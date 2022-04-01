@@ -21,7 +21,7 @@ class _SearchPageState extends State<SearchPage> {
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SearchBar(
+            MyNavigationBar(
               height: 50,
               child: _appBar(),
               color: Colors.white,

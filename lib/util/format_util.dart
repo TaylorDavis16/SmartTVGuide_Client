@@ -10,9 +10,6 @@ String durationTransform(int seconds) {
   return '$m:$s';
 }
 
-String timeFormat(DateTime start, DateTime stop) =>
-    '${start.hour}:${start.minute} - ${stop.hour}:${stop.minute}';
-
 ///数字转万
 String countFormat(int count) {
   String views = "";
@@ -31,3 +28,5 @@ String dateMonthAndDay(String dateStr) {
   String formatted = formatter.format(now);
   return formatted;
 }
+
+String dateHourAndMinute(DateTime time) => DateFormat('HH-mm').format(time);

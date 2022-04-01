@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:smart_tv_guide/http/core/my_state.dart';
 import 'package:smart_tv_guide/util/app_util.dart';
-
 import '../../util/color.dart';
-import '../../util/toast.dart';
+import '../../util/view_util.dart';
 import 'request_error.dart';
 
 ///通用底层带分页和刷新的页面框架
@@ -73,19 +72,15 @@ abstract class BaseState<T extends StatefulWidget> extends MyState<T>
 
   Future<void> loadData({loadMore = false}) async {
     if (!loading) {
-      // setState(() {
         loading = true;
-      // });
       if (!loadMore) {
         pageIndex = 0;
       }
       try {
-        logger.i('------_loadData---');
-        logger.i('pageIndex: $pageIndex');
         await customLoad(loadMore: loadMore);
+        logger.i('------_loadData---, pageIndex: $pageIndex');
         if (stopLoading) {
-          ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('You have reached the end')));
+          bottomMessage(context, 'You have reached the end');
         }
       } on NeedAuth catch (e) {
         logger.e(e.message);

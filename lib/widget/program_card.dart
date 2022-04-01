@@ -56,7 +56,7 @@ class ProgramCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(2),
                 ),
                 child: Text(
-                  timeFormat(program.start!, program.stop!),
+                  dateHourAndMinute(program.start!) + '-' +dateHourAndMinute(program.stop!),
                   style: const TextStyle(color: Colors.white, fontSize: 10),
                 ),
               ))

@@ -1,11 +1,16 @@
-import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:smart_tv_guide/dao/channel_dao.dart';
+import 'package:smart_tv_guide/dao/user_dao.dart';
 import 'package:smart_tv_guide/http/core/base_state.dart';
 import 'package:smart_tv_guide/model/channel.dart';
 import 'package:smart_tv_guide/util/app_util.dart';
 import 'package:smart_tv_guide/widget/appbar.dart';
+import 'package:smart_tv_guide/widget/multi_select_box.dart';
 
+import '../http/core/route_jump_listener.dart';
+import '../navigator/my_navigator.dart';
+import '../util/color.dart';
 import '../util/view_util.dart';
 
 class ChannelDetail extends StatefulWidget {
@@ -17,25 +22,33 @@ class ChannelDetail extends StatefulWidget {
   _ChannelDetailState createState() => _ChannelDetailState();
 }
 
-class _ChannelDetailState extends BaseState<ChannelDetail> {
+class _ChannelDetailState extends BaseState<ChannelDetail>
+    with MultiSelectSupport<ChannelDetail> {
   late List<Map<String, dynamic>> _items;
   bool marked = false;
-  late Random random;
   late List<Color> colors;
 
-  void _init() {
-    _items = configList(widget.channel.programs.length, random);
-    colors = [];
-    for (int i = 0; i < widget.channel.programs.length; i++) {
-      colors.add(Color.fromARGB(random.nextInt(256), random.nextInt(256),
-          random.nextInt(256), random.nextInt(256)));
-    }
+  @override
+  Future<void> refresh() async {
+    colors = List.generate(_items.length, (_) => randomColor());
+    loadData();
   }
 
   @override
   void initState() {
-    random = Random();
+    _refresh(UserDao.hasLogin());
+    _items = configList(widget.channel.programs.length);
+    colors = List.generate(_items.length, (_) => randomColor());
     super.initState();
+  }
+
+  void _like() async {
+    if (UserDao.hasLogin()) {
+      showMultiSelect();
+    } else {
+      showWarnToast('Please login');
+      MyNavigator().onJumpTo(RouteStatus.login);
+    }
   }
 
   @override
@@ -43,16 +56,12 @@ class _ChannelDetailState extends BaseState<ChannelDetail> {
     List<Program> programs = widget.channel.programs;
     return Scaffold(
       appBar: appBar(
-          widget.channel.displayName,
-          marked ? 'Remove' : 'Add',
-          () => setState(() {
-                marked = !marked;
-              }),
+          widget.channel.displayName, marked ? 'Remove' : 'Add', () => _like(),
           icon: marked ? Icons.favorite : Icons.favorite_border_outlined),
       body: MasonryGridView.count(
         itemCount: programs.length,
         physics: const AlwaysScrollableScrollPhysics(),
-        padding: const EdgeInsets.symmetric(vertical: 50, horizontal: 10),
+        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
         // the number of columns
         crossAxisCount: 3,
         mainAxisSpacing: 4,
@@ -80,8 +89,30 @@ class _ChannelDetailState extends BaseState<ChannelDetail> {
 
   @override
   Future<void> loadData({loadMore = false}) async {
-    setState(() {
-      _init();
-    });
+    setState(() {});
+  }
+
+  @override
+  String get selectBoxName => 'Channel Collection';
+
+  @override
+  Map<String, bool> fetch() {
+    Map<String, bool> selectBoxOptions = UserDao.getChannelCollection()
+        .map((key, list) => MapEntry(key, list.contains(widget.channel.id)));
+    return selectBoxOptions;
+  }
+
+  @override
+  Future<void> updateDB(Map<String, bool> changes, int change) async {
+    var success = await ChannelDao.updateData(changes, widget.channel.id, change);
+    _refresh(success);
+  }
+
+  _refresh(bool refresh) {
+    if(refresh){
+      setState(() {
+        marked = UserDao.containsChannel(widget.channel.id);
+      });
+    }
   }
 }

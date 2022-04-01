@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:smart_tv_guide/dao/channel_dao.dart';
 import 'package:smart_tv_guide/http/core/my_state.dart';
+import 'package:smart_tv_guide/model/channel.dart';
 import 'package:smart_tv_guide/model/home_model.dart';
 import 'package:smart_tv_guide/pages/home_tab_page.dart';
 import 'package:smart_tv_guide/widget/loading_container.dart';
@@ -9,7 +10,7 @@ import 'package:smart_tv_guide/widget/my_tab.dart';
 
 import '../http/core/request_error.dart';
 import '../util/app_util.dart';
-import '../util/toast.dart';
+import '../util/view_util.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -88,18 +89,14 @@ class _HomePageState extends MyState<HomePage>
 
   void loadData() async {
     try {
-      Map channelMap;
       if (!_homeBox.containsKey('channelMap')) {
         logger.i('request!');
         HomeModel model = await ChannelDao.homeData();
-        channelMap = model.channelMap;
-        await _homeBox.put('channelMap', model.channelMap);
-      } else {
-        // channelMap = Map<String, Channel>.from(_homeBox.get('channelMap'));
-        channelMap = _homeBox.get('channelMap');
+        _homeBox.put('channelMap', model.channelMap);
+        _homeBox.put('channels', model.channelMap.values.map<String>((e) => e.id).toList());
+        _collectProgram(model);
       }
-      List<String> channels =
-          channelMap.entries.map((e) => e.key as String).toList();
+      List<String> channels = _homeBox.get('channels');
       tabNames = ['All', 'Beijing', 'CCTV', 'NBTV', 'Other'];
       channelNameList
         ..add(channels)
@@ -119,6 +116,14 @@ class _HomePageState extends MyState<HomePage>
       logger.i(e.toString());
       showWarnToast(e.message);
     }
+  }
+
+  _collectProgram(HomeModel model) {
+    List<Program> allPrograms = [];
+    for (var entry in model.channelMap.entries) {
+      allPrograms.addAll(entry.value.programs);
+    }
+    _homeBox.put('programs', allPrograms);
   }
 
   @override

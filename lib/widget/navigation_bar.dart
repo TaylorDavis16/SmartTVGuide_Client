@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
 
 ///可自定义样式的沉浸式导航栏
-class SearchBar extends StatefulWidget {
+class MyNavigationBar extends StatefulWidget {
   final Color color;
   final double height;
   final Widget? child;
 
-  const SearchBar(
+  const MyNavigationBar(
       {Key? key, this.color = Colors.white, this.height = 46, this.child})
       : super(key: key);
 
   @override
-  _SearchBarState createState() => _SearchBarState();
+  _MyNavigationBarState createState() => _MyNavigationBarState();
 }
 
-class _SearchBarState extends State<SearchBar> {
+class _MyNavigationBarState extends State<MyNavigationBar> {
   @override
   void initState() {
     super.initState();

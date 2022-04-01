@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'app_util.dart';
+
 const MaterialColor white = MaterialColor(
   0xFFFFFFFF,
   <int, Color>{
@@ -21,3 +23,6 @@ const MaterialColor primary = MaterialColor(
   0xfffb7299,
   <int, Color>{50: Color(0xffff9db5)},
 );
+
+Color randomColor() => Color.fromARGB(random().nextInt(256), random().nextInt(256),
+    random().nextInt(256), random().nextInt(256));

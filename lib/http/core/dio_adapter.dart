@@ -28,19 +28,19 @@ class DioAdapter<T> extends RequesterAdapter<T> {
     } on DioError catch (e) {
       response = e.response;
       throw RequestError(response?.statusCode ?? -1, e.toString(),
-          data: buildRes(response, request));
+          data: buildRes(response, request, errorType: e.type));
     }
     logger.d("Leave Adapter");
     return buildRes(response, request);
   }
 
   ///构建HiNetResponse
-  MyNetResponse<T> buildRes(Response? response, BaseRequest request) {
+  MyNetResponse<T> buildRes(Response? response, BaseRequest request, {DioErrorType? errorType}) {
     return MyNetResponse<T>(
         data: response?.data,
         request: request,
         statusCode: response?.statusCode,
         statusMessage: response?.statusMessage,
-        extra: response);
+        extra: errorType);
   }
 }
