@@ -76,11 +76,9 @@ class _HomePageState extends MyState<HomePage>
   _content() => Flexible(
           child: TabBarView(
         controller: _controller,
-        children: [
-          ...channelNameList
-              .map((channelNames) => HomeTabPage(channelNames))
-              .toList()
-        ],
+        children: channelNameList
+            .map((channelNames) => HomeTabPage(channelNames))
+            .toList(),
       ));
 
   bool testKeyword(String channelName, String keyword) {
@@ -93,7 +91,8 @@ class _HomePageState extends MyState<HomePage>
         logger.i('request!');
         HomeModel model = await ChannelDao.homeData();
         _homeBox.put('channelMap', model.channelMap);
-        _homeBox.put('channels', model.channelMap.values.map<String>((e) => e.id).toList());
+        _homeBox.put('channels',
+            model.channelMap.values.map<String>((e) => e.id).toList());
         _collectProgram(model);
       }
       List<String> channels = _homeBox.get('channels');

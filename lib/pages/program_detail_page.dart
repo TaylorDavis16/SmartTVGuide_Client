@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:smart_tv_guide/dao/program_dao.dart';
 import 'package:smart_tv_guide/model/channel.dart';
 import 'package:smart_tv_guide/navigator/my_navigator.dart';
-import 'package:smart_tv_guide/util/app_util.dart';
 import 'package:smart_tv_guide/widget/appbar.dart';
 
 import '../dao/user_dao.dart';
 import '../http/core/route_jump_listener.dart';
+import '../util/app_util.dart';
 import '../util/view_util.dart';
 import '../widget/multi_select_box.dart';
 
@@ -30,16 +30,20 @@ class _ProgramDetailState extends State<ProgramDetail>
       Program p = widget.program;
       _program = Program(
           p.channel,
-          p.title.replaceAll(RegExp(r'[0-9\()（）・：\s]+'), ''),
+          p.title.replaceAll(RegExp(r'[0-9\-()（）・:：\s]+'), ''),
           p.lang,
           p.start,
           p.stop,
           p.about);
-      logger.d(_program);
       _refresh(true);
     }
+
+
     super.initState();
   }
+
+  @override
+  void sort(List list) => sortNames(list);
 
   void _like() async {
     if (UserDao.hasLogin()) {
@@ -54,11 +58,11 @@ class _ProgramDetailState extends State<ProgramDetail>
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: appBar(
-            widget.program.title, marked ? 'Remove' : 'Add', () => _like(),
+            widget.program.title, rightTitle: marked ? 'Remove' : 'Add', rightButtonClick: () => _like(),
             icon: marked ? Icons.favorite : Icons.favorite_border_outlined),
         body: ListView(
           children: [
-            Text(widget.program.about),
+            Text('This is ${widget.program.title} from ${widget.program.channel}'),
             Text(widget.program.channel),
             Text(widget.program.title),
             Text(widget.program.start.toString()),

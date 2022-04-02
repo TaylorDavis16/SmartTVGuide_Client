@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:smart_tv_guide/util/app_util.dart';
 import 'package:smart_tv_guide/util/view_util.dart';
 import 'package:smart_tv_guide/widget/appbar.dart';
+
 import '../widget/navigation_bar.dart';
 
 class SearchPage extends StatefulWidget {
@@ -17,7 +17,7 @@ class _SearchPageState extends State<SearchPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: appBar("Search", "", () => logger.i('123'), centerTitle: true),
+        appBar: appBar("Search", centerTitle: true),
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

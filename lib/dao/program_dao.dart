@@ -79,13 +79,12 @@ class ProgramDao {
     });
   }
 
-  static Future<bool> updateProgramNum(Map remove) async {
-    logger.d(remove);
+  static Future<bool> updateProgramNum(Map noLongerExist) async {
     return requestSend(() async {
       BaseRequest request = CollectRequest()
           .add('option', 'updateCollectNum')
           .add('type', 'program')
-          .add("remove", json.encode(remove));
+          .add("remove", json.encode(noLongerExist));
       var result = await Requester().fire(request);
       return result['code'] == 1;
     });

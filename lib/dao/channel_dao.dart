@@ -65,12 +65,12 @@ class ChannelDao {
     });
   }
 
-  static Future<bool> updateCollectNum(List remove) async {
+  static Future<bool> updateCollectNum(List noLongerExist) async {
     return requestSend(() async {
       BaseRequest request = CollectRequest()
           .add('option', 'updateCollectNum')
           .add('type', 'channel')
-          .add("remove", json.encode(remove));
+          .add("remove", json.encode(noLongerExist));
       var result = await Requester().fire(request);
       return result['code'] == 1;
     });

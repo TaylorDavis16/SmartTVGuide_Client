@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:smart_tv_guide/dao/program_dao.dart';
 import 'package:smart_tv_guide/dao/user_dao.dart';
-import 'package:smart_tv_guide/pages/collection_tab_page_state.dart';
+import 'package:smart_tv_guide/pages/collection_tab_page.dart';
 import 'package:smart_tv_guide/util/app_util.dart';
+
+import '../http/core/route_jump_listener.dart';
+import '../navigator/my_navigator.dart';
 
 class CollectionProgramPage extends CollectionTabPage {
   const CollectionProgramPage(data, context, {Key? key})
@@ -23,6 +26,9 @@ class _CollectionProgramPageState
   @override
   void openPage(String name) {
     logger.i(name);
+    MyNavigator().onJumpTo(RouteStatus.programCollectionFolder, args: {
+      'items': {'list': items[name], 'title': name}
+    });
   }
 
   @override
@@ -35,14 +41,16 @@ class _CollectionProgramPageState
   @override
   Future<void> deleteItem(String name) async {
     if (await ProgramDao.delete(name)) {
-      List remove = items.remove(name).where((program) =>
-      !UserDao.containsProgram(program)).toList();
+      List remove = items
+          .remove(name)
+          .where((program) => !UserDao.containsProgram(program))
+          .toList();
       if (remove.isNotEmpty) {
-        Map<String, String> map = {};
+        Map<String, String> noLongerExist = {};
         for (var program in remove) {
-          map[program.title] = program.channel;
+          noLongerExist[program.title] = program.channel;
         }
-        await ProgramDao.updateProgramNum(map);
+        await ProgramDao.updateProgramNum(noLongerExist);
       }
       refreshItems();
     }
@@ -54,5 +62,4 @@ class _CollectionProgramPageState
       super.updateItem(oldName, newName);
     }
   }
-
 }

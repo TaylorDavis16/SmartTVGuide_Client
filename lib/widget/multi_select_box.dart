@@ -4,8 +4,9 @@ import 'package:smart_tv_guide/util/color.dart';
 class MultiSelect extends StatefulWidget {
   final Map<String, bool> itemMap;
   final String name;
+  final void Function(List)? sort;
 
-  const MultiSelect(this.name, this.itemMap, {Key? key}) : super(key: key);
+  const MultiSelect(this.name, this.itemMap, {Key? key, this.sort}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _MultiSelectState();
@@ -26,6 +27,20 @@ class _MultiSelectState extends State<MultiSelect> {
     Navigator.pop(context, widget.itemMap);
   }
 
+  List<Widget> _checkBoxListTile(){
+    List<String> options = widget.itemMap.keys.toList();
+    if(widget.sort != null){
+      widget.sort!(options);
+    }
+    return options.map((option) => CheckboxListTile(
+      value: widget.itemMap[option],
+      title: Text(option),
+      controlAffinity: ListTileControlAffinity.leading,
+      onChanged: (isChecked) =>
+          _itemChange(option, isChecked!),
+    )).toList();
+  }
+
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
@@ -33,15 +48,7 @@ class _MultiSelectState extends State<MultiSelect> {
       title: Text(widget.name),
       content: SingleChildScrollView(
         child: ListBody(
-          children: widget.itemMap.entries
-              .map((entry) => CheckboxListTile(
-                    value: entry.value,
-                    title: Text(entry.key),
-                    controlAffinity: ListTileControlAffinity.leading,
-                    onChanged: (isChecked) =>
-                        _itemChange(entry.key, isChecked!),
-                  ))
-              .toList(),
+          children: _checkBoxListTile(),
         ),
       ),
       actions: [
@@ -61,16 +68,16 @@ class _MultiSelectState extends State<MultiSelect> {
 mixin MultiSelectSupport<T extends StatefulWidget> on State<T> {
   String get selectBoxName;
 
+  void sort(List list){}
+
   Map<String, bool> fetch();
 
   void showMultiSelect() async {
     Map<String, bool> selectBoxOptions = fetch();
     final Map<String, bool>? results = await showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return MultiSelect(selectBoxName, Map.from(selectBoxOptions));
-      },
-    );
+        context: context,
+        builder: (BuildContext context) =>
+            MultiSelect(selectBoxName, Map.from(selectBoxOptions), sort: sort,));
     // Update UI
     if (results != null) {
       Map<String, bool> changes = {};
@@ -79,14 +86,14 @@ mixin MultiSelectSupport<T extends StatefulWidget> on State<T> {
           changes[key] = results[key]!;
         }
       });
-      if(changes.isNotEmpty) {
+      if (changes.isNotEmpty) {
         bool keep1 = selectBoxOptions.values.any((value) => value);
         bool keep2 = selectBoxOptions.keys.any((key) => results[key]!);
         int change = 0;
-        if(!keep1 && keep2){
+        if (!keep1 && keep2) {
           change = 1;
         }
-        if(keep1 && !keep2){
+        if (keep1 && !keep2) {
           change = -1;
         }
         updateDB(changes, change);

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:smart_tv_guide/navigator/tab_navigator.dart';
 import 'package:smart_tv_guide/pages/channel_detail_page.dart';
+import 'package:smart_tv_guide/pages/collection_channel_folder_page.dart';
+import 'package:smart_tv_guide/pages/collection_program_folder_page.dart';
 import 'package:smart_tv_guide/pages/home_tab_page.dart';
 import 'package:smart_tv_guide/pages/homepage.dart';
 import 'package:smart_tv_guide/pages/login_page.dart';
@@ -54,6 +56,10 @@ RouteStatus getStatus(MaterialPage page) {
     return RouteStatus.login;
   } else if (page.child is CollectionPage) {
     return RouteStatus.collection;
+  } else if (page.child is CollectionChannelFolderPage) {
+    return RouteStatus.channelCollectionFolder;
+  } else if (page.child is CollectionProgramFolderPage) {
+    return RouteStatus.programCollectionFolder;
   } else {
     return RouteStatus.unknown;
   }
@@ -81,6 +87,8 @@ enum RouteStatus {
   channelDetail,
   programDetail,
   collection,
+  channelCollectionFolder,
+  programCollectionFolder,
   unknown,
 }
 

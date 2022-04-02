@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:smart_tv_guide/util/app_util.dart';
 
 ///自定义顶部appBar
-appBar(String title, String rightTitle, VoidCallback rightButtonClick,
-    {IconData? icon, bool leading = false, centerTitle = false}) {
+appBar(String title,
+    {String? rightTitle,
+    VoidCallback? rightButtonClick,
+    IconData? icon,
+    bool leading = false,
+    centerTitle = false}) {
   return AppBar(
     //让title居左
     centerTitle: centerTitle,
@@ -13,7 +18,8 @@ appBar(String title, String rightTitle, VoidCallback rightButtonClick,
       style: const TextStyle(fontSize: 18),
     ),
     actions: [
-      InkWell(
+      theme(
+          child: InkWell(
         onTap: rightButtonClick,
         child: Container(
           padding: const EdgeInsets.only(left: 15, right: 15),
@@ -24,15 +30,16 @@ appBar(String title, String rightTitle, VoidCallback rightButtonClick,
                 icon,
                 color: Colors.red,
               ),
-              Text(
-                rightTitle,
-                style: TextStyle(fontSize: 18, color: Colors.grey[500]),
-                textAlign: TextAlign.center,
-              )
+              if (rightTitle != null)
+                Text(
+                  rightTitle,
+                  style: TextStyle(fontSize: 18, color: Colors.grey[500]),
+                  textAlign: TextAlign.center,
+                )
             ],
           ),
         ),
-      )
+      ))
     ],
   );
 }

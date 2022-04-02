@@ -1,5 +1,7 @@
 import 'dart:math';
 
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:logger/logger.dart';
 
@@ -7,9 +9,9 @@ import '../http/core/route_jump_listener.dart';
 import '../model/channel.dart';
 import '../model/user.dart';
 import '../navigator/my_navigator.dart';
+import '../tools/shared_variables.dart';
 
-
-Future<void> hiveInit() async{
+Future<void> hiveInit() async {
   await Hive.initFlutter();
   Hive.registerAdapter(ChannelAdapter());
   Hive.registerAdapter(ProgramAdapter());
@@ -39,9 +41,19 @@ void initLogger() {
   );
 }
 
-void disposeLogger(){
+void disposeLogger() {
   _logger.d('logger out!');
   _logger.close();
+}
+
+Widget theme({required Widget child}) {
+  return Theme(
+      data: ThemeData(
+        brightness: Share.brightness,
+        splashColor: Colors.transparent,
+        highlightColor: Colors.transparent,
+      ),
+      child: child);
 }
 
 void gotoChannel(Channel channel) {
@@ -54,13 +66,22 @@ void gotoProgram(Program program) {
   MyNavigator().onJumpTo(RouteStatus.programDetail, args: {"program": program});
 }
 
+void sortNames(List list){
+  list.sort();
+  int d = list.indexOf('Default');
+  if (d != 0) {
+    list.setRange(1, d + 1, list.getRange(0, d));
+    list[0] = 'Default';
+  }
+}
+
 Random _random = Random();
 
 Random random() {
   return _random;
 }
 
-Future<bool> requestSend(Future<bool> Function() send) async{
+Future<bool> requestSend(Future<bool> Function() send) async {
   try {
     return await send();
   } catch (e) {
@@ -68,7 +89,3 @@ Future<bool> requestSend(Future<bool> Function() send) async{
     return false;
   }
 }
-
-
-
-

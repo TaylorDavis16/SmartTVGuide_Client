@@ -2,7 +2,6 @@ import 'dart:core';
 
 import 'package:flutter/material.dart';
 import 'package:smart_tv_guide/dao/user_dao.dart';
-import 'package:smart_tv_guide/util/app_util.dart';
 
 import '../http/core/route_jump_listener.dart';
 import '../navigator/my_navigator.dart';
@@ -22,7 +21,7 @@ class _MinePageState extends State<MinePage> {
     bool hasLogin = UserDao.hasLogin();
     String text = hasLogin ? 'Logout' : 'Login';
     return Scaffold(
-      appBar: appBar("title", "rightTitle", () => logger.i('123')),
+      appBar: appBar("Mine"),
       body: Center(
         child: ListView(
           children: [

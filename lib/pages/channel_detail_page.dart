@@ -42,6 +42,9 @@ class _ChannelDetailState extends BaseState<ChannelDetail>
     super.initState();
   }
 
+  @override
+  void sort(List list) => sortNames(list);
+
   void _like() async {
     if (UserDao.hasLogin()) {
       showMultiSelect();
@@ -56,7 +59,7 @@ class _ChannelDetailState extends BaseState<ChannelDetail>
     List<Program> programs = widget.channel.programs;
     return Scaffold(
       appBar: appBar(
-          widget.channel.displayName, marked ? 'Remove' : 'Add', () => _like(),
+          widget.channel.displayName, rightTitle: marked ? 'Remove' : 'Add', rightButtonClick: () => _like(),
           icon: marked ? Icons.favorite : Icons.favorite_border_outlined),
       body: MasonryGridView.count(
         itemCount: programs.length,

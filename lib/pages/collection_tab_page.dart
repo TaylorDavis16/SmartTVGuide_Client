@@ -1,18 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:smart_tv_guide/http/core/my_state.dart';
 
+import '../util/app_util.dart';
 import '../util/color.dart';
 import '../util/view_util.dart';
 
-final Map<IconData, String> tabs = {
-  Icons.tv: 'Channels',
-  Icons.star: 'Programs'
+final Map<IconData, Map> tabs = {
+  Icons.tv: {'type': 'Channels', 'title': 'Channels Collection Folder'},
+  Icons.star: {'type': 'Programs', 'title': 'Programs Collection Folder'}
 };
 
-abstract class CollectionTabPage extends StatefulWidget{
+abstract class CollectionTabPage extends StatefulWidget {
   final IconData data;
   final BuildContext context;
-  const CollectionTabPage(this.data, this.context, {Key? key}) : super(key: key);
+
+  const CollectionTabPage(this.data, this.context, {Key? key})
+      : super(key: key);
 
   @override
   CollectionTabPageBaseState createState();
@@ -20,7 +23,6 @@ abstract class CollectionTabPage extends StatefulWidget{
 
 abstract class CollectionTabPageBaseState<T extends CollectionTabPage>
     extends MyState<T> with AutomaticKeepAliveClientMixin {
-
   final TextEditingController nameController = TextEditingController();
   late Map items;
 
@@ -36,10 +38,9 @@ abstract class CollectionTabPageBaseState<T extends CollectionTabPage>
     return Scaffold(
       body: CustomScrollView(
         slivers: [
-          showSliverAppBar(tabs[widget.data]!),
+          showSliverAppBar(tabs[widget.data]?['title']!),
           SliverList(
-            delegate: SliverChildListDelegate(
-                items.keys.map((key) => card(key)).toList()),
+            delegate: SliverChildListDelegate(_cardList()),
           ),
         ],
       ),
@@ -59,42 +60,52 @@ abstract class CollectionTabPageBaseState<T extends CollectionTabPage>
       title: Text(screenTitle),
       bottom: TabBar(
         tabs: tabs.entries
-            .map((item) => Tab(icon: Icon(item.key), text: item.value))
+            .map((item) => Tab(icon: Icon(item.key), text: item.value['type']))
             .toList(),
       ),
     );
   }
 
-  Widget card(String name) => GestureDetector(
-    onTap: () => openPage(name),
-    child: Card(
-      color: Colors.orange.shade100,
-      margin: const EdgeInsets.all(10),
-      elevation: 3,
-      child: ListTile(
-          title: Text(name),
-          trailing: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // Edit button
-              IconButton(
-                  icon: const Icon(Icons.edit),
-                  onPressed: () => _showForm(name)),
-              // Delete button
-              IconButton(
-                icon: const Icon(Icons.delete),
-                onPressed: () => deleteItem(name),
-              ),
-            ],
-          )),
-    ),
-  );
+  List<Widget> _cardList() {
+    List<String> list = List.from(items.keys);
+    sortNames(list);
+    return list.map((key) => card(key)).toList();
+  }
 
-  void _showForm(String? itemKey) async {
+  Widget card(String name) => GestureDetector(
+        onTap: () => openPage(name),
+        child: Card(
+          color: name == 'Default'
+              ? Colors.orange.shade50
+              : Colors.orange.shade100,
+          margin: const EdgeInsets.all(10),
+          elevation: 3,
+          child: ListTile(
+              title: Text(name),
+              trailing: name == 'Default'
+                  ? null
+                  : Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text('${items[name].length}'),
+                        // Edit button
+                        IconButton(
+                            icon: const Icon(Icons.edit),
+                            onPressed: () => _showForm(name)),
+                        // Delete button
+                        IconButton(
+                            icon: const Icon(Icons.delete),
+                            onPressed: () => showDeleteConfirm(name)),
+                      ],
+                    )),
+        ),
+      );
+
+  void _showForm(String? oldName) async {
     // itemKey == null -> create new item
     // itemKey != null -> update an existing item
-    if (itemKey != null) {
-      nameController.text = itemKey;
+    if (oldName != null) {
+      nameController.text = oldName;
     }
     showModalBottomSheet(
         context: widget.context,
@@ -119,19 +130,20 @@ abstract class CollectionTabPageBaseState<T extends CollectionTabPage>
                   ),
                   ElevatedButton(
                     onPressed: () async {
-                      String name = nameController.text.trim();
+                      String newName = nameController.text.trim();
                       // Save new item
-                      if (itemKey == null) {
-                        if (items[name] == null) {
+                      if (oldName == null) {
+                        if (items[newName] == null) {
                           createItem(nameController.text.trim());
                         } else {
-                          showWarnToast('Collection $name is already exist!');
+                          showWarnToast(
+                              'Collection $newName is already exist!');
                         }
                       } else {
-                        if (itemKey != name) {
-                          updateItem(itemKey, nameController.text.trim());
+                        if (items[newName] == null) {
+                          updateItem(oldName, nameController.text.trim());
                         } else {
-                          showWarnToast('The name has to be different!');
+                          showWarnToast('The new name is exited!');
                         }
                       }
                       // update an existing item
@@ -139,7 +151,7 @@ abstract class CollectionTabPageBaseState<T extends CollectionTabPage>
                       nameController.text = '';
                       Navigator.of(context).pop(); // Close the bottom sheet
                     },
-                    child: Text(itemKey == null ? 'Create New' : 'Update'),
+                    child: Text(oldName == null ? 'Create New' : 'Update'),
                   ),
                   const SizedBox(
                     height: 15,
@@ -171,6 +183,26 @@ abstract class CollectionTabPageBaseState<T extends CollectionTabPage>
   Future<void> deleteItem(String name) async {
     items.remove(name);
     refreshItems();
+  }
+
+  Future showDeleteConfirm(String name) async {
+    await showDialog(
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+              title: const Text(
+                  'Are you sure want to delete this folder? All the contents in it will be gone'),
+              actions: [
+                TextButton(
+                    onPressed: () {
+                      deleteItem(name);
+                      Navigator.of(context).pop();
+                    },
+                    child: const Text('Yes')),
+                ElevatedButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    child: const Text('No'))
+              ],
+            ));
   }
 
   @override

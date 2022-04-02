@@ -4,7 +4,9 @@ import 'package:smart_tv_guide/dao/user_dao.dart';
 import 'package:smart_tv_guide/model/channel.dart';
 import 'package:smart_tv_guide/navigator/tab_navigator.dart';
 import 'package:smart_tv_guide/pages/channel_detail_page.dart';
+import 'package:smart_tv_guide/pages/collection_channel_folder_page.dart';
 import 'package:smart_tv_guide/pages/collection_page.dart';
+import 'package:smart_tv_guide/pages/collection_program_folder_page.dart';
 import 'package:smart_tv_guide/pages/login_page.dart';
 import 'package:smart_tv_guide/pages/program_detail_page.dart';
 import 'package:smart_tv_guide/pages/register_page.dart';
@@ -59,7 +61,11 @@ class _AppEntryState extends State<AppEntry> {
                 body: Center(child: CircularProgressIndicator()),
               );
         return MaterialApp(
-          home: widget,
+          home: Theme(data: ThemeData(
+            brightness: Share.brightness,
+            splashColor: Colors.transparent,
+            highlightColor: Colors.transparent,
+          ),child: widget,),
           // theme: ThemeData(primarySwatch: white, brightness: Share.brightness),
         );
       },
@@ -90,6 +96,7 @@ class RouteDelegate extends RouterDelegate<RoutePath>
   List<MaterialPage> pages = [];
   Channel? channel;
   Program? program;
+  Map? collect;
   int initialTabPage = 0;
 
   //为Navigator设置一个key，必要的时候可以通过navigatorKey.currentState来获取到NavigatorState对象
@@ -104,6 +111,8 @@ class RouteDelegate extends RouterDelegate<RoutePath>
         channel = args!['channel'];
       } else if (_routeStatus == RouteStatus.programDetail) {
         program = args!['program'];
+      } else if (_routeStatus == RouteStatus.channelCollectionFolder || _routeStatus == RouteStatus.programCollectionFolder) {
+        collect = args!['items'];
       }
       notifyListeners();
     }));
@@ -142,6 +151,10 @@ class RouteDelegate extends RouterDelegate<RoutePath>
       page = pageWrap(const RegisterPage());
     } else if (_routeStatus == RouteStatus.collection) {
       page = pageWrap(const CollectionPage());
+    }  else if (_routeStatus == RouteStatus.channelCollectionFolder) {
+      page = pageWrap(CollectionChannelFolderPage(collect!));
+    } else if (_routeStatus == RouteStatus.programCollectionFolder) {
+      page = pageWrap(CollectionProgramFolderPage(collect!));
     } else if (_routeStatus == RouteStatus.login) {
       page = pageWrap(const LoginPage());
     }

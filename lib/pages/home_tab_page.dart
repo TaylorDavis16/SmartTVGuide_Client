@@ -17,8 +17,7 @@ class HomeTabPage extends StatefulWidget {
 
 class _HomeTabPageState extends State<HomeTabPage>
     with AutomaticKeepAliveClientMixin, WidgetsBindingObserver {
-  static final homeBox = Hive.box('home');
-  Map channelMap = homeBox.get('channelMap');
+  Map channelMap = Hive.box('home').get('channelMap');
   late List<Map<String, dynamic>> _items;
 
   @override
