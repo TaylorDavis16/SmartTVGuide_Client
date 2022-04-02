@@ -6,6 +6,18 @@ import 'package:url_launcher/url_launcher.dart';
 import '../http/core/route_jump_listener.dart';
 import '../util/app_util.dart';
 
+///定义路由跳转逻辑要实现的功能
+class RouteJumpListener {
+  final OnJumpTo onJumpTo;
+
+  RouteJumpListener(this.onJumpTo);
+}
+
+typedef OnJumpTo = Function(RouteStatus routeStatus, {Map? args});
+
+typedef RouteChangeListener = Function(
+    RouteStatusInfo current, RouteStatusInfo pre);
+
 class MyNavigator extends _RouteJumpListener {
   MyNavigator._internal();
 

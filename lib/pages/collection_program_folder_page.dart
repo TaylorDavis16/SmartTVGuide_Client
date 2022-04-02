@@ -15,11 +15,11 @@ class CollectionProgramFolderPage extends StatefulWidget {
 
 class _CollectionProgramFolderPageState extends State<CollectionProgramFolderPage> {
   late List programs = widget.items['list'];
-
+  late RouteChangeListener listener;
   @override
   void initState() {
     super.initState();
-    MyNavigator().addListener((current, pre) {
+    MyNavigator().addListener(listener = (current, pre) {
       if(widget == current.page && pre.page is ProgramDetail){
         setState(() {});
       }
@@ -36,5 +36,11 @@ class _CollectionProgramFolderPageState extends State<CollectionProgramFolderPag
           itemCount: programs.length,
           itemBuilder: (BuildContext context, int index) => ProgramCard(program: programs[index])),
     );
+  }
+
+  @override
+  void dispose() {
+    MyNavigator().removeListener(listener);
+    super.dispose();
   }
 }

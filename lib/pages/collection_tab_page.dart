@@ -83,7 +83,7 @@ abstract class CollectionTabPageBaseState<T extends CollectionTabPage>
           child: ListTile(
               title: Text(name),
               trailing: name == 'Default'
-                  ? null
+                  ? Text('${items[name].length}')
                   : Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [

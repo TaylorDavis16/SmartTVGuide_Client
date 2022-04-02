@@ -13,10 +13,7 @@ import 'package:smart_tv_guide/pages/search_page.dart';
 
 import '../../pages/collection_page.dart';
 
-typedef OnJumpTo = Function(RouteStatus routeStatus, {Map? args});
 
-typedef RouteChangeListener = Function(
-    RouteStatusInfo current, RouteStatusInfo pre);
 
 ///路由信息
 class RouteStatusInfo {
@@ -92,9 +89,4 @@ enum RouteStatus {
   unknown,
 }
 
-///定义路由跳转逻辑要实现的功能
-class RouteJumpListener {
-  final OnJumpTo onJumpTo;
 
-  RouteJumpListener(this.onJumpTo);
-}

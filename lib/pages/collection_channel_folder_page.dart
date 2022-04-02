@@ -23,10 +23,11 @@ class _CollectionChannelFolderPageState extends State<CollectionChannelFolderPag
   Map channelMap = Hive.box('home').get('channelMap');
   late final List<Map<String, dynamic>> _items = configList(channelNameList.length);
 
+  late RouteChangeListener listener;
   @override
   void initState() {
     super.initState();
-    MyNavigator().addListener((current, pre) {
+    MyNavigator().addListener(listener = (current, pre) {
       if(widget == current.page && pre.page is ChannelDetail){
         setState(() {});
       }
@@ -67,5 +68,11 @@ class _CollectionChannelFolderPageState extends State<CollectionChannelFolderPag
         },
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    MyNavigator().removeListener(listener);
+    super.dispose();
   }
 }
