@@ -73,7 +73,7 @@ class _HomeTabPageState extends State<HomeTabPage>
             child: InkWell(
               onTap: () => gotoChannel(channel),
               child: Center(
-                child: cachedImage(channel.imgURL, channel.displayName),
+                child: cachedImage(channel),
               ),
             ),
           ),

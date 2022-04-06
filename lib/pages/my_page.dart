@@ -29,7 +29,7 @@ class _MinePageState extends State<MinePage> {
               onPressed: () {
                 if (hasLogin) {
                   UserDao.clearLogin();
-                  MyNavigator().onJumpTo(RouteStatus.home, args: {"page": 0});
+                  MyNavigator().onJumpTo(RouteStatus.tabNavigator, args: {"page": 0});
                 } else {
                   MyNavigator().onJumpTo(RouteStatus.login);
                 }
@@ -46,7 +46,12 @@ class _MinePageState extends State<MinePage> {
               ElevatedButton(
                 onPressed: () => MyNavigator().onJumpTo(RouteStatus.collection),
                 child: const Text('My Collection'),
-              )
+              ),
+            if (hasLogin)
+              ElevatedButton(
+                onPressed: () => MyNavigator().onJumpTo(RouteStatus.groupSearch),
+                child: const Text('Groups'),
+              ),
           ],
         ),
       ),

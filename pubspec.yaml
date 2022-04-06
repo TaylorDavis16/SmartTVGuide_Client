@@ -57,6 +57,7 @@ dependencies:
   hive_flutter: ^1.1.0
   lottie: ^1.2.2
   hive_generator: ^1.1.2
+  lpinyin: ^2.0.3
 
 dev_dependencies:
   flutter_test:

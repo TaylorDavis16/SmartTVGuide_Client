@@ -85,6 +85,12 @@ class _HomePageState extends MyState<HomePage>
     return channelName.contains(keyword);
   }
 
+  void handleData() async{
+    List apiData = await ChannelDao.apiData();
+    logger.i(apiData.length);
+    _homeBox.put('api', { for (var datum in apiData) datum['id'] : datum });
+  }
+
   void loadData() async {
     try {
       if (!_homeBox.containsKey('channelMap')) {
@@ -94,15 +100,16 @@ class _HomePageState extends MyState<HomePage>
         _homeBox.put('channels',
             model.channelMap.values.map<String>((e) => e.id).toList());
         _collectProgram(model);
+        handleData();
       }
-      List<String> channels = _homeBox.get('channels');
+      List<String> channelsId = _homeBox.get('channels');
       tabNames = ['All', 'Beijing', 'CCTV', 'NBTV', 'Other'];
       channelNameList
-        ..add(channels)
-        ..add(channels.where((e) => testKeyword(e, 'Beijing')).toList())
-        ..add(channels.where((e) => testKeyword(e, 'CCTV')).toList())
-        ..add(channels.where((e) => testKeyword(e, 'NBTV')).toList())
-        ..add(channels
+        ..add(channelsId)
+        ..add(channelsId.where((e) => testKeyword(e, 'Beijing')).toList())
+        ..add(channelsId.where((e) => testKeyword(e, 'CCTV')).toList())
+        ..add(channelsId.where((e) => testKeyword(e, 'NBTV')).toList())
+        ..add(channelsId
             .where((e) => !(testKeyword(e, 'Beijing') ||
                 testKeyword(e, 'CCTV') ||
                 testKeyword(e, 'NBTV')))
@@ -113,7 +120,7 @@ class _HomePageState extends MyState<HomePage>
       });
     } on RequestError catch (e) {
       logger.i(e.toString());
-      showWarnToast(e.message);
+      showWarnToast('Network Error');
     }
   }
 

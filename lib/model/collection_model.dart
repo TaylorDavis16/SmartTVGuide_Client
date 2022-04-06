@@ -1,64 +1,38 @@
+import 'package:hive_flutter/adapters.dart';
 import 'package:smart_tv_guide/model/channel.dart';
 
 ///解放生产力：在线json转dart https://www.devio.org/io/tools/json-to-dart/
-class CollectionChannelModel {
-  String? name;
-  Map<String, List<String>> collection = {};
+part 'collection_model.g.dart';
 
-  CollectionChannelModel(this.name, this.collection);
+@HiveType(typeId: 3)
+class CollectionModel extends HiveObject {
+  @HiveField(0)
+  Map channelCollection = {};
+  @HiveField(1)
+  Map programCollection = {};
 
-  CollectionChannelModel.fromJson(Map<String, dynamic> json) {
-    name = json['name'];
-    if (json['data'] != null) {
-      json['data'].forEach((key, values) =>
-          collection[key] = values);
+  CollectionModel(this.channelCollection, this.programCollection);
+
+  CollectionModel.fromJson(Map<String, dynamic> json) {
+    if (json['channel_collection'] != null) {
+      channelCollection = json['channel_collection'];
+    }
+    if (json['program_collection'] != null) {
+      programCollection = json['program_collection'].map((key, list) =>
+          MapEntry(key, list.map((value) => Program.fromJson(value)).toList()));
     }
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    final Map<String, dynamic> data1 = <String, dynamic>{};
-    data['name'] = name;
-    for (var entry in collection.entries) {
-      data1[entry.key] = entry.value;
-    }
-    data['collection'] = data1;
+    data['channel_collection'] = channelCollection;
+    data['program_collection'] = programCollection.map((key, list) =>
+        MapEntry(key, list.map((program) => program.toJson()).toList()));
     return data;
   }
 
   @override
   String toString() {
-    return 'HomeModel{name: $name, collection: ${collection.length}}';
-  }
-}
-
-class CollectionProgramModel {
-  String? name;
-  Map<String, List<Program>> collection = {};
-
-  CollectionProgramModel(this.name, this.collection);
-
-  CollectionProgramModel.fromJson(Map<String, dynamic> json) {
-    name = json['name'];
-    if (json['data'] != null) {
-      json['data'].forEach((key, values) =>
-      collection[key] = values.map((e) => Program.fromJson(e)).toList());
-    }
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    final Map<String, dynamic> data1 = <String, dynamic>{};
-    data['name'] = name;
-    for (var entry in collection.entries) {
-      data1[entry.key] = entry.value.map((e) => e.toJson()).toList();
-    }
-    data['collection'] = data1;
-    return data;
-  }
-
-  @override
-  String toString() {
-    return 'HomeModel{name: $name, collection: ${collection.length}}';
+    return 'CollectionChannelModel{channelCollection: $channelCollection, programCollection: $programCollection}';
   }
 }

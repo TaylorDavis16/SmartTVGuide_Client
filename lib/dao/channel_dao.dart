@@ -1,8 +1,11 @@
 import 'dart:convert';
 
+import 'package:hive_flutter/adapters.dart';
 import 'package:smart_tv_guide/dao/user_dao.dart';
 import 'package:smart_tv_guide/http/core/request_error.dart';
+import 'package:smart_tv_guide/http/request/api_request.dart';
 import 'package:smart_tv_guide/http/request/base_request.dart';
+import 'package:smart_tv_guide/http/request/trending_request.dart';
 import 'package:smart_tv_guide/util/app_util.dart';
 
 import '../http/core/requester.dart';
@@ -11,6 +14,15 @@ import '../http/request/home_request.dart';
 import '../model/home_model.dart';
 
 class ChannelDao {
+  static apiData() async{
+    try{
+      ApiRequest request = ApiRequest();
+      return await Requester().fire(request);
+    } catch(e){
+      logger.d(e);
+    }
+  }
+  static Map apiMap() => Hive.box('home').get('api');
   static Future<HomeModel> homeData() async {
     HomeRequest request = HomeRequest();
     request.add('name', 'home');
@@ -76,5 +88,9 @@ class ChannelDao {
     });
   }
 
+  static trendingData() async {
+    BaseRequest request = TrendingRequest();
+    return await Requester().fire(request);
+  }
   static Future<bool> delete(String name) => create(name, option: 'delete');
 }

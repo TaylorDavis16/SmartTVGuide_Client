@@ -107,7 +107,7 @@ abstract class CollectionTabPageBaseState<T extends CollectionTabPage>
     if (oldName != null) {
       nameController.text = oldName;
     }
-    showModalBottomSheet(
+    await showModalBottomSheet(
         context: widget.context,
         elevation: 5,
         isScrollControlled: true,
@@ -131,24 +131,24 @@ abstract class CollectionTabPageBaseState<T extends CollectionTabPage>
                   ElevatedButton(
                     onPressed: () async {
                       String newName = nameController.text.trim();
-                      // Save new item
-                      if (oldName == null) {
-                        if (items[newName] == null) {
-                          createItem(nameController.text.trim());
+                      if(newName.isNotEmpty){
+                        if (oldName == null) {
+                          if (items[newName] == null) {
+                            createItem(nameController.text.trim());
+                          } else {
+                            showWarnToast(
+                                'Collection $newName is already exist!');
+                          }
                         } else {
-                          showWarnToast(
-                              'Collection $newName is already exist!');
+                          if (items[newName] == null) {
+                            updateItem(oldName, nameController.text.trim());
+                          } else {
+                            showWarnToast('The new name is exited!');
+                          }
                         }
-                      } else {
-                        if (items[newName] == null) {
-                          updateItem(oldName, nameController.text.trim());
-                        } else {
-                          showWarnToast('The new name is exited!');
-                        }
+                      }else {
+                        showWarnToast('The name is empty!');
                       }
-                      // update an existing item
-                      // Clear the text fields
-                      nameController.text = '';
                       Navigator.of(context).pop(); // Close the bottom sheet
                     },
                     child: Text(oldName == null ? 'Create New' : 'Update'),
@@ -159,6 +159,7 @@ abstract class CollectionTabPageBaseState<T extends CollectionTabPage>
                 ],
               ),
             ));
+    nameController.clear();
   }
 
   void initItems();
@@ -209,4 +210,10 @@ abstract class CollectionTabPageBaseState<T extends CollectionTabPage>
   bool get wantKeepAlive => true;
 
   void openPage(String name);
+
+  @override
+  void dispose() {
+    nameController.dispose();
+    super.dispose();
+  }
 }

@@ -34,6 +34,7 @@ class DioAdapter<T> extends RequesterAdapter<T> {
     return buildRes(response, request);
   }
 
+
   ///构建HiNetResponse
   MyNetResponse<T> buildRes(Response? response, BaseRequest request, {DioErrorType? errorType}) {
     return MyNetResponse<T>(

@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:smart_tv_guide/pages/homepage.dart';
 import 'package:smart_tv_guide/pages/hot_page.dart';
 import 'package:smart_tv_guide/pages/my_page.dart';
-import 'package:smart_tv_guide/pages/search_page.dart';
 import 'package:smart_tv_guide/util/app_util.dart';
 
+import '../pages/treanding_page.dart';
 import 'my_navigator.dart';
 
 class TabNavigator extends StatefulWidget {
@@ -30,12 +30,12 @@ class _TabNavigatorState extends State<TabNavigator> {
     _pages = [
       const HomePage(),
       const HotPage(),
-      const SearchPage(),
+      const TrendingPage(),
       const MinePage(),
     ];
     if (!_built) {
       //页面第一次打开时通知打开的是那个tab
-      MyNavigator().onBottomTabChange(_pages[_currentIndex]);
+      MyNavigator().onTabChange(_pages[_currentIndex]);
       _built = true;
     }
   }
@@ -47,7 +47,7 @@ class _TabNavigatorState extends State<TabNavigator> {
         controller: _controller,
         children: _pages,
         onPageChanged: (index) =>
-            MyNavigator().onBottomTabChange(_pages[index]),
+            MyNavigator().onTabChange(_pages[index]),
         physics: const NeverScrollableScrollPhysics(),
       ),
       bottomNavigationBar: theme(

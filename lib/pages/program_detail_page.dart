@@ -68,11 +68,7 @@ class _ProgramDetailState extends State<ProgramDetail>
             Text(widget.program.start.toString()),
             Text(widget.program.stop.toString()),
             Text(widget.program.lang),
-            ElevatedButton(
-              onPressed: () async =>
-                  await MyNavigator().openH5('https://tv.cctv.com'),
-              child: const Text('View'),
-            )
+
           ],
         ));
   }

@@ -60,7 +60,7 @@ class _CollectionChannelFolderPageState extends State<CollectionChannelFolderPag
               child: InkWell(
                 onTap: () => gotoChannel(channel),
                 child: Center(
-                  child: cachedImage(channel.imgURL, channel.displayName),
+                  child: cachedImage(channel),
                 ),
               ),
             ),

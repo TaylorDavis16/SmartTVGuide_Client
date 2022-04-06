@@ -1,8 +1,9 @@
-
 import 'package:hive_flutter/adapters.dart';
+
 part 'channel.g.dart';
+
 @HiveType(typeId: 0)
-class Channel{
+class Channel extends HiveObject {
   @HiveField(0)
   String id = 'unknown';
   @HiveField(1)
@@ -49,25 +50,17 @@ class Channel{
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-          other is Channel &&
-              runtimeType == other.runtimeType &&
-              id == other.id &&
-              displayName == other.displayName &&
-              about == other.about &&
-              imgURL == other.imgURL &&
-              url == other.url;
+      other is Channel &&
+          runtimeType == other.runtimeType &&
+          id == other.id &&
+          displayName == other.displayName;
 
   @override
-  int get hashCode =>
-      id.hashCode ^
-      displayName.hashCode ^
-      about.hashCode ^
-      imgURL.hashCode ^
-      url.hashCode;
+  int get hashCode => id.hashCode ^ displayName.hashCode;
 }
 
 @HiveType(typeId: 1)
-class Program{
+class Program extends HiveObject {
   @HiveField(0)
   String channel = '';
   @HiveField(1)
@@ -103,7 +96,6 @@ class Program{
     data['about'] = about;
     return data;
   }
-
 
   @override
   bool operator ==(Object other) =>

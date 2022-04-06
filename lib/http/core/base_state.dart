@@ -25,23 +25,33 @@ abstract class BaseState<T extends StatefulWidget> extends MyState<T>
 
   get contentChild;
 
+
+  void addScrollListener(){
+    scrollController!.addListener(() {
+      var dis = scrollController!.position.extentAfter;
+      // print('$dis');
+      //当距离底部不足300时加载更多
+      if (dis < 100 &&
+          !loading &&
+          !stopLoading
+          //fix 当列表高度不满屏幕高度时不执行加载更多
+          &&
+          scrollController!.position.maxScrollExtent != 0) {
+        loadData(loadMore: true);
+      }
+      if (scrollController!.position.extentAfter == 0) {
+        bottomMessage(context, stopLoading ? 'You have reached the end' : 'More content is coming......');
+      }
+    });
+  }
+
   @override
   void initState() {
     super.initState();
     logger.i('initiating!!!!!!!!!!!!!');
     if (needScrollController) {
       scrollController = ScrollController();
-      scrollController!.addListener(() {
-        var dis = scrollController!.position.extentAfter;
-        // print('$dis');
-        //当距离底部不足300时加载更多
-        if (dis < 100 && !loading && !stopLoading
-            //fix 当列表高度不满屏幕高度时不执行加载更多
-            && scrollController!.position.maxScrollExtent != 0
-            ) {
-          loadData(loadMore: true);
-        }
-      });
+      addScrollListener();
     }
     loadData();
   }
@@ -72,7 +82,7 @@ abstract class BaseState<T extends StatefulWidget> extends MyState<T>
 
   Future<void> loadData({loadMore = false}) async {
     if (!loading) {
-        loading = true;
+      loading = true;
       if (!loadMore) {
         pageIndex = 0;
       }
@@ -88,10 +98,10 @@ abstract class BaseState<T extends StatefulWidget> extends MyState<T>
       } on RequestError catch (e) {
         logger.e(e.message);
         showWarnToast('Network Error 1');
-      } catch (e){
+      } catch (e) {
         logger.e(e.toString());
         showWarnToast('Network Error 2');
-      }finally {
+      } finally {
         loading = false;
       }
     }

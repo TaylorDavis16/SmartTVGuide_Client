@@ -24,6 +24,12 @@ class _CollectionProgramPageState
   }
 
   @override
+  void refreshItems() {
+    UserDao.saveCollection();
+    super.refreshItems();
+  }
+
+  @override
   void openPage(String name) {
     logger.i(name);
     MyNavigator().onJumpTo(RouteStatus.programCollectionFolder, args: {
@@ -50,7 +56,7 @@ class _CollectionProgramPageState
         for (var program in remove) {
           noLongerExist[program.title] = program.channel;
         }
-        await ProgramDao.updateProgramNum(noLongerExist);
+        ProgramDao.updateProgramNum(noLongerExist);
       }
       refreshItems();
     }

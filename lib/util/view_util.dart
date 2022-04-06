@@ -1,34 +1,33 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:smart_tv_guide/model/channel.dart';
 
 import 'app_util.dart';
-import 'format_util.dart';
-
 ///带缓存的image
-Widget cachedImage(String url, String alternative,
+Widget cachedImage(Channel channel,
     {double? width, double? height, BoxFit? fit = BoxFit.contain}) {
   var wrap = Wrap(
-    children: [const Icon(Icons.tv), Text(alternative)],
+    children: [const Icon(Icons.tv), Text(channel.displayName)],
   );
-  return url == 'unknown'
+  return channel.imgURL == 'unknown'
       ? wrap
       : CachedNetworkImage(
-          height: height,
-          width: width,
-          fit: fit,
-          placeholder: (
-            BuildContext context,
-            String url,
+      height: height,
+      width: width,
+      fit: fit,
+      placeholder: (
+          BuildContext context,
+          String url,
           ) =>
-              Container(color: Colors.grey[200]),
-          errorWidget: (
-            BuildContext context,
-            String url,
-            dynamic error,
+          Container(color: Colors.grey[200]),
+      errorWidget: (
+          BuildContext context,
+          String url,
+          dynamic error,
           ) =>
-              wrap,
-          imageUrl: url);
+      wrap,
+      imageUrl: channel.imgURL);
 }
 
 ///黑色线性渐变
@@ -59,9 +58,6 @@ blackLinearGradient({bool fromTop = false}) {
 ///带文字的小图标
 smallIconText(IconData iconData, var text) {
   var style = const TextStyle(fontSize: 12, color: Colors.grey);
-  if (text is int) {
-    text = countFormat(text);
-  }
   return [
     Icon(
       iconData,

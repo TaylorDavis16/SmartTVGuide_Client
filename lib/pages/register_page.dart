@@ -253,7 +253,7 @@ class _RegisterPageState extends State<RegisterPage>
                   : controller.selected);
           if (result['code'] == 1) {
             showToast('Register Successful');
-            MyNavigator().onJumpTo(RouteStatus.home, args: {"page": 0});
+            MyNavigator().onJumpTo(RouteStatus.tabNavigator, args: {"page": 0});
           } else {
             showWarnToast('Register Failed');
             showWarnToast(result['reason']);

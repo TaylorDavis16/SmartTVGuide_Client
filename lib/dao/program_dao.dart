@@ -12,28 +12,19 @@ import '../http/request/hot_request.dart';
 import '../model/channel.dart';
 
 class ProgramDao {
-  static Future<HotProgramModel> hotProgramData(
-          int pageIndex, int pageSize) async =>
-      _send(_hotRequest(pageIndex, pageSize, "hottest"));
-
-  static Future<HotProgramModel> hotCollectionData(
-          int pageIndex, int pageSize) async =>
-      _send(_hotRequest(pageIndex, pageSize, "collection"));
-
-  static Future<HotProgramModel> _send(BaseRequest request) async {
+  static Future<HotProgramModel> hotProgramData(int pageIndex, int pageSize) async {
+    BaseRequest request = HotRequest()
+        .add('pageIndex', pageIndex)
+        .add('pageSize', pageSize)
+        .add('email', UserDao.getUser().email!);
     var result = await Requester().fire(request);
+
     if (result['code'] != 1) {
       throw RequestError(result['code'], result['message']);
     }
     return HotProgramModel.fromJson(result['model']);
   }
 
-  static BaseRequest _hotRequest(int pageIndex, int pageSize, String type) =>
-      HotRequest()
-          .add('pageIndex', pageIndex)
-          .add('pageSize', pageSize)
-          .add('email', UserDao.getUser().email!)
-          .add('type', type);
 
   static retrieve() async {
     BaseRequest programRequest =

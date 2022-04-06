@@ -24,6 +24,12 @@ class _CollectionChannelPageState
   }
 
   @override
+  void refreshItems() {
+    UserDao.saveCollection();
+    super.refreshItems();
+  }
+
+  @override
   void openPage(String name) {
     logger.i(name);
     MyNavigator().onJumpTo(RouteStatus.channelCollectionFolder, args: {
@@ -46,7 +52,7 @@ class _CollectionChannelPageState
           .where((channel) => !UserDao.containsChannel(channel))
           .toList();
       if (noLongerExist.isNotEmpty) {
-        await ChannelDao.updateCollectNum(noLongerExist);
+        ChannelDao.updateCollectNum(noLongerExist);
       }
       refreshItems();
     }

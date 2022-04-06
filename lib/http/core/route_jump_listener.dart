@@ -3,16 +3,19 @@ import 'package:smart_tv_guide/navigator/tab_navigator.dart';
 import 'package:smart_tv_guide/pages/channel_detail_page.dart';
 import 'package:smart_tv_guide/pages/collection_channel_folder_page.dart';
 import 'package:smart_tv_guide/pages/collection_program_folder_page.dart';
-import 'package:smart_tv_guide/pages/home_tab_page.dart';
 import 'package:smart_tv_guide/pages/homepage.dart';
+import 'package:smart_tv_guide/pages/hot_page.dart';
 import 'package:smart_tv_guide/pages/login_page.dart';
 import 'package:smart_tv_guide/pages/my_page.dart';
+import 'package:smart_tv_guide/pages/group_search_page.dart';
 import 'package:smart_tv_guide/pages/program_detail_page.dart';
+import 'package:smart_tv_guide/pages/program_search_page.dart';
 import 'package:smart_tv_guide/pages/register_page.dart';
-import 'package:smart_tv_guide/pages/search_page.dart';
 
 import '../../pages/collection_page.dart';
-
+import '../../pages/group_detail_page.dart';
+import '../../pages/hot_tab_collection_page.dart';
+import '../../pages/treanding_page.dart';
 
 
 ///路由信息
@@ -33,34 +36,27 @@ pageWrap(Widget child) {
   return MaterialPage(key: ValueKey(child.hashCode), child: child);
 }
 
+Map _statusMap = {
+  TabNavigator: RouteStatus.tabNavigator,
+  HomePage: RouteStatus.tabNavigator,
+  HotPage: RouteStatus.tabNavigator,
+  TrendingPage: RouteStatus.tabNavigator,
+  MinePage: RouteStatus.tabNavigator,
+  ProgramSearchPage: RouteStatus.programSearch,
+  ChannelDetail: RouteStatus.channelDetail,
+  ProgramDetail: RouteStatus.programDetail,
+  HotTabCollectionPage: RouteStatus.hotCollectionTab,
+  RegisterPage: RouteStatus.registration,
+  LoginPage: RouteStatus.login,
+  CollectionPage: RouteStatus.collection,
+  CollectionChannelFolderPage: RouteStatus.channelCollectionFolder,
+  CollectionProgramFolderPage: RouteStatus.programCollectionFolder,
+  GroupSearchPage: RouteStatus.groupSearch,
+  GroupDetailPage : RouteStatus.groupDetail,
+};
+
 ///获取page对应的RouteStatus
-RouteStatus getStatus(MaterialPage page) {
-  if (page.child is HomeTabPage || page.child is TabNavigator) {
-    return RouteStatus.home;
-  } else if (page.child is HomePage) {
-    return RouteStatus.hot;
-  } else if (page.child is SearchPage) {
-    return RouteStatus.search;
-  } else if (page.child is ChannelDetail) {
-    return RouteStatus.channelDetail;
-  } else if (page.child is ProgramDetail) {
-    return RouteStatus.programDetail;
-  } else if (page.child is MinePage) {
-    return RouteStatus.mine;
-  } else if (page.child is RegisterPage) {
-    return RouteStatus.registration;
-  } else if (page.child is LoginPage) {
-    return RouteStatus.login;
-  } else if (page.child is CollectionPage) {
-    return RouteStatus.collection;
-  } else if (page.child is CollectionChannelFolderPage) {
-    return RouteStatus.channelCollectionFolder;
-  } else if (page.child is CollectionProgramFolderPage) {
-    return RouteStatus.programCollectionFolder;
-  } else {
-    return RouteStatus.unknown;
-  }
-}
+RouteStatus getStatus(MaterialPage page) => _statusMap[page.child.runtimeType] ?? RouteStatus.unknown;
 
 ///获取routeStatus在页面栈中的位置
 int getPageIndex(List<MaterialPage> pages, RouteStatus routeStatus) {
@@ -75,17 +71,19 @@ int getPageIndex(List<MaterialPage> pages, RouteStatus routeStatus) {
 
 ///自定义路由封装，路由状态
 enum RouteStatus {
-  home,
-  hot,
-  search,
-  mine,
+  tabNavigator,
+  programSearch,
   login,
   registration,
+  groupSearch,
+  groupDetail,
   channelDetail,
   programDetail,
   collection,
+  hotCollectionTab,
   channelCollectionFolder,
   programCollectionFolder,
+  peopleSearch,
   unknown,
 }
 

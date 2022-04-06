@@ -178,7 +178,7 @@ class _LoginPageState extends State<LoginPage>
   _login(BuildContext context) async {
     var result = await UserDao.login(_emailText.text, _passwordText.text);
     if (result['code'] == 1) {
-      MyNavigator().onJumpTo(RouteStatus.home, args: {"page": 0});
+      MyNavigator().onJumpTo(RouteStatus.tabNavigator, args: {"page": 0});
     } else {
       bottomMessage(context, 'Login failed');
       showWarnToast(result['reason']);

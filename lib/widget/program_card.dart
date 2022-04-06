@@ -42,7 +42,7 @@ class ProgramCard extends StatelessWidget {
             width: height * (16 / 9),
             height: height,
             child: Center(
-              child: cachedImage(theChannel().imgURL, theChannel().displayName,
+              child: cachedImage(theChannel(),
                   fit: BoxFit.fitWidth),
             ),
           ),
@@ -94,16 +94,9 @@ class ProgramCard extends StatelessWidget {
           children: [
             Row(
               children: [
-                ...smallIconText(Icons.ondemand_video, 99),
-                hiSpace(width: 5),
-                ...smallIconText(Icons.list_alt, 58)
+                ...smallIconText(Icons.language, program.lang),
               ],
             ),
-            const Icon(
-              Icons.more_vert_sharp,
-              color: Colors.grey,
-              size: 15,
-            )
           ],
         )
       ],

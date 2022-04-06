@@ -7,18 +7,11 @@ import 'package:logger/logger.dart';
 
 import '../http/core/route_jump_listener.dart';
 import '../model/channel.dart';
-import '../model/user.dart';
 import '../navigator/my_navigator.dart';
 import '../tools/shared_variables.dart';
 
-Future<void> hiveInit() async {
-  await Hive.initFlutter();
-  Hive.registerAdapter(ChannelAdapter());
-  Hive.registerAdapter(ProgramAdapter());
-  Hive.registerAdapter(UserAdapter());
-  await Hive.openBox('login_detail');
-  await Hive.openBox('home');
-  // Hive.box('home').delete('channelMap');
+void hiveClose() async{
+  await Hive.close();
 }
 
 class SimpleLogFilter extends LogFilter {
@@ -66,7 +59,7 @@ void gotoProgram(Program program) {
   MyNavigator().onJumpTo(RouteStatus.programDetail, args: {"program": program});
 }
 
-void sortNames(List list){
+void sortNames(List list) {
   list.sort();
   int d = list.indexOf('Default');
   if (d != 0) {
@@ -87,5 +80,15 @@ Future<bool> requestSend(Future<bool> Function() send) async {
   } catch (e) {
     logger.w(e);
     return false;
+  }
+}
+
+
+extension Unique<E, Id> on List<E> {
+  List<E> unique([Id Function(E element)? id, bool inPlace = true]) {
+    final ids = <dynamic>{};
+    var list = inPlace ? this : List<E>.from(this);
+    list.retainWhere((x) => ids.add(id != null ? id(x) : x as Id));
+    return list;
   }
 }

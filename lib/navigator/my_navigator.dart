@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:smart_tv_guide/navigator/tab_navigator.dart';
-
 import 'package:url_launcher/url_launcher.dart';
 
 import '../http/core/route_jump_listener.dart';
@@ -42,7 +40,7 @@ class MyNavigator extends _RouteJumpListener {
   }
 
   ///首页底部tab切换监听
-  void onBottomTabChange(Widget page) {
+  void onTabChange(Widget page) {
     _bottomTab = RouteStatusInfo(getStatus(pageWrap(page)), page);
     _notify(_bottomTab);
   }
@@ -78,11 +76,11 @@ class MyNavigator extends _RouteJumpListener {
   }
 
   void _notify(RouteStatusInfo? current) {
-    logger.d('current: $current');
-    if (current?.page is TabNavigator && _bottomTab != null) {
-      //如果打开的是首页，则明确到首页具体的tab
+    if (current?.routeStatus == RouteStatus.tabNavigator && _bottomTab != null) {
+      //定位具体的tab
       current = _bottomTab!;
     }
+    logger.d('current: $current');
     for (var listener in _listeners) {
       listener(current!, _current!);
     }

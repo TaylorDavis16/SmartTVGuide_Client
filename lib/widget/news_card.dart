@@ -38,7 +38,7 @@ class NewsCard extends StatelessWidget {
     final size = MediaQuery.of(context).size;
     return Stack(
       children: [
-        cachedImage(channel.imgURL, channel.displayName,
+        cachedImage(channel,
             width: size.width / 2 - 10, height: 120),
         Positioned(
           left: 0,
