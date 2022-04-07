@@ -19,45 +19,51 @@ class _GroupSearchPageState extends State<GroupSearchPage> {
 
   @override
   Widget build(BuildContext context) {
+    int id = UserDao.hasLogin() ? UserDao.getUser().id! : -1;
     return FutureBuilder(
-        future: search(''),
+        future: search(),
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           var widget = snapshot.connectionState == ConnectionState.done
               ? SliverList(
-            delegate: SliverChildBuilderDelegate(
-                  (BuildContext context, int index) {
-                return Padding(
-                  padding: const EdgeInsets.only(left: 10, right: 10),
-                  child: Card(
-                    color: Colors.amberAccent,
-                    elevation: 4,
-                    margin: const EdgeInsets.symmetric(vertical: 10),
-                    child: ListTile(
-                      leading: Text(
-                        groups[index]['name'].substring(0, 1),
-                        style: const TextStyle(fontSize: 24),
-                      ),
-                      title: Text(
-                          '${groups[index]['name']}    Size:${groups[index]['size']}'),
-                      subtitle: Text(
-                          'Owner: ${groups[index]['username']}. Created at ${DateTime.fromMillisecondsSinceEpoch(groups[index]['date'])}'),
-                      trailing: IconButton(
-                        icon: const Icon(Icons.add),
-                        onPressed: () => showAddConfirm(groups[index]),
-                      ),
-                    ),
+                  delegate: SliverChildBuilderDelegate(
+                    (BuildContext context, int index) {
+                      return Padding(
+                        padding: const EdgeInsets.only(left: 10, right: 10),
+                        child: Card(
+                          color: groups[index]['owner'] == id
+                              ? Colors.lightBlueAccent
+                              : Colors.orange.shade100,
+                          elevation: 4,
+                          margin: const EdgeInsets.symmetric(vertical: 10),
+                          child: ListTile(
+                            leading: Text(
+                              groups[index]['name'].substring(0, 1),
+                              style: const TextStyle(fontSize: 24),
+                            ),
+                            title: Text(
+                                '${groups[index]['name']}    Size:  ${groups[index]['size']}'),
+                            subtitle: Text(
+                                'Owner: ${groups[index]['username']}. Created at ${DateTime.fromMillisecondsSinceEpoch(groups[index]['date'])}'),
+                            trailing: IconButton(
+                              icon: const Icon(Icons.add),
+                              onPressed: () => showAddConfirm(groups[index]),
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                    childCount: groups.length, // 1000 list items
                   ),
-                );
-              },
-              childCount: groups.length, // 1000 list items
-            ),
-          )
-              : SliverList(delegate: SliverChildListDelegate([const Center(
-            child: Text(
-              'Loading......Please Wait',
-              style: TextStyle(fontSize: 30),
-            ),
-          )]));
+                )
+              : SliverList(
+                  delegate: SliverChildListDelegate([
+                  const Center(
+                    child: Text(
+                      'Loading......Please Wait',
+                      style: TextStyle(fontSize: 30),
+                    ),
+                  )
+                ]));
           return Scaffold(
             body: CustomScrollView(
               slivers: [
@@ -69,8 +75,8 @@ class _GroupSearchPageState extends State<GroupSearchPage> {
                   title: const Text('Group'),
                   actions: [
                     IconButton(
-                      onPressed: () =>
-                          MyNavigator().onJumpTo(RouteStatus.groupDetail),
+                      onPressed: () => UserDao.ensureLogin(() =>
+                          MyNavigator().onJumpTo(RouteStatus.groupDetail)),
                       icon: const Icon(Icons.supervised_user_circle_sharp),
                     ),
                   ],
@@ -95,7 +101,7 @@ class _GroupSearchPageState extends State<GroupSearchPage> {
                     actions: [
                       // Navigate to the Search Screen
                       IconButton(
-                          onPressed: () => search(controller.text),
+                          onPressed: () => setState(() {}),
                           icon: const Icon(Icons.search))
                     ],
                   ),
@@ -106,44 +112,39 @@ class _GroupSearchPageState extends State<GroupSearchPage> {
             ),
           );
         });
-
   }
 
-  Future<void> search(String text) async {
-    if(text.trim().isNotEmpty){
+  Future<void> search() async{
+    String text = controller.text.trim();
+    if (text.isNotEmpty) {
       controller.clear();
-      var result = await GroupDao.search(text);
+      var result = await GroupDao.search(controller.text);
       if (result['code'] == 1) {
-        setState(() {
-          groups = result['result'];
-        });
+        groups = result['result'];
+        setState(() {});
       }
     }
   }
 
   void add(dynamic info) {
-    if (UserDao.hasLogin()) {
+    UserDao.ensureLogin(() {
       int id = UserDao.getUser().id!;
-      if (UserDao.getGroupData()
-          .where((group) => group.owner == id && group.gid == info['gid'])
-          .toList()
-          .isEmpty) {
+      if (!UserDao.getGroupData()
+          .any((group) => group.owner == id && group.gid == info['gid'])) {
         GroupDao.join(
             info['gid'], info['owner'], info['username'], info['name']);
       } else {
         showWarnToast('This is your own group!');
       }
-    } else {
-      showWarnToast("Please login first");
-      MyNavigator().onJumpTo(RouteStatus.login);
-    }
+    });
   }
 
   Future showAddConfirm(dynamic info) async {
     await showDialog(
         context: context,
         builder: (BuildContext context) => AlertDialog(
-              title: Text('Are you sure you want to join in ${info['name']}?'),
+              title: Text(
+                  'Are you sure you want to join in ${info['name']} created by ${info['username']}?'),
               actions: [
                 ElevatedButton(
                     onPressed: () {

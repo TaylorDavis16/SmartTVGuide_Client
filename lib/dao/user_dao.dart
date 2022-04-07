@@ -7,11 +7,13 @@ import 'package:smart_tv_guide/model/collection_model.dart';
 import 'package:smart_tv_guide/model/user.dart';
 
 import '../http/core/requester.dart';
+import '../http/core/route_jump_listener.dart';
 import '../http/request/base_request.dart';
 import '../http/request/login_request.dart';
 import '../http/request/registration_request.dart';
 import '../model/channel.dart';
 import '../model/group.dart';
+import '../navigator/my_navigator.dart';
 import '../util/app_util.dart';
 import '../util/view_util.dart';
 
@@ -20,6 +22,15 @@ class UserDao {
   static const boardingPass = "boarding-pass";
 
   UserDao._internal();
+
+  static ensureLogin(Function() doStuff){
+    if (hasLogin()) {
+      doStuff();
+    } else {
+      showWarnToast("Please login first");
+      MyNavigator().onJumpTo(RouteStatus.login);
+    }
+  }
 
   static login(String email, String password) async {
     BaseRequest request = LoginRequest();
@@ -49,10 +60,10 @@ class UserDao {
     logger.d(map);
   }
 
-  static retrieveGroupData() async {
+  static Future retrieveGroupData() async {
     var result = await GroupDao.retrieve();
     if (result['code'] == 1) {
-      logger.i(result['groups']);
+      // logger.i(result['groups']);
       _loginBox.put('group', result['groups'].map((group) => Group.fromJson(group)).toList());
     }
   }
@@ -134,9 +145,4 @@ class UserDao {
   static bool containsProgram(Program program) =>
       getProgramCollection().values.any((list) => list.contains(program));
 
-  static void updateAllChannelCollection(Map<String, List<String>> map) =>
-      _loginBox.get('collection')['channel_collection'] = map;
-
-  static void updateAllProgramCollection(Map<String, List<Program>> map) =>
-      _loginBox.get('collection')['program_collection'] = map;
 }

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:smart_tv_guide/dao/group_dao.dart';
 import 'package:smart_tv_guide/dao/user_dao.dart';
 import 'package:smart_tv_guide/model/group.dart';
+import 'package:smart_tv_guide/util/app_util.dart';
+import 'package:smart_tv_guide/widget/loading_container.dart';
 
 import '../util/view_util.dart';
 import '../widget/my_expansion_tile.dart';
@@ -13,31 +15,35 @@ class GroupDetailPage extends StatefulWidget {
   State<GroupDetailPage> createState() => _GroupDetailPageState();
 }
 
-class _GroupDetailPageState extends State<GroupDetailPage>
-    with AutomaticKeepAliveClientMixin {
-  List<dynamic> allGroups = UserDao.getGroupData();
+class _GroupDetailPageState extends State<GroupDetailPage> {
+  List<dynamic> allGroups = [];
   late List<dynamic> myGroups;
   late List<dynamic> otherGroups;
-  final ScrollController _controller = ScrollController();
   final TextEditingController nameController = TextEditingController();
-  final TextEditingController codeController = TextEditingController();
+  bool isLoading = true;
 
   @override
   void initState() {
     super.initState();
+    refresh();
+  }
+
+  void retrieveData() {
+    allGroups = UserDao.getGroupData();
+    logger.i(allGroups);
     int id = UserDao.getUser().id!;
     myGroups = allGroups.where((group) => group.owner == id).toList();
     otherGroups = allGroups.where((group) => group.owner != id).toList();
-    _controller.addListener(() {
-      if (_controller.position.extentAfter == 0) {
-        bottomMessage(context, 'You have reached the end');
-      }
-    });
+  }
+
+  Future<void> refresh() async{
+    await UserDao.retrieveGroupData();
+    retrieveData();
+    setState(() {isLoading = false;});
   }
 
   @override
   Widget build(BuildContext context) {
-    super.build(context);
     return Scaffold(
       appBar: AppBar(
         title: const Text("My Groups"),
@@ -46,18 +52,24 @@ class _GroupDetailPageState extends State<GroupDetailPage>
               onPressed: () => _showForm(null), icon: const Icon(Icons.add))
         ],
       ),
-      body: SingleChildScrollView(
-        controller: _controller,
-        child: allGroups.isEmpty
-            ? _emptyText()
-            : Column(
+      body: LoadingContainer(
+        isLoading: isLoading,
+        child: RefreshIndicator(
+            onRefresh: refresh,
+            child:ListView(
+              children: [allGroups.isEmpty
+                  ? _emptyText()
+                  : Column(
                 children: [
                   if (myGroups.isNotEmpty)
-                    _myGroupExpansionTile(myGroups, 'Owner', 'My Groups'),
+                    _expansionTile(
+                        myGroups, 'Owner', 'My Groups', myGroupCard),
                   if (otherGroups.isNotEmpty)
-                    _otherGroupExpansionTile(otherGroups, 'Other Groups', 'Joined In'),
+                    _expansionTile(otherGroups, 'Other Groups', 'Joined In',
+                        otherGroupCard),
                 ],
-              ),
+              )],
+            ) ),
       ),
     );
   }
@@ -80,19 +92,14 @@ class _GroupDetailPageState extends State<GroupDetailPage>
         ],
       );
 
-  _myGroupExpansionTile(List groups, String title, String subtitle) => MyExpansionTile(
-    origin: groups,
-    title: title,
-    subtitle: subtitle,
-    toElement: (dynamic group) => myGroupCard(group),
-  );
-
-  _otherGroupExpansionTile(List groups, String title, String subtitle) => MyExpansionTile(
-    origin: groups,
-    title: title,
-    subtitle: subtitle,
-    toElement: (dynamic group) => otherGroupCard(group),
-  );
+  _expansionTile(List groups, String title, String subtitle,
+          Widget Function(dynamic group) map) =>
+      MyExpansionTile(
+        origin: groups,
+        title: title,
+        subtitle: subtitle,
+        toElement: (dynamic group) => map(group),
+      );
 
   void _showForm(String? oldName, {dynamic group}) async {
     if (oldName != null) {
@@ -150,20 +157,22 @@ class _GroupDetailPageState extends State<GroupDetailPage>
     nameController.clear();
   }
 
-  Widget myGroupCard(dynamic group) => card(group, buttons: [
+  Widget myGroupCard(dynamic group) => card(group, color: Colors.lightBlueAccent, buttons: [
         IconButton(
             icon: const Icon(Icons.edit),
             onPressed: () => _showForm(group.name, group: group)),
         IconButton(
             icon: const Icon(Icons.delete),
-            onPressed: () => showConfirm("Are you sure to dismiss this group?", group, deleteGroup)),
+            onPressed: () => showConfirm(
+                "Are you sure to dismiss this group?", group, deleteGroup)),
       ]);
 
   Widget otherGroupCard(dynamic group) => card(group, buttons: [
-    IconButton(
-        icon: const Icon(Icons.delete),
-        onPressed: () => showConfirm("Are you sure to leave this group?", group, quit)),
-  ]);
+        IconButton(
+            icon: const Icon(Icons.delete),
+            onPressed: () =>
+                showConfirm("Are you sure to leave this group?", group, quit)),
+      ]);
 
   Widget card(dynamic group, {Color? color, required List<Widget> buttons}) =>
       GestureDetector(
@@ -230,11 +239,8 @@ class _GroupDetailPageState extends State<GroupDetailPage>
   @override
   void dispose() {
     super.dispose();
-    _controller.dispose();
+    nameController.dispose();
   }
-
-  @override
-  bool get wantKeepAlive => true;
 
   void openPage(dynamic group) {}
 
@@ -257,7 +263,7 @@ class _GroupDetailPageState extends State<GroupDetailPage>
             ));
   }
 
-  Future quit(group) async{
+  Future quit(group) async {
     if (await GroupDao.quit(group.gid)) {
       otherGroups.remove(group);
       refreshItems();

@@ -19,7 +19,7 @@ class _MinePageState extends State<MinePage> {
   @override
   Widget build(BuildContext context) {
     bool hasLogin = UserDao.hasLogin();
-    String text = hasLogin ? 'Logout' : 'Login';
+    String loginStatus = hasLogin ? 'Logout' : 'Login';
     return Scaffold(
       appBar: appBar("Mine"),
       body: Center(
@@ -29,12 +29,13 @@ class _MinePageState extends State<MinePage> {
               onPressed: () {
                 if (hasLogin) {
                   UserDao.clearLogin();
-                  MyNavigator().onJumpTo(RouteStatus.tabNavigator, args: {"page": 0});
+                  MyNavigator()
+                      .onJumpTo(RouteStatus.tabNavigator, args: {"page": 0});
                 } else {
                   MyNavigator().onJumpTo(RouteStatus.login);
                 }
               },
-              child: Text(text),
+              child: Text(loginStatus),
             ),
             const Padding(padding: EdgeInsets.only(top: 10)),
             ElevatedButton(
@@ -47,11 +48,10 @@ class _MinePageState extends State<MinePage> {
                 onPressed: () => MyNavigator().onJumpTo(RouteStatus.collection),
                 child: const Text('My Collection'),
               ),
-            if (hasLogin)
-              ElevatedButton(
-                onPressed: () => MyNavigator().onJumpTo(RouteStatus.groupSearch),
-                child: const Text('Groups'),
-              ),
+            ElevatedButton(
+              onPressed: () => MyNavigator().onJumpTo(RouteStatus.groupSearch),
+              child: const Text('Groups'),
+            ),
           ],
         ),
       ),

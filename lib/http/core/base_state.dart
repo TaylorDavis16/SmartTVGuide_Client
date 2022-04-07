@@ -14,6 +14,7 @@ abstract class BaseState<T extends StatefulWidget> extends MyState<T>
   bool removeTop;
   bool needScrollController;
   bool stopLoading = false;
+  bool calm = false;
   ScrollController? scrollController;
 
   BaseState({
@@ -39,8 +40,10 @@ abstract class BaseState<T extends StatefulWidget> extends MyState<T>
           scrollController!.position.maxScrollExtent != 0) {
         loadData(loadMore: true);
       }
-      if (scrollController!.position.extentAfter == 0) {
+      if (scrollController!.position.extentAfter == 0 && !calm) {
         bottomMessage(context, stopLoading ? 'You have reached the end' : 'More content is coming......');
+        calm = true;
+        Future.delayed(const Duration(seconds: 5)).then((_) => calm = false);
       }
     });
   }

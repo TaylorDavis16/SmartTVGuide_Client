@@ -17,17 +17,20 @@ class ProgramSearchPage extends StatefulWidget {
 }
 
 class _ProgramSearchPageState extends State<ProgramSearchPage> {
-  final TextEditingController controller = TextEditingController();
+  final TextEditingController searchController = TextEditingController();
   List<dynamic> channels = [];
   List<dynamic> programs = [];
   final ScrollController _controller = ScrollController();
+  bool calm = false;
 
   @override
   void initState() {
     super.initState();
     _controller.addListener(() {
-      if (_controller.position.extentAfter == 0) {
+      if (_controller.position.extentAfter == 0 && !calm) {
         bottomMessage(context, 'You have reached the end');
+        calm = true;
+        Future.delayed(const Duration(seconds: 5)).then((_) => calm = false);
       }
     });
   }
@@ -35,7 +38,7 @@ class _ProgramSearchPageState extends State<ProgramSearchPage> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-        future: search(''),
+        future: search(),
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           var widget = snapshot.connectionState == ConnectionState.done
               ? SingleChildScrollView(
@@ -82,12 +85,12 @@ class _ProgramSearchPageState extends State<ProgramSearchPage> {
                     borderRadius: BorderRadius.circular(5)),
                 child: Center(
                   child: TextField(
-                    controller: controller,
+                    controller: searchController,
                     decoration: InputDecoration(
                         prefixIcon: const Icon(Icons.keyboard),
                         suffixIcon: IconButton(
                           icon: const Icon(Icons.clear),
-                          onPressed: () => controller.clear(),
+                          onPressed: () => searchController.clear(),
                         ),
                         hintText: 'Search...',
                         border: InputBorder.none),
@@ -96,7 +99,7 @@ class _ProgramSearchPageState extends State<ProgramSearchPage> {
               ),
               actions: [
                 IconButton(
-                    onPressed: () => search(controller.text.trim()),
+                    onPressed: () => setState(() {}),
                     icon: const Icon(Icons.search))
               ],
             ),
@@ -105,9 +108,9 @@ class _ProgramSearchPageState extends State<ProgramSearchPage> {
         });
   }
 
-  Future<void> search(String characters) async {
-    if (characters != '') {
-      setState(() {});
+  Future<void> search() async {
+    String characters = searchController.text.trim();
+    if (characters.isNotEmpty) {
       String origin = characters;
       characters =
           PinyinHelper.getPinyinE(characters, separator: '').toLowerCase();
@@ -149,7 +152,7 @@ class _ProgramSearchPageState extends State<ProgramSearchPage> {
   @override
   void dispose() {
     super.dispose();
-    controller.dispose();
+    searchController.dispose();
     _controller.dispose();
   }
 }

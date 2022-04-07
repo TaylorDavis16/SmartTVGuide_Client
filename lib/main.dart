@@ -65,7 +65,7 @@ class _AppEntryState extends State<AppEntry> {
     //   logger.i(UserDao.getChannelCollection());
     //   logger.i(UserDao.getProgramCollection());
     // }
-    // Hive.box('home').delete('channelMap');
+    Hive.box('home').delete('channelMap');
     // Share.map['switch'] = changeTheme;
   }
 

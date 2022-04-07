@@ -100,8 +100,11 @@ class _HomePageState extends MyState<HomePage>
         _homeBox.put('channels',
             model.channelMap.values.map<String>((e) => e.id).toList());
         _collectProgram(model);
+      }
+      if (!_homeBox.containsKey('api')) {
         handleData();
       }
+
       List<String> channelsId = _homeBox.get('channels');
       tabNames = ['All', 'Beijing', 'CCTV', 'NBTV', 'Other'];
       channelNameList

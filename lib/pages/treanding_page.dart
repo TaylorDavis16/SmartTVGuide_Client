@@ -3,7 +3,6 @@ import 'package:hive_flutter/adapters.dart';
 import 'package:smart_tv_guide/http/core/route_jump_listener.dart';
 import 'package:smart_tv_guide/navigator/my_navigator.dart';
 import 'package:smart_tv_guide/util/app_util.dart';
-import 'package:smart_tv_guide/widget/loading_container.dart';
 
 import '../dao/channel_dao.dart';
 
@@ -14,13 +13,13 @@ class TrendingPage extends StatefulWidget {
   State<TrendingPage> createState() => _TrendingPageState();
 }
 
-class _TrendingPageState extends State<TrendingPage> with AutomaticKeepAliveClientMixin{
+class _TrendingPageState extends State<TrendingPage>
+    with AutomaticKeepAliveClientMixin {
   List<dynamic> channels = [];
-  bool _isLoading = true;
 
   @override
   initState() {
-    loadData();
+    loadData(force: true);
     super.initState();
   }
 
@@ -42,10 +41,9 @@ class _TrendingPageState extends State<TrendingPage> with AutomaticKeepAliveClie
         padding: const EdgeInsets.all(10),
         child: RefreshIndicator(
           onRefresh: loadData,
-          child: LoadingContainer(
-            isLoading: _isLoading,
-            child: Column(
-              children: [Expanded(
+          child: Column(
+            children: [
+              Expanded(
                 child: ListView.builder(
                   itemCount: channels.length,
                   itemBuilder: (context, index) => Card(
@@ -59,32 +57,33 @@ class _TrendingPageState extends State<TrendingPage> with AutomaticKeepAliveClie
                         style: const TextStyle(fontSize: 24),
                       ),
                       title: Text(channels[index].displayName),
-                      subtitle:
-                      Text('${channels[index].about}'),
+                      subtitle: Text('${channels[index].about}'),
                     ),
                   ),
                 ),
-              )],
-            ),
+              )
+            ],
           ),
         ),
       ),
     );
   }
 
-  Future<void> loadData() async{
+  Future<void> loadData({force = false}) async {
     var searchBox = Hive.box('search');
     Map channelMap = Hive.box('home').get('channelMap');
-    var result = await ChannelDao.trendingData();
-    if(result['code'] == 1) {
-      if(result['new']){
+    var result = await ChannelDao.trendingData(force: force);
+    if (result != null) {
+      if (result['code'] == 1 && (result['new'] || force)) {
         searchBox.put('channels', result['data']);
+        channels = result['data'].map((id) => channelMap[id]).toList();
       }
-      channels = searchBox.get('channels').map((id) => channelMap[id]).toList();
-      setState(() {
-        _isLoading = false;
-      });
+    } else {
+      if (channels.isEmpty && searchBox.get('channels') != null) {
+        channels = searchBox.get('channels').map((id) => channelMap[id]).toList();
+      }
     }
+    setState(() {});
   }
 
   @override

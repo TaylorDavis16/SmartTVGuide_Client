@@ -88,9 +88,14 @@ class ChannelDao {
     });
   }
 
-  static trendingData() async {
-    BaseRequest request = TrendingRequest();
-    return await Requester().fire(request);
+  static trendingData({force = false}) async {
+    try {
+      BaseRequest request = TrendingRequest().add('force', force);
+      return await Requester().fire(request);
+    } catch (e){
+      logger.w(e);
+    }
+
   }
   static Future<bool> delete(String name) => create(name, option: 'delete');
 }

@@ -8,7 +8,6 @@ import 'package:smart_tv_guide/util/format_util.dart';
 import 'package:smart_tv_guide/widget/appbar.dart';
 import 'package:smart_tv_guide/widget/multi_select_box.dart';
 
-import '../http/core/route_jump_listener.dart';
 import '../navigator/my_navigator.dart';
 import '../util/color.dart';
 import '../util/view_util.dart';
@@ -26,6 +25,7 @@ class _ChannelDetailState extends BaseState<ChannelDetail>
     with MultiSelectSupport<ChannelDetail> {
   late List<Map<String, dynamic>> _items;
   bool marked = false;
+  bool calm = false;
   late List<Color> colors;
   Map apiData = ChannelDao.apiMap();
 
@@ -40,8 +40,10 @@ class _ChannelDetailState extends BaseState<ChannelDetail>
   @override
   void addScrollListener() {
     scrollController?.addListener(() {
-      if (scrollController?.position.extentAfter == 0) {
+      if (scrollController?.position.extentAfter == 0 && !calm) {
         bottomMessage(context, 'You have reached the end');
+        calm = true;
+        Future.delayed(const Duration(seconds: 5)).then((_) => calm = false);
       }
     });
   }
@@ -58,12 +60,7 @@ class _ChannelDetailState extends BaseState<ChannelDetail>
   void sort(List list) => sortNames(list);
 
   void _like() async {
-    if (UserDao.hasLogin()) {
-      showMultiSelect();
-    } else {
-      showWarnToast('Please login');
-      MyNavigator().onJumpTo(RouteStatus.login);
-    }
+    UserDao.ensureLogin(() => showMultiSelect());
   }
 
   @override

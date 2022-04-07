@@ -52,12 +52,12 @@ class GroupDao {
         .add('groupName', groupName)
         .add('uid', UserDao.getUser().id!);
     var result = await Requester().fire(request);
-    showToast(result['message']);
+    showToast(result['feedback']);
   }
 
   static Future search(String name) async {
     BaseRequest request =
-        GroupRequest.getRequest(option: 'search').add('name', name);
+        GroupRequest().add('option', 'search').add('name', name);
     return await Requester().fire(request);
   }
 }

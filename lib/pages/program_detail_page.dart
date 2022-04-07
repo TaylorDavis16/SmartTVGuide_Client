@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:smart_tv_guide/dao/program_dao.dart';
 import 'package:smart_tv_guide/model/channel.dart';
-import 'package:smart_tv_guide/navigator/my_navigator.dart';
 import 'package:smart_tv_guide/widget/appbar.dart';
 
 import '../dao/user_dao.dart';
-import '../http/core/route_jump_listener.dart';
 import '../util/app_util.dart';
-import '../util/view_util.dart';
 import '../widget/multi_select_box.dart';
 
 class ProgramDetail extends StatefulWidget {
@@ -38,7 +35,6 @@ class _ProgramDetailState extends State<ProgramDetail>
       _refresh(true);
     }
 
-
     super.initState();
   }
 
@@ -46,29 +42,25 @@ class _ProgramDetailState extends State<ProgramDetail>
   void sort(List list) => sortNames(list);
 
   void _like() async {
-    if (UserDao.hasLogin()) {
-      showMultiSelect();
-    } else {
-      showWarnToast('Please login');
-      MyNavigator().onJumpTo(RouteStatus.login);
-    }
+    UserDao.ensureLogin(() => showMultiSelect());
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: appBar(
-            widget.program.title, rightTitle: marked ? 'Remove' : 'Add', rightButtonClick: () => _like(),
+        appBar: appBar(widget.program.title,
+            rightTitle: marked ? 'Remove' : 'Add',
+            rightButtonClick: () => _like(),
             icon: marked ? Icons.favorite : Icons.favorite_border_outlined),
         body: ListView(
           children: [
-            Text('This is ${widget.program.title} from ${widget.program.channel}'),
+            Text(
+                'This is ${widget.program.title} from ${widget.program.channel}'),
             Text(widget.program.channel),
             Text(widget.program.title),
             Text(widget.program.start.toString()),
             Text(widget.program.stop.toString()),
             Text(widget.program.lang),
-
           ],
         ));
   }
@@ -90,7 +82,7 @@ class _ProgramDetailState extends State<ProgramDetail>
   }
 
   _refresh(bool refresh) {
-    if(refresh){
+    if (refresh) {
       setState(() {
         marked = UserDao.containsProgram(_program);
       });
