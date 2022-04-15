@@ -14,7 +14,8 @@ class HotPage extends StatefulWidget {
   _HotPageState createState() => _HotPageState();
 }
 
-class _HotPageState extends State<HotPage> with TickerProviderStateMixin, AutomaticKeepAliveClientMixin {
+class _HotPageState extends State<HotPage>
+    with TickerProviderStateMixin, AutomaticKeepAliveClientMixin {
   static const tabs = ["Latest", "Hottest", "Favorite"];
   TabController? _controller;
 
@@ -51,11 +52,11 @@ class _HotPageState extends State<HotPage> with TickerProviderStateMixin, Automa
   }
 
   _tabBar() {
-    return MyTab(tabs.map<Tab>((tab) => Tab(text: tab)).toList(),
-        fontSize: 16,
-        borderWidth: 3,
-        unselectedLabelColor: Colors.black54,
-        controller: _controller);
+    return Container(
+        color: Colors.white,
+        child: MyTab(tabs.map<Tab>((tab) => Tab(text: tab)).toList(),
+            unselectedLabelColor: Colors.black54,
+            controller: _controller));
   }
 
   _buildTabView() {

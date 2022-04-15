@@ -21,7 +21,7 @@ class _MinePageState extends State<MinePage> {
     bool hasLogin = UserDao.hasLogin();
     String loginStatus = hasLogin ? 'Logout' : 'Login';
     return Scaffold(
-      appBar: appBar("Mine"),
+      appBar: appBar("Mine", centerTitle: true),
       body: Center(
         child: ListView(
           children: [

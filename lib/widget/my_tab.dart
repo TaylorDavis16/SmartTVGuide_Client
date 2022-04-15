@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:underline_indicator/underline_indicator.dart';
 
-import '../util/color.dart';
-
 ///顶部tab切换组件
 class MyTab extends StatelessWidget {
   final List<Widget> tabs;
@@ -15,10 +13,10 @@ class MyTab extends StatelessWidget {
   const MyTab(this.tabs,
       {Key? key,
       this.controller,
-      this.fontSize = 13,
-      this.borderWidth = 2,
+      this.fontSize = 16,
+      this.borderWidth = 3,
       this.insets = 15,
-      this.unselectedLabelColor = Colors.grey})
+      this.unselectedLabelColor = Colors.white})
       : super(key: key);
 
   @override
@@ -26,12 +24,12 @@ class MyTab extends StatelessWidget {
     return TabBar(
         controller: controller,
         isScrollable: true,
-        labelColor: primary,
+        labelColor: Colors.red,
         unselectedLabelColor: unselectedLabelColor,
         labelStyle: TextStyle(fontSize: fontSize),
         indicator: UnderlineIndicator(
             strokeCap: StrokeCap.square,
-            borderSide: BorderSide(color: primary, width: borderWidth),
+            borderSide: BorderSide(color: Colors.red, width: borderWidth),
             insets: EdgeInsets.only(left: insets, right: insets)),
         tabs: tabs);
   }

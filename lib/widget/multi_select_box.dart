@@ -44,7 +44,7 @@ class _MultiSelectState extends State<MultiSelect> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      backgroundColor: primary,
+      backgroundColor: Colors.lightBlueAccent,
       title: Text(widget.name),
       content: SingleChildScrollView(
         child: ListBody(
@@ -53,7 +53,7 @@ class _MultiSelectState extends State<MultiSelect> {
       ),
       actions: [
         TextButton(
-          child: const Text('Cancel'),
+          child: const Text('Cancel', style: TextStyle(color: Colors.black),),
           onPressed: _cancel,
         ),
         ElevatedButton(

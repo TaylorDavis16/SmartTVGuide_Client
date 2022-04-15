@@ -7,7 +7,7 @@ class MyNavigationBar extends StatefulWidget {
   final Widget? child;
 
   const MyNavigationBar(
-      {Key? key, this.color = Colors.white, this.height = 46, this.child})
+      {Key? key, this.color = Colors.grey, this.height = 46, this.child})
       : super(key: key);
 
   @override

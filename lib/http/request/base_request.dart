@@ -5,7 +5,7 @@ abstract class BaseRequest {
   var pathParams = '';
 
   // static String authority = "www.dongdong16.com";
-  static String authority = "192.168.1.3:8080";
+  static String authority = "192.168.1.10:8080";
   static String app = "SmartTVGuide/";
 
   HttpMethod httpMethod();

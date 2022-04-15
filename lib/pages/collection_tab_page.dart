@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:smart_tv_guide/http/core/my_state.dart';
 
 import '../util/app_util.dart';
-import '../util/color.dart';
 import '../util/view_util.dart';
 
 final Map<IconData, Map> tabs = {
@@ -53,7 +52,7 @@ abstract class CollectionTabPageBaseState<T extends CollectionTabPage>
 
   SliverAppBar showSliverAppBar(String screenTitle) {
     return SliverAppBar(
-      backgroundColor: primary,
+      backgroundColor: Colors.lightBlueAccent,
       floating: true,
       pinned: true,
       snap: false,

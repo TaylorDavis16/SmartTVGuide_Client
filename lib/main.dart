@@ -83,6 +83,7 @@ class _AppEntryState extends State<AppEntry> {
               );
         return MaterialApp(
           home: widget,
+          debugShowCheckedModeBanner: false,
           // theme: ThemeData(primarySwatch: white, brightness: Share.brightness),
         );
       },

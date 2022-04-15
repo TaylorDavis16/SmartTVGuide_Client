@@ -118,7 +118,7 @@ class _GroupSearchPageState extends State<GroupSearchPage> {
     String text = controller.text.trim();
     if (text.isNotEmpty) {
       controller.clear();
-      var result = await GroupDao.search(controller.text);
+      var result = await GroupDao.search(text);
       if (result['code'] == 1) {
         groups = result['result'];
         setState(() {});

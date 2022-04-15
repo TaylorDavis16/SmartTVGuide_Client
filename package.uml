@@ -1,0 +1,1271 @@
+@startuml
+set namespaceSeparator ::
+
+class "smart_tv_guide::tools::shared_variables.dart::Share" {
+  {static} -Map<dynamic, dynamic> _map
+  {static} +Brightness brightness
+  {static} +Map<dynamic, dynamic> map
+}
+
+"smart_tv_guide::tools::shared_variables.dart::Share" o-- "dart::ui::Brightness"
+
+abstract class "smart_tv_guide::tools::validator.dart::Validators" {
+  +StreamTransformer<String, String> emailValidator
+  +StreamTransformer<String, String> passwordValidator
+  +StreamTransformer<String, String> usernameValidator
+}
+
+"smart_tv_guide::tools::validator.dart::Validators" o-- "dart::async::StreamTransformer<String, String>"
+
+class "smart_tv_guide::tools::bloc.dart::Bloc" {
+  -BehaviorSubject<String> _emailController
+  -BehaviorSubject<String> _passwordController
+  -BehaviorSubject<String> _usernameController
+  +dynamic Function(String) emailChanged
+  +dynamic Function(String) passwordChanged
+  +dynamic Function(String) usernameChanged
+  +Stream<String> email
+  +Stream<String> password
+  +Stream<String> username
+  +Stream<bool> loginSubmitCheck
+  +Stream<bool> registerSubmitCheck
+  +void dispose()
+}
+
+"smart_tv_guide::tools::bloc.dart::Bloc" o-- "rxdart::src::subjects::behavior_subject.dart::BehaviorSubject<String>"
+"smart_tv_guide::tools::bloc.dart::Bloc" o-- "null::dynamic Function(String)"
+"smart_tv_guide::tools::bloc.dart::Bloc" o-- "dart::async::Stream<String>"
+"smart_tv_guide::tools::bloc.dart::Bloc" o-- "dart::async::Stream<bool>"
+"smart_tv_guide::tools::validator.dart::Validators" <|-- "smart_tv_guide::tools::bloc.dart::Bloc"
+"smart_tv_guide::tools::bloc.dart::BaseBloc" <|-- "smart_tv_guide::tools::bloc.dart::Bloc"
+
+abstract class "smart_tv_guide::tools::bloc.dart::BaseBloc" {
+  +void dispose()
+}
+
+class "smart_tv_guide::widget::input_field.dart::InputField" {
+  +Stream<String>? stream
+  +TextEditingController controller
+  +void Function(String)? onChanged
+  +String? labelText
+  +TextStyle? labelStyle
+  +TextStyle errorStyle
+  +bool obscureText
+  +TextInputType? keyboardType
+  +double height
+  +double? width
+  +_InputFieldState createState()
+}
+
+"smart_tv_guide::widget::input_field.dart::InputField" o-- "dart::async::Stream<String>"
+"smart_tv_guide::widget::input_field.dart::InputField" o-- "flutter::src::widgets::editable_text.dart::TextEditingController"
+"smart_tv_guide::widget::input_field.dart::InputField" o-- "null::void Function(String)"
+"smart_tv_guide::widget::input_field.dart::InputField" o-- "flutter::src::painting::text_style.dart::TextStyle"
+"smart_tv_guide::widget::input_field.dart::InputField" o-- "flutter::src::services::text_input.dart::TextInputType"
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "smart_tv_guide::widget::input_field.dart::InputField"
+
+class "smart_tv_guide::widget::input_field.dart::_InputFieldState" {
+  +Widget build()
+  -dynamic _textField()
+}
+
+"flutter::src::widgets::framework.dart::State" <|-- "smart_tv_guide::widget::input_field.dart::_InputFieldState"
+
+class "smart_tv_guide::widget::navigation_bar.dart::MyNavigationBar" {
+  +Color color
+  +double height
+  +Widget? child
+  +_MyNavigationBarState createState()
+}
+
+"smart_tv_guide::widget::navigation_bar.dart::MyNavigationBar" o-- "dart::ui::Color"
+"smart_tv_guide::widget::navigation_bar.dart::MyNavigationBar" o-- "flutter::src::widgets::framework.dart::Widget"
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "smart_tv_guide::widget::navigation_bar.dart::MyNavigationBar"
+
+class "smart_tv_guide::widget::navigation_bar.dart::_MyNavigationBarState" {
+  +void initState()
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::State" <|-- "smart_tv_guide::widget::navigation_bar.dart::_MyNavigationBarState"
+
+class "smart_tv_guide::widget::hi_banner.dart::HiBanner" {
+  +List<Channel> bannerList
+  +double bannerHeight
+  +EdgeInsetsGeometry? padding
+  +Widget build()
+  -dynamic _banner()
+  -dynamic _image()
+}
+
+"smart_tv_guide::widget::hi_banner.dart::HiBanner" o-- "flutter::src::painting::edge_insets.dart::EdgeInsetsGeometry"
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "smart_tv_guide::widget::hi_banner.dart::HiBanner"
+
+class "smart_tv_guide::widget::login_button.dart::LoginButton" {
+  +String title
+  +bool enable
+  +void Function()? onPressed
+  +Color color
+  +Widget build()
+}
+
+"smart_tv_guide::widget::login_button.dart::LoginButton" o-- "dart::ui::void Function()"
+"smart_tv_guide::widget::login_button.dart::LoginButton" o-- "dart::ui::Color"
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "smart_tv_guide::widget::login_button.dart::LoginButton"
+
+class "smart_tv_guide::widget::dropdown_box.dart::DropdownController" {
+  +List<String> list
+  +String selected
+}
+
+class "smart_tv_guide::widget::dropdown_box.dart::DropdownBox" {
+  +DropdownController? dropdownController
+  +_DropdownBoxState createState()
+}
+
+"smart_tv_guide::widget::dropdown_box.dart::DropdownBox" o-- "smart_tv_guide::widget::dropdown_box.dart::DropdownController"
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "smart_tv_guide::widget::dropdown_box.dart::DropdownBox"
+
+class "smart_tv_guide::widget::dropdown_box.dart::_DropdownBoxState" {
+  -List<String> _list
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::State" <|-- "smart_tv_guide::widget::dropdown_box.dart::_DropdownBoxState"
+
+class "smart_tv_guide::widget::multi_select_box.dart::MultiSelect" {
+  +Map<String, bool> itemMap
+  +String name
+  +void Function(List<dynamic>)? sort
+  +State<StatefulWidget> createState()
+}
+
+"smart_tv_guide::widget::multi_select_box.dart::MultiSelect" o-- "null::void Function(List<dynamic>)"
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "smart_tv_guide::widget::multi_select_box.dart::MultiSelect"
+
+class "smart_tv_guide::widget::multi_select_box.dart::_MultiSelectState" {
+  -void _itemChange()
+  -void _cancel()
+  -void _submit()
+  -List<Widget> _checkBoxListTile()
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::State" <|-- "smart_tv_guide::widget::multi_select_box.dart::_MultiSelectState"
+
+abstract class "smart_tv_guide::widget::multi_select_box.dart::MultiSelectSupport" {
+  +String selectBoxName
+  +void sort()
+  +Map<String, bool> fetch()
+  +void showMultiSelect()
+  +Future<void> updateDB()
+}
+
+class "smart_tv_guide::widget::my_expansion_tile.dart::MyExpansionTile" {
+  +List<T> origin
+  +String title
+  +String subtitle
+  +E Function(T) toElement
+  +Widget build()
+}
+
+"smart_tv_guide::widget::my_expansion_tile.dart::MyExpansionTile" o-- "null::E Function(T)"
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "smart_tv_guide::widget::my_expansion_tile.dart::MyExpansionTile"
+
+class "smart_tv_guide::widget::button_field.dart::ButtonField" {
+  +Color color
+  +Widget? child
+  +dynamic Function()? onPressed
+  +double? height
+  +double? width
+  +Widget build()
+}
+
+"smart_tv_guide::widget::button_field.dart::ButtonField" o-- "dart::ui::Color"
+"smart_tv_guide::widget::button_field.dart::ButtonField" o-- "flutter::src::widgets::framework.dart::Widget"
+"smart_tv_guide::widget::button_field.dart::ButtonField" o-- "null::dynamic Function()"
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "smart_tv_guide::widget::button_field.dart::ButtonField"
+
+class "smart_tv_guide::widget::news_card.dart::NewsCard" {
+  +Channel channel
+  +Widget build()
+  -dynamic _itemImage()
+  -dynamic _iconText()
+  -dynamic _infoText()
+}
+
+"smart_tv_guide::widget::news_card.dart::NewsCard" o-- "smart_tv_guide::model::channel.dart::Channel"
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "smart_tv_guide::widget::news_card.dart::NewsCard"
+
+class "smart_tv_guide::widget::program_card.dart::ProgramCard" {
+  {static} +Map<dynamic, dynamic> channelMap
+  +Program program
+  +Channel theChannel()
+  +Widget build()
+  -dynamic _itemImage()
+  -dynamic _buildContent()
+  -dynamic _buildBottomContent()
+  -dynamic _owner()
+}
+
+"smart_tv_guide::widget::program_card.dart::ProgramCard" o-- "smart_tv_guide::model::channel.dart::Program"
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "smart_tv_guide::widget::program_card.dart::ProgramCard"
+
+class "smart_tv_guide::widget::my_tab.dart::MyTab" {
+  +List<Widget> tabs
+  +TabController? controller
+  +double fontSize
+  +double borderWidth
+  +double insets
+  +Color unselectedLabelColor
+  +Widget build()
+}
+
+"smart_tv_guide::widget::my_tab.dart::MyTab" o-- "flutter::src::material::tab_controller.dart::TabController"
+"smart_tv_guide::widget::my_tab.dart::MyTab" o-- "dart::ui::Color"
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "smart_tv_guide::widget::my_tab.dart::MyTab"
+
+class "smart_tv_guide::widget::loading_container.dart::LoadingContainer" {
+  +Widget child
+  +bool isLoading
+  +bool cover
+  -Widget _loadingView
+  +Widget build()
+}
+
+"smart_tv_guide::widget::loading_container.dart::LoadingContainer" o-- "flutter::src::widgets::framework.dart::Widget"
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "smart_tv_guide::widget::loading_container.dart::LoadingContainer"
+
+class "smart_tv_guide::util::app_util.dart::SimpleLogFilter" {
+  +bool isProd
+  +bool shouldLog()
+}
+
+"logger::src::log_filter.dart::LogFilter" <|-- "smart_tv_guide::util::app_util.dart::SimpleLogFilter"
+
+class "smart_tv_guide::dao::group_dao.dart::GroupDao" {
+  {static} +dynamic retrieve()
+  {static} +Future<dynamic> create()
+  {static} +Future<dynamic> update()
+  {static} +Future<dynamic> delete()
+  {static} +Future<bool> quit()
+  {static} +Future<dynamic> join()
+  {static} +Future<dynamic> search()
+}
+
+class "smart_tv_guide::dao::user_dao.dart::UserDao" {
+  {static} -Box<dynamic> _loginBox
+  {static} +String boardingPass
+  {static} +dynamic ensureLogin()
+  {static} +dynamic login()
+  {static} +dynamic retrieveCollectionData()
+  {static} +Future<dynamic> retrieveGroupData()
+  {static} +dynamic register()
+  {static} +dynamic sendCheckCode()
+  {static} +bool hasLogin()
+  {static} +void clearLogin()
+  {static} +User getUser()
+  {static} +Map<dynamic, dynamic> getChannelCollection()
+  {static} +Map<dynamic, dynamic> getProgramCollection()
+  {static} +List<dynamic> getGroupData()
+  {static} +void updateChannelCollection()
+  {static} +void updateProgramCollection()
+  {static} +void saveCollection()
+  {static} +void saveGroups()
+  {static} +bool containsChannel()
+  {static} +bool containsProgram()
+}
+
+"smart_tv_guide::dao::user_dao.dart::UserDao" o-- "hive::hive.dart::Box<dynamic>"
+
+class "smart_tv_guide::dao::program_dao.dart::ProgramDao" {
+  {static} +Future<HotProgramModel> hotProgramData()
+  {static} +dynamic retrieve()
+  {static} +Future<bool> updateData()
+  {static} +Future<bool> create()
+  {static} +Future<bool> update()
+  {static} +Future<bool> updateProgramNum()
+  {static} +Future<bool> delete()
+}
+
+class "smart_tv_guide::dao::channel_dao.dart::ChannelDao" {
+  {static} +dynamic apiData()
+  {static} +Map<dynamic, dynamic> apiMap()
+  {static} +Future<HomeModel> homeData()
+  {static} +dynamic retrieve()
+  {static} +Future<bool> updateData()
+  {static} +Future<bool> create()
+  {static} +Future<bool> update()
+  {static} +Future<bool> updateCollectNum()
+  {static} +dynamic trendingData()
+  {static} +Future<bool> delete()
+}
+
+class "smart_tv_guide::main.dart::AppEntry" {
+  +State<AppEntry> createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "smart_tv_guide::main.dart::AppEntry"
+
+class "smart_tv_guide::main.dart::_AppEntryState" {
+  -RouteDelegate _routeDelegate
+  +void changeTheme()
+  +Future<void> init()
+  +Widget build()
+  +void dispose()
+}
+
+"smart_tv_guide::main.dart::_AppEntryState" o-- "smart_tv_guide::main.dart::RouteDelegate"
+"flutter::src::widgets::framework.dart::State" <|-- "smart_tv_guide::main.dart::_AppEntryState"
+
+class "smart_tv_guide::main.dart::RouteDelegate" {
+  +GlobalKey<NavigatorState> navigatorKey
+  -RouteStatus _routeStatus
+  +List<MaterialPage<dynamic>> pages
+  +Channel? channel
+  +Program? program
+  +Map<dynamic, dynamic>? collect
+  +int initialTabPage
+  +RouteStatus routeStatus
+  +bool hasLogin
+  +Widget build()
+  +Future<void> setNewRoutePath()
+}
+
+"smart_tv_guide::main.dart::RouteDelegate" o-- "flutter::src::widgets::framework.dart::GlobalKey<NavigatorState>"
+"smart_tv_guide::main.dart::RouteDelegate" o-- "smart_tv_guide::http::core::route_jump_listener.dart::RouteStatus"
+"smart_tv_guide::main.dart::RouteDelegate" o-- "smart_tv_guide::model::channel.dart::Channel"
+"smart_tv_guide::main.dart::RouteDelegate" o-- "smart_tv_guide::model::channel.dart::Program"
+"flutter::src::widgets::router.dart::RouterDelegate" <|-- "smart_tv_guide::main.dart::RouteDelegate"
+"flutter::src::foundation::change_notifier.dart::ChangeNotifier" <|-- "smart_tv_guide::main.dart::RouteDelegate"
+"flutter::src::widgets::router.dart::PopNavigatorRouterDelegateMixin" <|-- "smart_tv_guide::main.dart::RouteDelegate"
+
+class "smart_tv_guide::main.dart::RoutePath" {
+  +String location
+}
+
+class "smart_tv_guide::http::core::request_error.dart::NeedLogin" {
+}
+
+"smart_tv_guide::http::core::request_error.dart::RequestError" <|-- "smart_tv_guide::http::core::request_error.dart::NeedLogin"
+
+class "smart_tv_guide::http::core::request_error.dart::NeedAuth" {
+}
+
+"smart_tv_guide::http::core::request_error.dart::RequestError" <|-- "smart_tv_guide::http::core::request_error.dart::NeedAuth"
+
+class "smart_tv_guide::http::core::request_error.dart::PageNotFound" {
+}
+
+"smart_tv_guide::http::core::request_error.dart::RequestError" <|-- "smart_tv_guide::http::core::request_error.dart::PageNotFound"
+
+class "smart_tv_guide::http::core::request_error.dart::ServerError" {
+}
+
+"smart_tv_guide::http::core::request_error.dart::RequestError" <|-- "smart_tv_guide::http::core::request_error.dart::ServerError"
+
+class "smart_tv_guide::http::core::request_error.dart::RequestError" {
+  +int code
+  +String message
+  +dynamic data
+}
+
+"dart::core::Exception" <|-- "smart_tv_guide::http::core::request_error.dart::RequestError"
+
+class "smart_tv_guide::http::core::mock_adapter.dart::MockAdapter" {
+  +Future<MyNetResponse<Map<dynamic, dynamic>>> send()
+}
+
+"smart_tv_guide::http::core::requester_adapter.dart::RequesterAdapter" <|-- "smart_tv_guide::http::core::mock_adapter.dart::MockAdapter"
+
+class "smart_tv_guide::http::core::requester.dart::Requester" {
+  -dynamic Function(RequestError) _hiErrorInterceptor
+  {static} -Requester _instance
+  +Future<dynamic> fire()
+  +Future<MyNetResponse<T>> send()
+  +void setErrorInterceptor()
+}
+
+"smart_tv_guide::http::core::requester.dart::Requester" o-- "smart_tv_guide::http::core::hi_interceptor.dart::dynamic Function(RequestError)"
+"smart_tv_guide::http::core::requester.dart::Requester" o-- "smart_tv_guide::http::core::requester.dart::Requester"
+
+abstract class "smart_tv_guide::http::core::my_state.dart::MyState" {
+  +void setState()
+}
+
+"flutter::src::widgets::framework.dart::State" <|-- "smart_tv_guide::http::core::my_state.dart::MyState"
+
+class "smart_tv_guide::http::core::dio_adapter.dart::DioAdapter" {
+  +Future<MyNetResponse<T>> send()
+  +MyNetResponse<T> buildRes()
+}
+
+"smart_tv_guide::http::core::requester_adapter.dart::RequesterAdapter" <|-- "smart_tv_guide::http::core::dio_adapter.dart::DioAdapter"
+
+abstract class "smart_tv_guide::http::core::hot_tab_state.dart::HotTabState" {
+  +bool needSwiper
+  +int pageSize
+  +bool needLogin
+  +List<dynamic> programs
+  +List<Channel> bannerList
+  +bool isLoading
+  +int maxSize
+  +dynamic contentChild
+  +Future<void> loadData()
+  +Future<void> customLoad()
+  +Future<void> load()
+  -dynamic _item()
+  +List<Channel> renewBannerList()
+}
+
+"smart_tv_guide::http::core::base_state.dart::BaseState" <|-- "smart_tv_guide::http::core::hot_tab_state.dart::HotTabState"
+
+abstract class "smart_tv_guide::http::core::base_state.dart::BaseState" {
+  +int pageIndex
+  +bool loading
+  +bool removeTop
+  +bool needScrollController
+  +bool stopLoading
+  +bool calm
+  +ScrollController? scrollController
+  +dynamic contentChild
+  +bool wantKeepAlive
+  +void addScrollListener()
+  +void initState()
+  +void dispose()
+  +Widget build()
+  +Future<void> refresh()
+  +Future<void> customLoad()
+  +Future<void> loadData()
+}
+
+"smart_tv_guide::http::core::base_state.dart::BaseState" o-- "flutter::src::widgets::scroll_controller.dart::ScrollController"
+"smart_tv_guide::http::core::my_state.dart::MyState" <|-- "smart_tv_guide::http::core::base_state.dart::BaseState"
+"flutter::src::widgets::automatic_keep_alive.dart::AutomaticKeepAliveClientMixin" <|-- "smart_tv_guide::http::core::base_state.dart::BaseState"
+
+abstract class "smart_tv_guide::http::core::requester_adapter.dart::RequesterAdapter" {
+  +Future<MyNetResponse<T>> send()
+}
+
+class "smart_tv_guide::http::core::requester_adapter.dart::MyNetResponse" {
+  +T? data
+  +BaseRequest? request
+  +int? statusCode
+  +String? statusMessage
+  +dynamic extra
+  +String toString()
+}
+
+"smart_tv_guide::http::core::requester_adapter.dart::MyNetResponse" o-- "smart_tv_guide::http::request::base_request.dart::BaseRequest"
+
+class "smart_tv_guide::http::core::route_jump_listener.dart::RouteStatusInfo" {
+  +RouteStatus routeStatus
+  +Widget page
+  +String toString()
+}
+
+"smart_tv_guide::http::core::route_jump_listener.dart::RouteStatusInfo" o-- "smart_tv_guide::http::core::route_jump_listener.dart::RouteStatus"
+"smart_tv_guide::http::core::route_jump_listener.dart::RouteStatusInfo" o-- "flutter::src::widgets::framework.dart::Widget"
+
+class "smart_tv_guide::http::core::route_jump_listener.dart::RouteStatus" {
+  +int index
+  {static} +List<RouteStatus> values
+  {static} +RouteStatus tabNavigator
+  {static} +RouteStatus programSearch
+  {static} +RouteStatus login
+  {static} +RouteStatus registration
+  {static} +RouteStatus groupSearch
+  {static} +RouteStatus groupDetail
+  {static} +RouteStatus channelDetail
+  {static} +RouteStatus programDetail
+  {static} +RouteStatus collection
+  {static} +RouteStatus hotCollectionTab
+  {static} +RouteStatus channelCollectionFolder
+  {static} +RouteStatus programCollectionFolder
+  {static} +RouteStatus peopleSearch
+  {static} +RouteStatus unknown
+}
+
+"smart_tv_guide::http::core::route_jump_listener.dart::RouteStatus" o-- "smart_tv_guide::http::core::route_jump_listener.dart::RouteStatus"
+"dart::core::Enum" <|-- "smart_tv_guide::http::core::route_jump_listener.dart::RouteStatus"
+
+class "smart_tv_guide::http::request::registration_request.dart::RegistrationRequest" {
+  +HttpMethod httpMethod()
+  +bool needLogin()
+  +String path()
+}
+
+"smart_tv_guide::http::request::base_request.dart::BaseRequest" <|-- "smart_tv_guide::http::request::registration_request.dart::RegistrationRequest"
+
+class "smart_tv_guide::http::request::login_request.dart::LoginRequest" {
+  +HttpMethod httpMethod()
+  +bool needLogin()
+  +String path()
+}
+
+"smart_tv_guide::http::request::base_request.dart::BaseRequest" <|-- "smart_tv_guide::http::request::login_request.dart::LoginRequest"
+
+class "smart_tv_guide::http::request::image_looker.dart::ImageFinder" {
+  {static} +String base
+  {static} +String defaultImg
+}
+
+abstract class "smart_tv_guide::http::request::base_request.dart::BaseRequest" {
+  +String pathParams
+  {static} +String authority
+  {static} +String app
+  +Map<String, String> params
+  +Map<String, dynamic> header
+  +HttpMethod httpMethod()
+  +String path()
+  +String url()
+  +bool needLogin()
+  +BaseRequest add()
+  +BaseRequest addHeader()
+}
+
+class "smart_tv_guide::http::request::base_request.dart::HttpMethod" {
+  +int index
+  {static} +List<HttpMethod> values
+  {static} +HttpMethod get
+  {static} +HttpMethod post
+  {static} +HttpMethod delete
+}
+
+"smart_tv_guide::http::request::base_request.dart::HttpMethod" o-- "smart_tv_guide::http::request::base_request.dart::HttpMethod"
+"dart::core::Enum" <|-- "smart_tv_guide::http::request::base_request.dart::HttpMethod"
+
+class "smart_tv_guide::http::request::hot_request.dart::HotRequest" {
+  +HttpMethod httpMethod()
+  +bool needLogin()
+  +String path()
+}
+
+"smart_tv_guide::http::request::base_request.dart::BaseRequest" <|-- "smart_tv_guide::http::request::hot_request.dart::HotRequest"
+
+class "smart_tv_guide::http::request::group_request.dart::GroupRequest" {
+  {static} +BaseRequest getRequest()
+  +HttpMethod httpMethod()
+  +bool needLogin()
+  +String path()
+}
+
+"smart_tv_guide::http::request::base_request.dart::BaseRequest" <|-- "smart_tv_guide::http::request::group_request.dart::GroupRequest"
+
+class "smart_tv_guide::http::request::home_request.dart::HomeRequest" {
+  +HttpMethod httpMethod()
+  +bool needLogin()
+  +String path()
+}
+
+"smart_tv_guide::http::request::base_request.dart::BaseRequest" <|-- "smart_tv_guide::http::request::home_request.dart::HomeRequest"
+
+class "smart_tv_guide::http::request::trending_request.dart::TrendingRequest" {
+  +HttpMethod httpMethod()
+  +bool needLogin()
+  +String path()
+}
+
+"smart_tv_guide::http::request::base_request.dart::BaseRequest" <|-- "smart_tv_guide::http::request::trending_request.dart::TrendingRequest"
+
+class "smart_tv_guide::http::request::collect_request.dart::CollectRequest" {
+  {static} +BaseRequest getRequest()
+  +HttpMethod httpMethod()
+  +bool needLogin()
+  +String path()
+}
+
+"smart_tv_guide::http::request::base_request.dart::BaseRequest" <|-- "smart_tv_guide::http::request::collect_request.dart::CollectRequest"
+
+class "smart_tv_guide::http::request::check_code_request.dart::CheckCodeRequest" {
+  +HttpMethod httpMethod()
+  +bool needLogin()
+  +String path()
+}
+
+"smart_tv_guide::http::request::base_request.dart::BaseRequest" <|-- "smart_tv_guide::http::request::check_code_request.dart::CheckCodeRequest"
+
+class "smart_tv_guide::http::request::api_request.dart::ApiRequest" {
+  +Map<String, dynamic> header
+  +HttpMethod httpMethod()
+  +bool needLogin()
+  +String url()
+  +String path()
+}
+
+"smart_tv_guide::http::request::base_request.dart::BaseRequest" <|-- "smart_tv_guide::http::request::api_request.dart::ApiRequest"
+
+class "smart_tv_guide::model::group.dart::Group" {
+  +int gid
+  +int owner
+  +String name
+  +DateTime begin
+  +Map<dynamic, dynamic> members
+  +Map<String, dynamic> toJson()
+}
+
+class "smart_tv_guide::model::group.dart::GroupAdapter" {
+  +int typeId
+  +int hashCode
+  +Group read()
+  +void write()
+  +bool ==()
+}
+
+"hive::hive.dart::TypeAdapter" <|-- "smart_tv_guide::model::group.dart::GroupAdapter"
+
+class "smart_tv_guide::model::home_model.dart::HomeModel" {
+  +Map<String, Channel> channelMap
+  +Map<String, dynamic> toJson()
+  +String toString()
+}
+
+class "smart_tv_guide::model::user.dart::User" {
+  +int? id
+  +String? username
+  +String? email
+  +String? gender
+  +Map<String, dynamic> toJson()
+}
+
+class "smart_tv_guide::model::user.dart::UserAdapter" {
+  +int typeId
+  +int hashCode
+  +User read()
+  +void write()
+  +bool ==()
+}
+
+"hive::hive.dart::TypeAdapter" <|-- "smart_tv_guide::model::user.dart::UserAdapter"
+
+class "smart_tv_guide::model::collection_model.dart::CollectionModel" {
+  +Map<dynamic, dynamic> channelCollection
+  +Map<dynamic, dynamic> programCollection
+  +Map<String, dynamic> toJson()
+  +String toString()
+}
+
+"hive::src::object::hive_object.dart::HiveObject" <|-- "smart_tv_guide::model::collection_model.dart::CollectionModel"
+
+class "smart_tv_guide::model::collection_model.dart::CollectionModelAdapter" {
+  +int typeId
+  +int hashCode
+  +CollectionModel read()
+  +void write()
+  +bool ==()
+}
+
+"hive::hive.dart::TypeAdapter" <|-- "smart_tv_guide::model::collection_model.dart::CollectionModelAdapter"
+
+class "smart_tv_guide::model::hot_program_model.dart::HotProgramModel" {
+  +List<Program> programs
+  +int maxSize
+  +Map<String, dynamic> toJson()
+  +String toString()
+}
+
+class "smart_tv_guide::model::channel.dart::Channel" {
+  +String id
+  +String displayName
+  +String about
+  +String imgURL
+  +String url
+  +List<Program> programs
+  +int hashCode
+  +Map<String, dynamic> toJson()
+  +bool ==()
+}
+
+"hive::src::object::hive_object.dart::HiveObject" <|-- "smart_tv_guide::model::channel.dart::Channel"
+
+class "smart_tv_guide::model::channel.dart::Program" {
+  +String channel
+  +String title
+  +String lang
+  +DateTime? start
+  +DateTime? stop
+  +String about
+  +int hashCode
+  +Map<String, dynamic> toJson()
+  +bool ==()
+  +String toString()
+}
+
+"hive::src::object::hive_object.dart::HiveObject" <|-- "smart_tv_guide::model::channel.dart::Program"
+
+class "smart_tv_guide::model::channel.dart::ChannelAdapter" {
+  +int typeId
+  +int hashCode
+  +Channel read()
+  +void write()
+  +bool ==()
+}
+
+"hive::hive.dart::TypeAdapter" <|-- "smart_tv_guide::model::channel.dart::ChannelAdapter"
+
+class "smart_tv_guide::model::channel.dart::ProgramAdapter" {
+  +int typeId
+  +int hashCode
+  +Program read()
+  +void write()
+  +bool ==()
+}
+
+"hive::hive.dart::TypeAdapter" <|-- "smart_tv_guide::model::channel.dart::ProgramAdapter"
+
+class "smart_tv_guide::navigator::my_navigator.dart::RouteJumpListener" {
+  +dynamic Function(RouteStatus, {Map<dynamic, dynamic>? args}) onJumpTo
+}
+
+"smart_tv_guide::navigator::my_navigator.dart::RouteJumpListener" o-- "smart_tv_guide::navigator::my_navigator.dart::dynamic Function(RouteStatus, {Map<dynamic, dynamic> args})"
+
+class "smart_tv_guide::navigator::my_navigator.dart::MyNavigator" {
+  {static} -MyNavigator _instance
+  -RouteJumpListener? _routeJump
+  -List<dynamic Function(RouteStatusInfo, RouteStatusInfo)> _listeners
+  -RouteStatusInfo? _current
+  -RouteStatusInfo? _bottomTab
+  +Future<bool> openH5()
+  +void onTabChange()
+  +void registerRouteJump()
+  +void addListener()
+  +void removeListener()
+  +void onJumpTo()
+  +void notify()
+  -void _notify()
+}
+
+"smart_tv_guide::navigator::my_navigator.dart::MyNavigator" o-- "smart_tv_guide::navigator::my_navigator.dart::MyNavigator"
+"smart_tv_guide::navigator::my_navigator.dart::MyNavigator" o-- "smart_tv_guide::navigator::my_navigator.dart::RouteJumpListener"
+"smart_tv_guide::navigator::my_navigator.dart::MyNavigator" o-- "smart_tv_guide::http::core::route_jump_listener.dart::RouteStatusInfo"
+"smart_tv_guide::navigator::my_navigator.dart::_RouteJumpListener" <|-- "smart_tv_guide::navigator::my_navigator.dart::MyNavigator"
+
+abstract class "smart_tv_guide::navigator::my_navigator.dart::_RouteJumpListener" {
+  +void onJumpTo()
+}
+
+class "smart_tv_guide::navigator::tab_navigator.dart::TabNavigator" {
+  +int initialPage
+  +State<TabNavigator> createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "smart_tv_guide::navigator::tab_navigator.dart::TabNavigator"
+
+class "smart_tv_guide::navigator::tab_navigator.dart::_TabNavigatorState" {
+  -PageController _controller
+  -MaterialAccentColor _activeColor
+  -int _currentIndex
+  -List<Widget> _pages
+  -bool _built
+  +void initState()
+  +Widget build()
+  -dynamic _bottomNavigationBarItem()
+  -void _jumpToPage()
+}
+
+"smart_tv_guide::navigator::tab_navigator.dart::_TabNavigatorState" o-- "flutter::src::widgets::page_view.dart::PageController"
+"smart_tv_guide::navigator::tab_navigator.dart::_TabNavigatorState" o-- "flutter::src::material::colors.dart::MaterialAccentColor"
+"flutter::src::widgets::framework.dart::State" <|-- "smart_tv_guide::navigator::tab_navigator.dart::_TabNavigatorState"
+
+class "smart_tv_guide::db::my_cache.dart::MyCache" {
+  {static} -SharedPreferences _prefs
+  {static} -MyCache _instance
+  {static} +Future<void> preInit()
+  +dynamic setString()
+  +dynamic setDouble()
+  +dynamic setInt()
+  +dynamic setBool()
+  +dynamic setStringList()
+  +Object? get()
+}
+
+"smart_tv_guide::db::my_cache.dart::MyCache" o-- "shared_preferences::shared_preferences.dart::SharedPreferences"
+"smart_tv_guide::db::my_cache.dart::MyCache" o-- "smart_tv_guide::db::my_cache.dart::MyCache"
+
+class "smart_tv_guide::pages::register_page.dart::RegisterPage" {
+  +State<StatefulWidget> createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "smart_tv_guide::pages::register_page.dart::RegisterPage"
+
+class "smart_tv_guide::pages::register_page.dart::_RegisterPageState" {
+  -Animation<double> _iconAnimation
+  -AnimationController _iconAnimationController
+  -Bloc _bloc
+  -TextEditingController _username
+  -TextEditingController _email
+  -TextEditingController _password
+  -TextEditingController _rePassword
+  -TextEditingController _checkCode
+  -DropdownBox _dropdown
+  +String checkCode
+  -Timer _timer
+  +bool freeze
+  +int count
+  +bool wantKeepAlive
+  +void initState()
+  +Widget build()
+  -dynamic _register()
+  +void dispose()
+}
+
+"smart_tv_guide::pages::register_page.dart::_RegisterPageState" o-- "flutter::src::animation::animation.dart::Animation<double>"
+"smart_tv_guide::pages::register_page.dart::_RegisterPageState" o-- "flutter::src::animation::animation_controller.dart::AnimationController"
+"smart_tv_guide::pages::register_page.dart::_RegisterPageState" o-- "smart_tv_guide::tools::bloc.dart::Bloc"
+"smart_tv_guide::pages::register_page.dart::_RegisterPageState" o-- "flutter::src::widgets::editable_text.dart::TextEditingController"
+"smart_tv_guide::pages::register_page.dart::_RegisterPageState" o-- "smart_tv_guide::widget::dropdown_box.dart::DropdownBox"
+"smart_tv_guide::pages::register_page.dart::_RegisterPageState" o-- "dart::async::Timer"
+"flutter::src::widgets::framework.dart::State" <|-- "smart_tv_guide::pages::register_page.dart::_RegisterPageState"
+"flutter::src::widgets::ticker_provider.dart::SingleTickerProviderStateMixin" <|-- "smart_tv_guide::pages::register_page.dart::_RegisterPageState"
+"flutter::src::widgets::automatic_keep_alive.dart::AutomaticKeepAliveClientMixin" <|-- "smart_tv_guide::pages::register_page.dart::_RegisterPageState"
+
+class "smart_tv_guide::pages::homepage.dart::HomePage" {
+  +State<HomePage> createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "smart_tv_guide::pages::homepage.dart::HomePage"
+
+class "smart_tv_guide::pages::homepage.dart::_HomePageState" {
+  {static} -Box<dynamic> _homeBox
+  +List<List<String>> channelNameList
+  +List<String> tabNames
+  -TabController? _controller
+  -bool _isLoading
+  +bool wantKeepAlive
+  +void initState()
+  +void dispose()
+  +Widget build()
+  -dynamic _tab()
+  -dynamic _content()
+  +bool testKeyword()
+  +void handleData()
+  +void loadData()
+  -dynamic _collectProgram()
+}
+
+"smart_tv_guide::pages::homepage.dart::_HomePageState" o-- "hive::hive.dart::Box<dynamic>"
+"smart_tv_guide::pages::homepage.dart::_HomePageState" o-- "flutter::src::material::tab_controller.dart::TabController"
+"smart_tv_guide::http::core::my_state.dart::MyState" <|-- "smart_tv_guide::pages::homepage.dart::_HomePageState"
+"flutter::src::widgets::automatic_keep_alive.dart::AutomaticKeepAliveClientMixin" <|-- "smart_tv_guide::pages::homepage.dart::_HomePageState"
+"flutter::src::widgets::ticker_provider.dart::TickerProviderStateMixin" <|-- "smart_tv_guide::pages::homepage.dart::_HomePageState"
+
+class "smart_tv_guide::pages::program_search_page.dart::ProgramSearchPage" {
+  +State<ProgramSearchPage> createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "smart_tv_guide::pages::program_search_page.dart::ProgramSearchPage"
+
+class "smart_tv_guide::pages::program_search_page.dart::_ProgramSearchPageState" {
+  +TextEditingController searchController
+  +List<dynamic> channels
+  +List<dynamic> programs
+  -ScrollController _controller
+  +bool calm
+  +void initState()
+  +Widget build()
+  +Future<void> search()
+  -bool _isMatchedPinyin()
+  +void dispose()
+}
+
+"smart_tv_guide::pages::program_search_page.dart::_ProgramSearchPageState" o-- "flutter::src::widgets::editable_text.dart::TextEditingController"
+"smart_tv_guide::pages::program_search_page.dart::_ProgramSearchPageState" o-- "flutter::src::widgets::scroll_controller.dart::ScrollController"
+"flutter::src::widgets::framework.dart::State" <|-- "smart_tv_guide::pages::program_search_page.dart::_ProgramSearchPageState"
+
+class "smart_tv_guide::pages::channel_detail_page.dart::ChannelDetail" {
+  +Channel channel
+  +_ChannelDetailState createState()
+}
+
+"smart_tv_guide::pages::channel_detail_page.dart::ChannelDetail" o-- "smart_tv_guide::model::channel.dart::Channel"
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "smart_tv_guide::pages::channel_detail_page.dart::ChannelDetail"
+
+class "smart_tv_guide::pages::channel_detail_page.dart::_ChannelDetailState" {
+  -List<Map<String, dynamic>> _items
+  +bool marked
+  +bool calm
+  +List<Color> colors
+  +Map<dynamic, dynamic> apiData
+  +dynamic contentChild
+  +String selectBoxName
+  +Future<void> refresh()
+  +void addScrollListener()
+  +void initState()
+  +void sort()
+  -void _like()
+  -dynamic _sliverBar()
+  -dynamic _detail()
+  +Future<void> loadData()
+  +Map<String, bool> fetch()
+  +Future<void> updateDB()
+  -dynamic _refresh()
+}
+
+"smart_tv_guide::http::core::base_state.dart::BaseState" <|-- "smart_tv_guide::pages::channel_detail_page.dart::_ChannelDetailState"
+"smart_tv_guide::widget::multi_select_box.dart::MultiSelectSupport" <|-- "smart_tv_guide::pages::channel_detail_page.dart::_ChannelDetailState"
+
+class "smart_tv_guide::pages::hot_tab_collection_page.dart::HotTabCollectionPage" {
+  +_HotTabCollectionPageState createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "smart_tv_guide::pages::hot_tab_collection_page.dart::HotTabCollectionPage"
+
+class "smart_tv_guide::pages::hot_tab_collection_page.dart::_HotTabCollectionPageState" {
+  +List<dynamic> totalPrograms
+  +dynamic Function(RouteStatusInfo, RouteStatusInfo) listener
+  +bool wantKeepAlive
+  +void initState()
+  +Widget build()
+  +void reset()
+  +Future<void> load()
+  +void dispose()
+}
+
+"smart_tv_guide::pages::hot_tab_collection_page.dart::_HotTabCollectionPageState" o-- "smart_tv_guide::navigator::my_navigator.dart::dynamic Function(RouteStatusInfo, RouteStatusInfo)"
+"smart_tv_guide::http::core::hot_tab_state.dart::HotTabState" <|-- "smart_tv_guide::pages::hot_tab_collection_page.dart::_HotTabCollectionPageState"
+
+class "smart_tv_guide::pages::hot_tab_latest_page.dart::HotTabLatestPage" {
+  +_HotTabLatestPageState createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "smart_tv_guide::pages::hot_tab_latest_page.dart::HotTabLatestPage"
+
+class "smart_tv_guide::pages::hot_tab_latest_page.dart::_HotTabLatestPageState" {
+  +List<dynamic> totalPrograms
+  +void initState()
+  +Future<void> customLoad()
+}
+
+"smart_tv_guide::http::core::hot_tab_state.dart::HotTabState" <|-- "smart_tv_guide::pages::hot_tab_latest_page.dart::_HotTabLatestPageState"
+
+class "smart_tv_guide::pages::program_detail_page.dart::ProgramDetail" {
+  +Program program
+  +_ProgramDetailState createState()
+}
+
+"smart_tv_guide::pages::program_detail_page.dart::ProgramDetail" o-- "smart_tv_guide::model::channel.dart::Program"
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "smart_tv_guide::pages::program_detail_page.dart::ProgramDetail"
+
+class "smart_tv_guide::pages::program_detail_page.dart::_ProgramDetailState" {
+  +bool marked
+  -Program _program
+  +String selectBoxName
+  +void initState()
+  +void sort()
+  -void _like()
+  +Widget build()
+  +Map<String, bool> fetch()
+  +Future<void> updateDB()
+  -dynamic _refresh()
+}
+
+"smart_tv_guide::pages::program_detail_page.dart::_ProgramDetailState" o-- "smart_tv_guide::model::channel.dart::Program"
+"flutter::src::widgets::framework.dart::State" <|-- "smart_tv_guide::pages::program_detail_page.dart::_ProgramDetailState"
+"smart_tv_guide::widget::multi_select_box.dart::MultiSelectSupport" <|-- "smart_tv_guide::pages::program_detail_page.dart::_ProgramDetailState"
+
+class "smart_tv_guide::pages::any_page.dart::AnyPage" {
+  +_AnyPageState createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "smart_tv_guide::pages::any_page.dart::AnyPage"
+
+class "smart_tv_guide::pages::any_page.dart::_AnyPageState" {
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::State" <|-- "smart_tv_guide::pages::any_page.dart::_AnyPageState"
+
+class "smart_tv_guide::pages::collection_channel_page.dart::CollectionChannelPage" {
+  +_CollectionChannelPageState createState()
+}
+
+"smart_tv_guide::pages::collection_tab_page.dart::CollectionTabPage" <|-- "smart_tv_guide::pages::collection_channel_page.dart::CollectionChannelPage"
+
+class "smart_tv_guide::pages::collection_channel_page.dart::_CollectionChannelPageState" {
+  +void initItems()
+  +void refreshItems()
+  +void openPage()
+  +Future<void> createItem()
+  +Future<void> deleteItem()
+  +Future<void> updateItem()
+}
+
+"smart_tv_guide::pages::collection_tab_page.dart::CollectionTabPageBaseState" <|-- "smart_tv_guide::pages::collection_channel_page.dart::_CollectionChannelPageState"
+
+class "smart_tv_guide::pages::login_page.dart::LoginPage" {
+  +State<StatefulWidget> createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "smart_tv_guide::pages::login_page.dart::LoginPage"
+
+class "smart_tv_guide::pages::login_page.dart::_LoginPageState" {
+  -Animation<double> _iconAnimation
+  -AnimationController _iconAnimationController
+  -VideoPlayerController _videoController
+  -Bloc _bloc
+  -TextEditingController _emailText
+  -TextEditingController _passwordText
+  +bool wantKeepAlive
+  +void initState()
+  +Widget build()
+  -dynamic _login()
+  +void dispose()
+}
+
+"smart_tv_guide::pages::login_page.dart::_LoginPageState" o-- "flutter::src::animation::animation.dart::Animation<double>"
+"smart_tv_guide::pages::login_page.dart::_LoginPageState" o-- "flutter::src::animation::animation_controller.dart::AnimationController"
+"smart_tv_guide::pages::login_page.dart::_LoginPageState" o-- "video_player::video_player.dart::VideoPlayerController"
+"smart_tv_guide::pages::login_page.dart::_LoginPageState" o-- "smart_tv_guide::tools::bloc.dart::Bloc"
+"smart_tv_guide::pages::login_page.dart::_LoginPageState" o-- "flutter::src::widgets::editable_text.dart::TextEditingController"
+"flutter::src::widgets::framework.dart::State" <|-- "smart_tv_guide::pages::login_page.dart::_LoginPageState"
+"flutter::src::widgets::ticker_provider.dart::SingleTickerProviderStateMixin" <|-- "smart_tv_guide::pages::login_page.dart::_LoginPageState"
+"flutter::src::widgets::automatic_keep_alive.dart::AutomaticKeepAliveClientMixin" <|-- "smart_tv_guide::pages::login_page.dart::_LoginPageState"
+
+class "smart_tv_guide::pages::collection_program_page.dart::CollectionProgramPage" {
+  +_CollectionProgramPageState createState()
+}
+
+"smart_tv_guide::pages::collection_tab_page.dart::CollectionTabPage" <|-- "smart_tv_guide::pages::collection_program_page.dart::CollectionProgramPage"
+
+class "smart_tv_guide::pages::collection_program_page.dart::_CollectionProgramPageState" {
+  +void initItems()
+  +void refreshItems()
+  +void openPage()
+  +Future<void> createItem()
+  +Future<void> deleteItem()
+  +Future<void> updateItem()
+}
+
+"smart_tv_guide::pages::collection_tab_page.dart::CollectionTabPageBaseState" <|-- "smart_tv_guide::pages::collection_program_page.dart::_CollectionProgramPageState"
+
+class "smart_tv_guide::pages::group_detail_page.dart::GroupDetailPage" {
+  +State<GroupDetailPage> createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "smart_tv_guide::pages::group_detail_page.dart::GroupDetailPage"
+
+class "smart_tv_guide::pages::group_detail_page.dart::_GroupDetailPageState" {
+  +List<dynamic> allGroups
+  +List<dynamic> myGroups
+  +List<dynamic> otherGroups
+  +TextEditingController nameController
+  +bool isLoading
+  +void initState()
+  +void retrieveData()
+  +Future<void> refresh()
+  +Widget build()
+  -dynamic _emptyText()
+  -dynamic _expansionTile()
+  -void _showForm()
+  +Widget myGroupCard()
+  +Widget otherGroupCard()
+  +Widget card()
+  +void refreshItems()
+  +Future<void> createGroup()
+  +Future<void> updateGroup()
+  +Future<void> deleteGroup()
+  +void dispose()
+  +void openPage()
+  +Future<dynamic> showConfirm()
+  +Future<dynamic> quit()
+}
+
+"smart_tv_guide::pages::group_detail_page.dart::_GroupDetailPageState" o-- "flutter::src::widgets::editable_text.dart::TextEditingController"
+"flutter::src::widgets::framework.dart::State" <|-- "smart_tv_guide::pages::group_detail_page.dart::_GroupDetailPageState"
+
+class "smart_tv_guide::pages::treanding_page.dart::TrendingPage" {
+  +State<TrendingPage> createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "smart_tv_guide::pages::treanding_page.dart::TrendingPage"
+
+class "smart_tv_guide::pages::treanding_page.dart::_TrendingPageState" {
+  +List<dynamic> channels
+  +bool wantKeepAlive
+  +void initState()
+  +Widget build()
+  +Future<void> loadData()
+}
+
+"flutter::src::widgets::framework.dart::State" <|-- "smart_tv_guide::pages::treanding_page.dart::_TrendingPageState"
+"flutter::src::widgets::automatic_keep_alive.dart::AutomaticKeepAliveClientMixin" <|-- "smart_tv_guide::pages::treanding_page.dart::_TrendingPageState"
+
+abstract class "smart_tv_guide::pages::collection_tab_page.dart::CollectionTabPage" {
+  +IconData data
+  +BuildContext context
+  +CollectionTabPageBaseState<CollectionTabPage> createState()
+}
+
+"smart_tv_guide::pages::collection_tab_page.dart::CollectionTabPage" o-- "flutter::src::widgets::icon_data.dart::IconData"
+"smart_tv_guide::pages::collection_tab_page.dart::CollectionTabPage" o-- "flutter::src::widgets::framework.dart::BuildContext"
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "smart_tv_guide::pages::collection_tab_page.dart::CollectionTabPage"
+
+abstract class "smart_tv_guide::pages::collection_tab_page.dart::CollectionTabPageBaseState" {
+  +TextEditingController nameController
+  +Map<dynamic, dynamic> items
+  +bool wantKeepAlive
+  +void initState()
+  +Widget build()
+  +SliverAppBar showSliverAppBar()
+  -List<Widget> _cardList()
+  +Widget card()
+  -void _showForm()
+  +void initItems()
+  +void refreshItems()
+  +Future<void> createItem()
+  +Future<void> updateItem()
+  +Future<void> deleteItem()
+  +Future<dynamic> showDeleteConfirm()
+  +void openPage()
+  +void dispose()
+}
+
+"smart_tv_guide::pages::collection_tab_page.dart::CollectionTabPageBaseState" o-- "flutter::src::widgets::editable_text.dart::TextEditingController"
+"smart_tv_guide::http::core::my_state.dart::MyState" <|-- "smart_tv_guide::pages::collection_tab_page.dart::CollectionTabPageBaseState"
+"flutter::src::widgets::automatic_keep_alive.dart::AutomaticKeepAliveClientMixin" <|-- "smart_tv_guide::pages::collection_tab_page.dart::CollectionTabPageBaseState"
+
+class "smart_tv_guide::pages::home_tab_page.dart::HomeTabPage" {
+  +List<String> channelNames
+  +State<HomeTabPage> createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "smart_tv_guide::pages::home_tab_page.dart::HomeTabPage"
+
+class "smart_tv_guide::pages::home_tab_page.dart::_HomeTabPageState" {
+  +Map<dynamic, dynamic> channelMap
+  -List<Map<String, dynamic>> _items
+  +bool wantKeepAlive
+  +void initState()
+  +void dispose()
+  +void didChangeAppLifecycleState()
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::State" <|-- "smart_tv_guide::pages::home_tab_page.dart::_HomeTabPageState"
+"flutter::src::widgets::automatic_keep_alive.dart::AutomaticKeepAliveClientMixin" <|-- "smart_tv_guide::pages::home_tab_page.dart::_HomeTabPageState"
+"flutter::src::widgets::binding.dart::WidgetsBindingObserver" <|-- "smart_tv_guide::pages::home_tab_page.dart::_HomeTabPageState"
+
+class "smart_tv_guide::pages::collection_program_folder_page.dart::CollectionProgramFolderPage" {
+  +Map<dynamic, dynamic> items
+  +State<CollectionProgramFolderPage> createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "smart_tv_guide::pages::collection_program_folder_page.dart::CollectionProgramFolderPage"
+
+class "smart_tv_guide::pages::collection_program_folder_page.dart::_CollectionProgramFolderPageState" {
+  +List<dynamic> programs
+  +dynamic Function(RouteStatusInfo, RouteStatusInfo) listener
+  +void initState()
+  +Widget build()
+  +void dispose()
+}
+
+"smart_tv_guide::pages::collection_program_folder_page.dart::_CollectionProgramFolderPageState" o-- "smart_tv_guide::navigator::my_navigator.dart::dynamic Function(RouteStatusInfo, RouteStatusInfo)"
+"flutter::src::widgets::framework.dart::State" <|-- "smart_tv_guide::pages::collection_program_folder_page.dart::_CollectionProgramFolderPageState"
+
+class "smart_tv_guide::pages::hot_page.dart::HotPage" {
+  +_HotPageState createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "smart_tv_guide::pages::hot_page.dart::HotPage"
+
+class "smart_tv_guide::pages::hot_page.dart::_HotPageState" {
+  {static} +List<String> tabs
+  -TabController? _controller
+  +bool wantKeepAlive
+  +void initState()
+  +void dispose()
+  +Widget build()
+  -dynamic _buildNavigationBar()
+  -dynamic _tabBar()
+  -dynamic _buildTabView()
+}
+
+"smart_tv_guide::pages::hot_page.dart::_HotPageState" o-- "flutter::src::material::tab_controller.dart::TabController"
+"flutter::src::widgets::framework.dart::State" <|-- "smart_tv_guide::pages::hot_page.dart::_HotPageState"
+"flutter::src::widgets::ticker_provider.dart::TickerProviderStateMixin" <|-- "smart_tv_guide::pages::hot_page.dart::_HotPageState"
+"flutter::src::widgets::automatic_keep_alive.dart::AutomaticKeepAliveClientMixin" <|-- "smart_tv_guide::pages::hot_page.dart::_HotPageState"
+
+class "smart_tv_guide::pages::group_search_page.dart::GroupSearchPage" {
+  +_GroupSearchPageState createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "smart_tv_guide::pages::group_search_page.dart::GroupSearchPage"
+
+class "smart_tv_guide::pages::group_search_page.dart::_GroupSearchPageState" {
+  +TextEditingController controller
+  +List<dynamic> groups
+  +Widget build()
+  +Future<void> search()
+  +void add()
+  +Future<dynamic> showAddConfirm()
+  +void dispose()
+}
+
+"smart_tv_guide::pages::group_search_page.dart::_GroupSearchPageState" o-- "flutter::src::widgets::editable_text.dart::TextEditingController"
+"flutter::src::widgets::framework.dart::State" <|-- "smart_tv_guide::pages::group_search_page.dart::_GroupSearchPageState"
+
+class "smart_tv_guide::pages::hot_tab_hottest_page.dart::HotTabHottestPage" {
+  +_HotTabHottestPageState createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "smart_tv_guide::pages::hot_tab_hottest_page.dart::HotTabHottestPage"
+
+class "smart_tv_guide::pages::hot_tab_hottest_page.dart::_HotTabHottestPageState" {
+  +Future<void> load()
+}
+
+"smart_tv_guide::http::core::hot_tab_state.dart::HotTabState" <|-- "smart_tv_guide::pages::hot_tab_hottest_page.dart::_HotTabHottestPageState"
+
+class "smart_tv_guide::pages::collection_page.dart::CollectionPage" {
+  +_CollectionPageState createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "smart_tv_guide::pages::collection_page.dart::CollectionPage"
+
+class "smart_tv_guide::pages::collection_page.dart::_CollectionPageState" {
+  +dynamic Function(RouteStatusInfo, RouteStatusInfo) listener
+  +bool wantKeepAlive
+  +void initState()
+  +Widget build()
+  +void dispose()
+}
+
+"smart_tv_guide::pages::collection_page.dart::_CollectionPageState" o-- "smart_tv_guide::navigator::my_navigator.dart::dynamic Function(RouteStatusInfo, RouteStatusInfo)"
+"flutter::src::widgets::framework.dart::State" <|-- "smart_tv_guide::pages::collection_page.dart::_CollectionPageState"
+"flutter::src::widgets::automatic_keep_alive.dart::AutomaticKeepAliveClientMixin" <|-- "smart_tv_guide::pages::collection_page.dart::_CollectionPageState"
+
+class "smart_tv_guide::pages::collection_channel_folder_page.dart::CollectionChannelFolderPage" {
+  +Map<dynamic, dynamic> items
+  +State<CollectionChannelFolderPage> createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "smart_tv_guide::pages::collection_channel_folder_page.dart::CollectionChannelFolderPage"
+
+class "smart_tv_guide::pages::collection_channel_folder_page.dart::_CollectionChannelFolderPageState" {
+  +List<dynamic> channelNameList
+  +Map<dynamic, dynamic> channelMap
+  -List<Map<String, dynamic>> _items
+  +dynamic Function(RouteStatusInfo, RouteStatusInfo) listener
+  +void initState()
+  +Widget build()
+  +void dispose()
+}
+
+"smart_tv_guide::pages::collection_channel_folder_page.dart::_CollectionChannelFolderPageState" o-- "smart_tv_guide::navigator::my_navigator.dart::dynamic Function(RouteStatusInfo, RouteStatusInfo)"
+"flutter::src::widgets::framework.dart::State" <|-- "smart_tv_guide::pages::collection_channel_folder_page.dart::_CollectionChannelFolderPageState"
+
+class "smart_tv_guide::pages::my_page.dart::MinePage" {
+  +State<MinePage> createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "smart_tv_guide::pages::my_page.dart::MinePage"
+
+class "smart_tv_guide::pages::my_page.dart::_MinePageState" {
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::State" <|-- "smart_tv_guide::pages::my_page.dart::_MinePageState"
+
+
+@enduml
