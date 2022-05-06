@@ -24,6 +24,6 @@ class HotProgramModel {
 
   @override
   String toString() {
-    return 'HomeModel{programs: ${programs.length}, maxSize: $maxSize}';
+    return 'HomeModel{programs: $programs, maxSize: $maxSize}';
   }
 }

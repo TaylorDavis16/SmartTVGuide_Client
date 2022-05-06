@@ -10,6 +10,7 @@ import 'package:smart_tv_guide/pages/collection_channel_folder_page.dart';
 import 'package:smart_tv_guide/pages/collection_page.dart';
 import 'package:smart_tv_guide/pages/collection_program_folder_page.dart';
 import 'package:smart_tv_guide/pages/group_detail_page.dart';
+import 'package:smart_tv_guide/pages/group_manage_page.dart';
 import 'package:smart_tv_guide/pages/login_page.dart';
 import 'package:smart_tv_guide/pages/group_search_page.dart';
 import 'package:smart_tv_guide/pages/program_detail_page.dart';
@@ -115,6 +116,7 @@ class RouteDelegate extends RouterDelegate<RoutePath>
   List<MaterialPage> pages = [];
   Channel? channel;
   Program? program;
+  Group? group;
   Map? collect;
   int initialTabPage = 0;
 
@@ -132,6 +134,8 @@ class RouteDelegate extends RouterDelegate<RoutePath>
         program = args!['program'];
       } else if (_routeStatus == RouteStatus.channelCollectionFolder || _routeStatus == RouteStatus.programCollectionFolder) {
         collect = args!['items'];
+      } else if (_routeStatus == RouteStatus.groupDetail) {
+        group = args!['group'];
       }
       notifyListeners();
     }));
@@ -172,8 +176,8 @@ class RouteDelegate extends RouterDelegate<RoutePath>
       page = pageWrap(const CollectionPage());
     } else if (_routeStatus == RouteStatus.groupSearch) {
       page = pageWrap(const GroupSearchPage());
-    } else if (_routeStatus == RouteStatus.groupDetail) {
-      page = pageWrap(const GroupDetailPage());
+    } else if (_routeStatus == RouteStatus.groupManagement) {
+      page = pageWrap(const GroupManagePage());
     } else if (_routeStatus == RouteStatus.channelCollectionFolder) {
       page = pageWrap(CollectionChannelFolderPage(collect!));
     } else if (_routeStatus == RouteStatus.programCollectionFolder) {
@@ -182,6 +186,8 @@ class RouteDelegate extends RouterDelegate<RoutePath>
       page = pageWrap(const LoginPage());
     } else if (_routeStatus == RouteStatus.registration) {
       page = pageWrap(const RegisterPage());
+    } else if (_routeStatus == RouteStatus.groupDetail) {
+      page = pageWrap(GroupDetail(group!));
     } else{
       page = pageWrap(const AnyPage());
     }

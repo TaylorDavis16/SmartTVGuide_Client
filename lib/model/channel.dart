@@ -78,7 +78,7 @@ class Program extends HiveObject {
       this.channel, this.title, this.lang, this.start, this.stop, this.about);
 
   Program.fromJson(Map<String, dynamic> json) {
-    channel = json['channel'];
+    channel = json['cid'];
     title = json['title'];
     lang = json['lang'];
     start = DateTime.parse(json['start']);
@@ -88,7 +88,7 @@ class Program extends HiveObject {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    data['channel'] = channel;
+    data['cid'] = channel;
     data['title'] = title;
     data['lang'] = lang;
     data['start'] = start.toString();

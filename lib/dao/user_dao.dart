@@ -63,8 +63,9 @@ class UserDao {
   static Future retrieveGroupData() async {
     var result = await GroupDao.retrieve();
     if (result['code'] == 1) {
-      // logger.i(result['groups']);
-      _loginBox.put('group', result['groups'].map((group) => Group.fromJson(group)).toList());
+      logger.i(result['groups']);
+      result['groups'].forEach((key, group) => result['groups'].update(key, (group) => Group.fromJson(group)));
+      _loginBox.put('group', result['groups']);
     }
   }
   
@@ -94,6 +95,7 @@ class UserDao {
   static void clearLogin() {
     showToast('Log out Successful');
     _loginBox.delete('collection');
+    _loginBox.delete('groups');
     _loginBox.delete(boardingPass);
   }
 
@@ -107,7 +109,7 @@ class UserDao {
   static Map getProgramCollection() =>
       _loginBox.get('collection').programCollection;
 
-  static List getGroupData() =>  _loginBox.get('group');
+  static Map getGroupData() =>  _loginBox.get('group');
 
   static void updateChannelCollection(Map<String, bool> operations,
       String channel) {
@@ -135,7 +137,7 @@ class UserDao {
     _loginBox.get('collection').save();
   }
 
-  static void saveGroups(List newGroups){
+  static void saveGroups(Map newGroups){
     _loginBox.put('group', newGroups);
   }
 

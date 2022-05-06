@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:smart_tv_guide/dao/program_dao.dart';
 import 'package:smart_tv_guide/model/channel.dart';
+import 'package:smart_tv_guide/util/color.dart';
 import 'package:smart_tv_guide/widget/appbar.dart';
 
 import '../dao/user_dao.dart';
@@ -52,16 +53,28 @@ class _ProgramDetailState extends State<ProgramDetail>
             rightTitle: marked ? 'Remove' : 'Add',
             rightButtonClick: () => _like(),
             icon: marked ? Icons.favorite : Icons.favorite_border_outlined),
-        body: ListView(
-          children: [
-            Text(
-                'This is ${widget.program.title} from ${widget.program.channel}'),
-            Text(widget.program.channel),
-            Text(widget.program.title),
-            Text(widget.program.start.toString()),
-            Text(widget.program.stop.toString()),
-            Text(widget.program.lang),
-          ],
+        body: SingleChildScrollView(
+          child: Column(
+            children: [
+              ListTile(
+                  title: Text(
+                      'Intro: This is ${widget.program.title} from ${widget.program.channel}'),
+                  tileColor: randomColor()),
+              ListTile(
+                  title: Text('Channel ID: ${widget.program.channel}'),
+                  tileColor: randomColor()),
+              ListTile(
+                  title: Text('Name: ${widget.program.title}'), tileColor: randomColor()),
+              ListTile(
+                  title: Text('Start: ${widget.program.start.toString()}'),
+                  tileColor: randomColor()),
+              ListTile(
+                  title: Text('Stop: ${widget.program.stop.toString()}'),
+                  tileColor: randomColor()),
+              ListTile(
+                  title: Text('Language: ${widget.program.lang}'), tileColor: randomColor()),
+            ],
+          ),
         ));
   }
 

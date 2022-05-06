@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:smart_tv_guide/dao/user_dao.dart';
 import 'package:smart_tv_guide/http/request/base_request.dart';
-import 'package:smart_tv_guide/model/hot_program_model.dart';
 import 'package:smart_tv_guide/util/app_util.dart';
 
 import '../http/core/request_error.dart';
@@ -12,17 +11,13 @@ import '../http/request/hot_request.dart';
 import '../model/channel.dart';
 
 class ProgramDao {
-  static Future<HotProgramModel> hotProgramData(int pageIndex, int pageSize) async {
-    BaseRequest request = HotRequest()
-        .add('pageIndex', pageIndex)
-        .add('pageSize', pageSize)
-        .add('email', UserDao.getUser().email!);
+  static Future<List<dynamic>> hotProgramData() async {
+    BaseRequest request = HotRequest().add('email', UserDao.getUser().email!);
     var result = await Requester().fire(request);
-
     if (result['code'] != 1) {
       throw RequestError(result['code'], result['message']);
     }
-    return HotProgramModel.fromJson(result['model']);
+    return result['programs'].map((e) => Program.fromJson(e)).toList();
   }
 
 

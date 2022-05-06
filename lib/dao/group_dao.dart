@@ -57,7 +57,7 @@ class GroupDao {
 
   static Future search(String name) async {
     BaseRequest request =
-        GroupRequest().add('option', 'search').add('name', name);
+        GroupRequest().add('option', 'search').add('name', name).add('id', UserDao.hasLogin() ? UserDao.getUser().id! : -1);
     return await Requester().fire(request);
   }
 }

@@ -46,18 +46,17 @@ class _ProgramSearchPageState extends State<ProgramSearchPage> {
                   child: Column(
                     children: [
                       if (channels.isNotEmpty)
-                        if (channels.isNotEmpty)
-                          MyExpansionTile(
-                            origin: channels,
-                            subtitle: 'Channel',
-                            title: 'Related channels',
-                            toElement: (dynamic channel) => ListTile(
-                                onTap: () => gotoChannel(channel as Channel),
-                                leading: CircleAvatar(
-                                  backgroundColor: randomColor(),
-                                ),
-                                title: Text(channel.displayName)),
-                          ),
+                        MyExpansionTile(
+                          origin: channels,
+                          subtitle: 'Channel',
+                          title: 'Related channels',
+                          toElement: (dynamic channel) => ListTile(
+                              onTap: () => gotoChannel(channel as Channel),
+                              leading: CircleAvatar(
+                                backgroundColor: randomColor(),
+                              ),
+                              title: Text(channel.displayName)),
+                        ),
                       if (programs.isNotEmpty)
                         MyExpansionTile(
                             origin: programs,

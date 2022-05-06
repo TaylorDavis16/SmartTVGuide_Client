@@ -30,6 +30,11 @@ class Group {
         'begin': begin.millisecondsSinceEpoch,
         'members': members,
       };
+
+  @override
+  String toString() {
+    return 'Group{gid: $gid, owner: $owner, name: $name, begin: $begin, members: $members}';
+  }
 }
 
 

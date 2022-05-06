@@ -13,7 +13,7 @@ import 'package:smart_tv_guide/pages/program_search_page.dart';
 import 'package:smart_tv_guide/pages/register_page.dart';
 
 import '../../pages/collection_page.dart';
-import '../../pages/group_detail_page.dart';
+import '../../pages/group_manage_page.dart';
 import '../../pages/hot_tab_collection_page.dart';
 import '../../pages/treanding_page.dart';
 
@@ -52,7 +52,7 @@ Map _statusMap = {
   CollectionChannelFolderPage: RouteStatus.channelCollectionFolder,
   CollectionProgramFolderPage: RouteStatus.programCollectionFolder,
   GroupSearchPage: RouteStatus.groupSearch,
-  GroupDetailPage : RouteStatus.groupDetail,
+  GroupManagePage : RouteStatus.groupManagement,
 };
 
 ///获取page对应的RouteStatus
@@ -76,6 +76,7 @@ enum RouteStatus {
   login,
   registration,
   groupSearch,
+  groupManagement,
   groupDetail,
   channelDetail,
   programDetail,

@@ -3,13 +3,13 @@ import 'package:flutter/material.dart';
 class MyExpansionTile<T, E extends Widget> extends StatelessWidget {
   final List<T> origin;
   final String title;
-  final String subtitle;
+  final String? subtitle;
   final E Function(T e) toElement;
 
   const MyExpansionTile(
       {required this.origin,
       required this.title,
-      required this.subtitle,
+      this.subtitle,
       required this.toElement,
       Key? key})
       : super(key: key);
@@ -22,7 +22,7 @@ class MyExpansionTile<T, E extends Widget> extends StatelessWidget {
       collapsedBackgroundColor: Colors.blueGrey,
       backgroundColor: Colors.white,
       iconColor: Colors.blue,
-      subtitle: Text(subtitle),
+      subtitle: subtitle == null ? null : Text(subtitle!),
       // Contents
       children: origin.map(toElement).toList(),
     );

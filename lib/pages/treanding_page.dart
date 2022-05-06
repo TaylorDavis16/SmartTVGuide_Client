@@ -3,6 +3,7 @@ import 'package:hive_flutter/adapters.dart';
 import 'package:smart_tv_guide/http/core/route_jump_listener.dart';
 import 'package:smart_tv_guide/navigator/my_navigator.dart';
 import 'package:smart_tv_guide/util/app_util.dart';
+import 'package:smart_tv_guide/util/color.dart';
 
 import '../dao/channel_dao.dart';
 
@@ -47,7 +48,7 @@ class _TrendingPageState extends State<TrendingPage>
                 child: ListView.builder(
                   itemCount: channels.length,
                   itemBuilder: (context, index) => Card(
-                    color: Colors.blue[100],
+                    color: randomColor(),
                     elevation: 4,
                     margin: const EdgeInsets.symmetric(vertical: 10),
                     child: ListTile(

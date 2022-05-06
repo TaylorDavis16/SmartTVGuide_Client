@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:smart_tv_guide/dao/group_dao.dart';
 import 'package:smart_tv_guide/dao/user_dao.dart';
-import 'package:smart_tv_guide/util/view_util.dart';
 
 import '../http/core/route_jump_listener.dart';
 import '../navigator/my_navigator.dart';
@@ -44,9 +43,14 @@ class _GroupSearchPageState extends State<GroupSearchPage> {
                                 '${groups[index]['name']}    Size:  ${groups[index]['size']}'),
                             subtitle: Text(
                                 'Owner: ${groups[index]['username']}. Created at ${DateTime.fromMillisecondsSinceEpoch(groups[index]['date'])}'),
-                            trailing: IconButton(
+                            trailing: groups[index]['owner'] == id
+                                ? null
+                                : joined(index, id)
+                                ? null
+                                : IconButton(
                               icon: const Icon(Icons.add),
-                              onPressed: () => showAddConfirm(groups[index]),
+                              onPressed: () =>
+                                  showAddConfirm(groups[index]),
                             ),
                           ),
                         ),
@@ -76,7 +80,7 @@ class _GroupSearchPageState extends State<GroupSearchPage> {
                   actions: [
                     IconButton(
                       onPressed: () => UserDao.ensureLogin(() =>
-                          MyNavigator().onJumpTo(RouteStatus.groupDetail)),
+                          MyNavigator().onJumpTo(RouteStatus.groupManagement)),
                       icon: const Icon(Icons.supervised_user_circle_sharp),
                     ),
                   ],
@@ -114,7 +118,7 @@ class _GroupSearchPageState extends State<GroupSearchPage> {
         });
   }
 
-  Future<void> search() async{
+  Future<void> search() async {
     String text = controller.text.trim();
     if (text.isNotEmpty) {
       controller.clear();
@@ -126,16 +130,16 @@ class _GroupSearchPageState extends State<GroupSearchPage> {
     }
   }
 
+  bool joined(int index, int id) {
+    if (UserDao.hasLogin()) {
+      return UserDao.getGroupData().containsKey(groups[index]['gid'].toString());
+    }
+    return false;
+  }
+
   void add(dynamic info) {
     UserDao.ensureLogin(() {
-      int id = UserDao.getUser().id!;
-      if (!UserDao.getGroupData()
-          .any((group) => group.owner == id && group.gid == info['gid'])) {
-        GroupDao.join(
-            info['gid'], info['owner'], info['username'], info['name']);
-      } else {
-        showWarnToast('This is your own group!');
-      }
+      GroupDao.join(info['gid'], info['owner'], info['username'], info['name']);
     });
   }
 
