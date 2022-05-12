@@ -25,7 +25,6 @@ class _ChannelDetailState extends BaseState<ChannelDetail>
     with MultiSelectSupport<ChannelDetail> {
   late List<Map<String, dynamic>> _items;
   bool marked = false;
-  bool calm = false;
   late List<Color> colors;
   Map apiData = ChannelDao.apiMap();
 
@@ -66,7 +65,8 @@ class _ChannelDetailState extends BaseState<ChannelDetail>
   @override
   get contentChild {
     List<Program> programs = widget.channel.programs;
-    var website = apiData[widget.channel.id]['website'];
+    bool hasInfo = apiData[widget.channel.id] != null;
+    var website = hasInfo ? apiData[widget.channel.id]['website'] : null;
     return Scaffold(
         appBar: appBar(widget.channel.displayName,
             rightTitle: marked ? 'Remove' : 'Add',
@@ -82,6 +82,7 @@ class _ChannelDetailState extends BaseState<ChannelDetail>
                     scrollController!.position.minScrollExtent,
                     duration: const Duration(seconds: 1),
                     curve: Curves.ease)),
+            if(hasInfo)
             SliverGrid.count(
               crossAxisCount: 1,
               mainAxisSpacing: 1.0,
@@ -107,6 +108,7 @@ class _ChannelDetailState extends BaseState<ChannelDetail>
                       'Languages: ${apiData[widget.channel.id]['languages'].toString()}'),
               ],
             ),
+            if(hasInfo)
             SliverGrid.count(
               crossAxisCount: 3,
               mainAxisSpacing: 1.0,

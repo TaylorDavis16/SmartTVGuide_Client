@@ -94,17 +94,13 @@ class _HomePageState extends MyState<HomePage>
   void loadData() async {
     try {
       if (!_homeBox.containsKey('channelMap')) {
-        logger.i('request!');
         HomeModel model = await ChannelDao.homeData();
         _homeBox.put('channelMap', model.channelMap);
         _homeBox.put('channels',
             model.channelMap.values.map<String>((e) => e.id).toList());
         _collectProgram(model);
       }
-      if (!_homeBox.containsKey('api')) {
-        handleData();
-      }
-
+      handleData();
       List<String> channelsId = _homeBox.get('channels');
       tabNames = ['All', 'Beijing', 'CCTV', 'NBTV', 'Other'];
       channelNameList
