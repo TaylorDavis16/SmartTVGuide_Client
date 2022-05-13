@@ -4,6 +4,7 @@ import 'package:smart_tv_guide/model/channel.dart';
 import 'package:smart_tv_guide/util/color.dart';
 import 'package:smart_tv_guide/widget/appbar.dart';
 
+import '../dao/channel_dao.dart';
 import '../dao/user_dao.dart';
 import '../util/app_util.dart';
 import '../widget/multi_select_box.dart';
@@ -21,6 +22,7 @@ class _ProgramDetailState extends State<ProgramDetail>
     with MultiSelectSupport<ProgramDetail> {
   bool marked = false;
   late final Program _program;
+  Map apiData = ChannelDao.apiMap();
 
   @override
   void initState() {
@@ -62,6 +64,10 @@ class _ProgramDetailState extends State<ProgramDetail>
                   tileColor: randomColor()),
               ListTile(
                   title: Text('Channel ID: ${widget.program.channel}'),
+                  tileColor: randomColor()),
+              if(apiData[_program.channel] != null)
+              ListTile(
+                  title: Text('Category: ${apiData[_program.channel]['categories'].toString()}'),
                   tileColor: randomColor()),
               ListTile(
                   title: Text('Name: ${widget.program.title}'), tileColor: randomColor()),

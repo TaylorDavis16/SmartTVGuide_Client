@@ -19,6 +19,7 @@ class _HotTabHottestPageState extends HotTabState<HotTabHottestPage> {
   _HotTabHottestPageState() : super(needSwiper: true, needLogin: true);
   List recommendation = [];
   Map apiData = ChannelDao.apiMap();
+  List all = Hive.box('home').get('programs').where((e) => DateTime.now().compareTo(e.start) <= 0).toList();
 
   @override
   Future<void> load(int currentIndex, {loadMore = false}) async {
@@ -28,12 +29,21 @@ class _HotTabHottestPageState extends HotTabState<HotTabHottestPage> {
       recommendation = await ProgramDao.hotProgramData();
       Set<String> set = {};
       for (var e in recommendation) {
-        apiData[e.channel].forEach((v) => set.add(v));
+        apiData[e.channel]?['categories']?.forEach((v) => set.add(v));
       }
-      logger.w(set);
-      List all = Hive.box('home').get('programs');
+      logger.i(set);
       all.shuffle(random());
-      List sameClass = all.where((e) => set.contains(e.channel)).toList();
+      List sameClass = all.where((e) => condition(e, set)).toList();
+      List other = all.where((e) => !condition(e, set)).toList();
+      logger.i(sameClass.length);
+      logger.i(other.length);
+      sameClass.addAll(other.take((){
+        if(other.length > sameClass.length) {
+          return sameClass.length < 100 ? other.length : sameClass.length ~/ 2;
+        } else {
+          return other.length;
+        }
+      }()).toList());
       recommendation.addAll(sameClass);
       recommendation.shuffle(random());
       recommendation.addAll(all);
@@ -53,6 +63,16 @@ class _HotTabHottestPageState extends HotTabState<HotTabHottestPage> {
       stopLoading = true;
     }
     setState(() {});
+  }
+
+  bool condition(dynamic e, Set set) {
+    if(DateTime.now().compareTo(e.start) > 0) {
+      return false;
+    }
+    if(apiData[e.channel] != null){
+      return apiData[e.channel]['categories']?.any((c) => set.contains(c));
+    }
+    return false;
   }
 
 

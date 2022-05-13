@@ -84,6 +84,7 @@ class _TrendingPageState extends State<TrendingPage>
         channels = searchBox.get('channels').map((id) => channelMap[id]).toList();
       }
     }
+    logger.i(channels);
     setState(() {});
   }
 

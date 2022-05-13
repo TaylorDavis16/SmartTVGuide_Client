@@ -85,10 +85,12 @@ class _HomePageState extends MyState<HomePage>
     return channelName.contains(keyword);
   }
 
-  void handleData() async{
-    List apiData = await ChannelDao.apiData();
-    logger.i(apiData.length);
-    _homeBox.put('api', { for (var datum in apiData) datum['id'] : datum });
+  void handleData() async {
+    if (!_homeBox.containsKey('api')) {
+      List apiData = await ChannelDao.apiData();
+      logger.i(apiData.length);
+      _homeBox.put('api', {for (var datum in apiData) datum['id']: datum});
+    }
   }
 
   void loadData() async {
@@ -105,11 +107,14 @@ class _HomePageState extends MyState<HomePage>
       tabNames = ['All', 'Beijing', 'CCTV', 'NBTV', 'Other'];
       channelNameList
         ..add(channelsId)
-        ..add(channelsId.where((e) => testKeyword(e, 'Beijing')).toList())
+        ..add(channelsId
+            .where((e) => testKeyword(e, 'Beijing') || testKeyword(e, 'BRTV'))
+            .toList())
         ..add(channelsId.where((e) => testKeyword(e, 'CCTV')).toList())
         ..add(channelsId.where((e) => testKeyword(e, 'NBTV')).toList())
         ..add(channelsId
             .where((e) => !(testKeyword(e, 'Beijing') ||
+                testKeyword(e, 'BRTV') ||
                 testKeyword(e, 'CCTV') ||
                 testKeyword(e, 'NBTV')))
             .toList());

@@ -5,11 +5,12 @@ import 'package:smart_tv_guide/model/channel.dart';
 
 import 'app_util.dart';
 ///带缓存的image
-Widget cachedImage(Channel channel,
+Widget cachedImage(Channel? channel,
     {double? width, double? height, BoxFit? fit = BoxFit.contain}) {
   var wrap = Wrap(
-    children: [const Icon(Icons.tv), Text(channel.displayName)],
+    children: [const Icon(Icons.tv), Text(channel == null ? "Expired" : channel.displayName)],
   );
+  if(channel == null) return wrap;
   return channel.imgURL == 'unknown'
       ? wrap
       : CachedNetworkImage(

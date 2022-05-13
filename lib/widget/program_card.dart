@@ -13,7 +13,7 @@ class ProgramCard extends StatelessWidget {
 
   const ProgramCard({Key? key, required this.program}) : super(key: key);
 
-  Channel theChannel() => channelMap[program.channel];
+  Channel? theChannel() => channelMap[program.channel];
 
   @override
   Widget build(BuildContext context) {
@@ -119,7 +119,7 @@ class ProgramCard extends StatelessWidget {
         ),
         hiSpace(width: 8),
         Text(
-          theChannel().displayName,
+          theChannel() == null ? 'Expired' : theChannel()!.displayName,
           style: const TextStyle(fontSize: 11, color: Colors.grey),
         )
       ],
